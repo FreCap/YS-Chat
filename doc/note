@@ -1,0 +1,138 @@
+1) Un poolThread di netty che in automatico gestisce le connessioni.
+
+2) se netty gestisce il suo pool di thread in modo che, se il thread k 
+    è impegnato a fare un'operazione complessa ( come una query al DB ),
+	apre automaticamente un nuovo thread x gestire	il nuovo evente di un 
+    channel ( come una nuova connessione.. ), possiamo tranquillamente
+	non preoccuparci di fare un sistema di queue su un altro thread, ma 
+    semplicemente assicurarci che esista sempre una connessione 
+	attiva al server mysql ( e quindi impedire una nuova connessione per 
+    ogni operazione fatta )
+
+3) package sn.net PresenceHandler.java:
+	
+	static final ChannelGroup channels = new DefaultChannelGroup(); // in cui mettere le varie connessioni.
+	
+	{ricordo k per ritrovare la connessione basta fare channels.find(id_connessione)}
+	{con e.getChannel().getId() trovi l'id della connessione}
+
+	// dichiarare l'evento channelConnected
+	@Override
+	public void channelConnected
+	
+	basta fare un channels.add(e.getChannel())
+		
+	GESTIRE LA CONNESSIONE
+	
+	@Override
+	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e)
+			throws Exception {
+		
+		String messaggio = (String) e.getMessage();		
+		String[] splitted = messaggio.split(" ",2);
+
+		int azione = Integer.parseInt(splitted[0]);
+		String value = splitted[1];
+		
+		switch (azione) {
+		case LOGIN:
+			account account = new account();
+			data = value.split(" ");
+			account.login(e.getChannel(),data[0],data[1]);
+			break;
+		}
+		
+		super.messageReceived(ctx, e);
+	}
+	
+	dovrà gestire una serie di switch del messaggio 
+	TIPO_MSG VALUE
+	il value spesso è a sua volta suddiviso da spazi, per questo ho usato 
+    split(" ",2), in modo che divida soltanto l'azione dal value. 
+    Vedi sotto nell'esempio del LOGIN un value possibile
+	
+	i tipi msg devono essere definiti da una var static/enum
+	eventualmente creare delle classi x definire i msg in modo più carino, 
+    da decidere qual'è la maniera migliore
+	ad es.
+		PSEUDOCODE
+		class action_LOGIN{
+			int account_id;
+			int chat_key;
+			int MSG = LOGIN;// l'enum
+			func set_account_id(account_id)
+			func set_chat_key(chat_key)
+			func set_fromString(string)
+			func toString()
+		}
+	
+	TODO:
+	CHG_STATUS
+		-> value = (INT)account_id (INT)status (String)nickname
+	LOGIN
+		-> value = (INT)account_id (String)chat_key
+		PSEUDOCODE
+		Account account new Account();
+		account->login(e->getChannel(),account_id,chat_key);
+		
+		package sn.account Account.java
+		
+			class account
+				static accounts = concurrentHashMap<int,account> // dv int è ovviamente l'account id
+				int[] channels_id // i channel appartenenti all'account
+				int[] friends_online;
+				int[] chat_opened;
+				int chat_active;
+				String nickname;
+				int account_id;
+				int status;
+				
+				login(channel, account_id, chat_key){
+					->check che l'account esista facendo un select dal db mysql, in fase di test si può anche nn fare || return 1 if error
+					->check k la chat_key sia uguale a quella del db || return 2 if error
+					->inserisci il channel.getId in channels_id, inserisci this in accounts
+					->set Status online ( basta fare un semplice enum x gli stati )
+					->load friends, e check di chi è online tramite accounts.get(account_id)
+						->segnala online tramite un ciclo for degli account amici, account_amico->friend_status(this);
+				}
+			
+				friend_status(account account){
+					String msg = CHG_STATUS+" "+account->account_id+" "+account->status+" "+account->nickname;
+					for(int channel_id: account->channels_id){
+						PresenceHandler::channels->find(channel_id)->write(msg);
+					}
+					if(account->status == OFFLINE){
+						friend_remove(account->account_id)
+					}
+				}
+				
+				friend_add(account_id){
+					friends_online.add(account_id);
+				}
+
+				friend_remove(account_id){
+					friends_online.remove(account_id);
+				}
+				channel_add(channel_id){
+					boolean added = accounts.add(channel_id, channel) == null;
+					 if (added) {
+						PresenceHandler::channels.find(channel_id).getCloseFuture().addListener(channel_remove);
+					 }
+				}
+				
+				channel_remove(channel){
+					channels_id.remove(channel.getId())
+					if(channels_id.size()==0){
+						logout();
+					}
+				}
+				
+				logout(){
+					->set status offline
+					->notifica friends list
+					->remove from accounts
+				}
+			}
+
+	
+	
