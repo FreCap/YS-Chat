@@ -2,11 +2,8 @@ package sn.net;
 
 import org.jboss.netty.channel.*;
 import org.jboss.netty.channel.group.*;
-import org.jboss.netty.util.internal.StringUtil;
 
-import sn.account.account;
 import sn.net.actions.Action;
-import sn.net.actions.ActionsEnum;
 
 /*
  * PS: differenza fra Upstream e Downstream è sostanzialmente degli eventi che vengono applicati agli stesso, vedi sources:
@@ -16,7 +13,7 @@ import sn.net.actions.ActionsEnum;
 public class PresenceHandler extends SimpleChannelUpstreamHandler {
 
     public static final int MAX_UNITS = 25;
-    static final ChannelGroup channels = new DefaultChannelGroup();
+    public static final ChannelGroup channels = new DefaultChannelGroup();
 
     @Override
     public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e)

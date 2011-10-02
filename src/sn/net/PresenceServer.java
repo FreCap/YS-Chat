@@ -1,6 +1,5 @@
 package sn.net;
 
-import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
