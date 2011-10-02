@@ -36,9 +36,9 @@
 		
 		switch (azione) {
 		case LOGIN:
-			account account = new account();
+			profilo profilo = new profilo();
 			data = value.split(" ");
-			account.login(e.getChannel(),data[0],data[1]);
+			profilo.login(e.getChannel(),data[0],data[1]);
 			break;
 		}
 		
@@ -57,10 +57,10 @@
 	ad es.
 		PSEUDOCODE
 		class action_LOGIN{
-			int account_id;
+			int profilo_id;
 			int chat_key;
 			int MSG = LOGIN;// l'enum
-			func set_account_id(account_id)
+			func set_profilo_id(profilo_id)
 			func set_chat_key(chat_key)
 			func set_fromString(string)
 			func toString()
@@ -68,53 +68,53 @@
 	
 	TODO:
 	CHG_STATUS
-		-> value = (INT)account_id (INT)status (String)nickname
+		-> value = (INT)profilo_id (INT)status (String)nickname
 	LOGIN
-		-> value = (INT)account_id (String)chat_key
+		-> value = (INT)profilo_id (String)chat_key
 		PSEUDOCODE
-		Account account new Account();
-		account->login(e->getChannel(),account_id,chat_key);
+		profilo profilo new profilo();
+		profilo->login(e->getChannel(),profilo_id,chat_key);
 		
-		package sn.account Account.java
+		package sn.profilo profilo.java
 		
-			class account
-				static accounts = concurrentHashMap<int,account> // dv int è ovviamente l'account id
-				int[] channels_id // i channel appartenenti all'account
+			class profilo
+				static profili = concurrentHashMap<int,profilo> // dv int è ovviamente l'profilo id
+				int[] channels_id // i channel appartenenti all'profilo
 				int[] friends_online;
 				int[] chat_opened;
 				int chat_active;
 				String nickname;
-				int account_id;
+				int profilo_id;
 				int status;
 				
-				login(channel, account_id, chat_key){
-					->check che l'account esista facendo un select dal db mysql, in fase di test si può anche nn fare || return 1 if error
+				login(channel, profilo_id, chat_key){
+					->check che l'profilo esista facendo un select dal db mysql, in fase di test si può anche nn fare || return 1 if error
 					->check k la chat_key sia uguale a quella del db || return 2 if error
-					->inserisci il channel.getId in channels_id, inserisci this in accounts
+					->inserisci il channel.getId in channels_id, inserisci this in profili
 					->set Status online ( basta fare un semplice enum x gli stati )
-					->load friends, e check di chi è online tramite accounts.get(account_id)
-						->segnala online tramite un ciclo for degli account amici, account_amico->friend_status(this);
+					->load friends, e check di chi è online tramite profili.get(profilo_id)
+						->segnala online tramite un ciclo for degli profilo amici, profilo_amico->friend_status(this);
 				}
 			
-				friend_status(account account){
-					String msg = CHG_STATUS+" "+account->account_id+" "+account->status+" "+account->nickname;
-					for(int channel_id: account->channels_id){
+				friend_status(profilo profilo){
+					String msg = CHG_STATUS+" "+profilo->profilo_id+" "+profilo->status+" "+profilo->nickname;
+					for(int channel_id: profilo->channels_id){
 						PresenceHandler::channels->find(channel_id)->write(msg);
 					}
-					if(account->status == OFFLINE){
-						friend_remove(account->account_id)
+					if(profilo->status == OFFLINE){
+						friend_remove(profilo->profilo_id)
 					}
 				}
 				
-				friend_add(account_id){
-					friends_online.add(account_id);
+				friend_add(profilo_id){
+					friends_online.add(profilo_id);
 				}
 
-				friend_remove(account_id){
-					friends_online.remove(account_id);
+				friend_remove(profilo_id){
+					friends_online.remove(profilo_id);
 				}
 				channel_add(channel_id){
-					boolean added = accounts.add(channel_id, channel) == null;
+					boolean added = profili.add(channel_id, channel) == null;
 					 if (added) {
 						PresenceHandler::channels.find(channel_id).getCloseFuture().addListener(channel_remove);
 					 }
@@ -130,7 +130,7 @@
 				logout(){
 					->set status offline
 					->notifica friends list
-					->remove from accounts
+					->remove from profili
 				}
 			}
 

@@ -45,9 +45,9 @@ public class PresenceHandler extends SimpleChannelUpstreamHandler {
 //
 //        switch (azione) {
 //            case ChatMessageLogin.TAG:
-//                account account = new account();
+//                profilo profilo = new profilo();
 //                data = value.split(" ");
-//                account.login(e.getChannel(), data[0], data[1]);
+//                profilo.login(e.getChannel(), data[0], data[1]);
 //
 //                Channel ch = e.getChannel();
 //                ch.write(e.getMessage());

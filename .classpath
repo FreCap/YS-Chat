@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="D:/eclipse-java-helios-SR1-win32/eclipse/lib/junit-4.10.jar"/>
+	<classpathentry kind="lib" path="D:/eclipse-java-helios-SR1-win32/eclipse/lib/netty-3.2.4.Final.jar"/>
+	<classpathentry kind="lib" path="D:/eclipse-java-helios-SR1-win32/eclipse/lib/mysql-connector-java-5.1.17-bin.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

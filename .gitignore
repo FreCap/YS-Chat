@@ -5,3 +5,6 @@
 /dist/
 /lib/junit-4.10.jar
 /lib/netty-3.2.4.Final.jar
+/bin/
+/*.classpath
+/*.project

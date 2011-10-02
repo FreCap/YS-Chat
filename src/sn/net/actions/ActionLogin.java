@@ -2,8 +2,8 @@ package sn.net.actions;
 
 import org.jboss.netty.channel.Channel;
 
-import sn.account.Account;
 import sn.net.PresenceHandler;
+import sn.profilo.Profilo;
 
 public final class ActionLogin extends Action {
 
@@ -13,7 +13,7 @@ public final class ActionLogin extends Action {
     
     public static final String regex = "/^([0-9]{0,3}) ([0-9]{0,15}) ([0-9a-zA-Z]{10,50})$/";
 	
-	int account_id;
+	int profilo_id;
 	String chat_key;
 	
     // --- Constructors --------------------------------------------------------
@@ -26,16 +26,16 @@ public final class ActionLogin extends Action {
 			// è dentro a channels se è già loggato
 			if(PresenceHandler.channels.find(channel.getId()) != null){
 			
-				// se è un account già loggato da un altro client
-				if(Account.accounts.containsKey(fields[1])){
+				// se è un profilo già loggato da un altro client
+				if(Profilo.profili.containsKey(fields[1])){
 					
-					Account account = Account.accounts.get(fields[1]);
-					account.channel_add(channel);
+					Profilo profiloExistent = Profilo.profili.get(fields[1]);
+					profiloExistent.channel_add(channel);
 					
 				}else{
 					
-					Account account = new Account();
-					account.login(channel);
+					Profilo profilo = new Profilo();
+					profilo.login(channel, Integer.parseInt(fields[1]), fields[2]);
 					
 				}
 			}
@@ -46,12 +46,12 @@ public final class ActionLogin extends Action {
     
     // --- Getter & Setter -----------------------------------------------------
     
-    public int getAccount_id() {
-        return account_id;
+    public int getprofilo_id() {
+        return profilo_id;
     }
 
-    public void setAccount_id(int account_id) {
-        this.account_id = account_id;
+    public void setprofilo_id(int profilo_id) {
+        this.profilo_id = profilo_id;
     }
 
     public String getChat_key() {
