@@ -1,6 +1,7 @@
 package sn.net.actions;
 
 public enum ActionsEnum {
+	CONNECT,
 	LOGIN,
 	CHG_STATUS,
 	DISCONNECT,

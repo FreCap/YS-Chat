@@ -23,8 +23,8 @@ public class Profilo {
 
 	public static ConcurrentHashMap<Integer,Profilo> profili = new ConcurrentHashMap<Integer,Profilo>(); // dv int è ovviamente l'profilo id
 	IntegerArray channels_id = new IntegerArray(); // i channel appartenenti all'profilo
-	int[] friends_online;
-	int[] chat_opened;
+	IntegerArray friends_online;
+	IntegerArray chat_opened;
 	int chat_active;
 	String nickname;
 	String chat_key;

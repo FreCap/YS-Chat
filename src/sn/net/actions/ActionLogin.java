@@ -8,11 +8,13 @@ import sn.profilo.Profilo;
 public final class ActionLogin extends Action {
 
     // --- Costanti & Variabili private -----------------------------------------------
-
+	
     ActionsEnum MESSAGE_COMMAND = ActionsEnum.LOGIN;
     
-    public static final String regex = "/^([0-9]{0,3}) ([0-9]{0,15}) ([0-9a-zA-Z]{10,50})$/";
-	
+    //(int) command | (int) account_id (string) chat_key+salt MD5
+    public static final String regex_client = "/^([0-9]{0,3}) ([0-9]{0,15}) ([0-9a-zA-Z]{10,50})$/";
+	public static final String scheme_server = "%d %d %s\n";
+
 	int profilo_id;
 	String chat_key;
 	
@@ -20,13 +22,13 @@ public final class ActionLogin extends Action {
         
 	public static void login(String[] fields, String data, Channel channel) {
 		
-		boolean match = data.matches(regex);
+		boolean match = data.matches(regex_client);
 		if(match){
 			
-			// � dentro a channels se � gi� loggato
-			if(PresenceHandler.channels.find(channel.getId()) != null){
+			//se è dentro a channels se è già loggato
+			if(PresenceHandler.channels.find(channel.getId()) == null){
 			
-				// se � un profilo gi� loggato da un altro client
+				// se è un profilo già loggato da un altro client
 				if(Profilo.profili.containsKey(fields[1])){
 					
 					Profilo profiloExistent = Profilo.profili.get(fields[1]);
@@ -43,7 +45,7 @@ public final class ActionLogin extends Action {
 		}
 		
 	}
-    
+	
     // --- Getter & Setter -----------------------------------------------------
     
     public int getprofilo_id() {
