@@ -2,10 +2,20 @@ package sn.main;
 
 import sn.net.*;
 
+/**
+ *
+ * @author Alessandro Passerini <alessandro.passerini at xelia.it>
+ */
 public class Main {
+
+    // --- Costanti & Variabili private ----------------------------------------
 
 	private static PresenceServer presenceServer = null;
 	
+    // --- Costruttori ---------------------------------------------------------
+    
+    // --- Getter & Setter -----------------------------------------------------
+
 	/**
 	 * @param args
 	 */
@@ -21,5 +31,11 @@ public class Main {
 	public static PresenceServer getPresenceServer() {
 		return presenceServer;
 	}
+
+    // --- Metodi public -------------------------------------------------------
+    
+    // --- Metodi protected ----------------------------------------------------
+
+    // --- Metodi private ------------------------------------------------------
 
 }

@@ -12,20 +12,15 @@ import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
  */
 public class PresenceServer {
 
+    // --- Costanti & Variabili private -----------------------------------------------
+
     public final int DEFAULT_PORT = 9999;
 
     private int serverPort = DEFAULT_PORT;
+	
+    // --- Constructors --------------------------------------------------------
 
-    public int getServerPort() {
-        return serverPort;
-    }
-
-    public void setServerPort(int serverPort) {
-        this.serverPort = serverPort;
-    }
-    
     public PresenceServer() {
-
         ServerBootstrap bootstrap = new ServerBootstrap(
                 new NioServerSocketChannelFactory(
                 Executors.newCachedThreadPool(),
@@ -39,9 +34,22 @@ public class PresenceServer {
         } catch(Exception e) {
             System.out.println("Cannot bind to 127.0.0.1:" + serverPort + ". Is there another server active?");
         }
-        
-
-        
-
     }
+
+    // --- Getter & Setter -----------------------------------------------------
+    
+    public int getServerPort() {
+        return serverPort;
+    }
+
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
+    }
+
+    // --- Metodi public -------------------------------------------------------
+    
+    // --- Metodi protected ----------------------------------------------------
+
+    // --- Metodi private ------------------------------------------------------
+
 }

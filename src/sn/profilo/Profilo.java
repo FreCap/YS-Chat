@@ -16,8 +16,9 @@ import db.table.TableProfilo;
 
 public class Profilo {
 	/**
-	 * TODO forse tutto dovrebbe essere dentro una ConcurrentHashMap, in modo da consentire l'accesso simultaneo
-	 * e tutti i metodi, o quasi, dovrebbero essere static, con un argomento in pi� per l'id del profilo
+	 * TODO forse tutto dovrebbe essere dentro una ConcurrentHashMap, in modo da
+     * consentire l'accesso simultaneo e tutti i metodi, o quasi, dovrebbero 
+     * essere static, con un argomento in più per l'id del profilo.
 	 */
 
 	public static ConcurrentHashMap<Integer,Profilo> profili = new ConcurrentHashMap<Integer,Profilo>(); // dv int è ovviamente l'profilo id
