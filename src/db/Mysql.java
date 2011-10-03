@@ -73,4 +73,22 @@ public class Mysql {
 		
 	}
 	
+	public static String[] ResultSetRow_to_StringArray(ResultSet rs){
+		try {
+			int colonne = rs.getMetaData().getColumnCount();
+			String[] row = null;
+			while (rs.first()) {
+				row = new String[colonne];
+				for (int i = 1; i < colonne; i++) {
+					row[i-1] = rs.getString(i);
+				}
+			}
+			return row;
+		} catch (SQLException e) {
+				
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 }

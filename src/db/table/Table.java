@@ -37,5 +37,12 @@ public abstract class Table {
 	
 	}
 	
+	public static String[] get_byId(int item_id, boolean toArray){
+		if(toArray){
+			ResultSet rs = get_byId(item_id);
+			return Mysql.ResultSetRow_to_StringArray(rs);
+		}
+		return null;
+	}	
 	
 }
