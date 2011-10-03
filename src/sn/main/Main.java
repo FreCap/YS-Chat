@@ -1,5 +1,7 @@
 package sn.main;
 
+import db.Memcached;
+import db.Mysql;
 import sn.net.*;
 
 /**
@@ -21,6 +23,10 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		System.out.println("Starting PresenceServer");
+		
+		Mysql.init();
+		Memcached.init();
+		
 		setPresenceServer(new PresenceServer());
 	}
 
