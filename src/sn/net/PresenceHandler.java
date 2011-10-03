@@ -66,7 +66,11 @@ public class PresenceHandler extends SimpleChannelUpstreamHandler {
         ch.close();
     }
     
-    // --- Private methods -----------------------------------------------------
+    // --- Metodi public -------------------------------------------------------
     
+    // --- Metodi protected ----------------------------------------------------
+
+    // --- Metodi private ------------------------------------------------------
+
     
 }

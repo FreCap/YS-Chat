@@ -36,7 +36,7 @@ public abstract class Table {
 		return rs;
 	
 	}
-	
+
 	public static String[] get_byId(int item_id, boolean toArray){
 		if(toArray){
 			ResultSet rs = get_byId(item_id);
@@ -45,4 +45,12 @@ public abstract class Table {
 		return null;
 	}	
 	
+	
+
+    // --- Metodi public -------------------------------------------------------
+    
+    // --- Metodi protected ----------------------------------------------------
+
+    // --- Metodi private ------------------------------------------------------
+
 }

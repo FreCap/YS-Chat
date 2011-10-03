@@ -7,7 +7,7 @@ import sn.profilo.Profilo;
 
 public final class ActionLogin extends Action {
 
-    // --- Constants & Variables -----------------------------------------------
+    // --- Costanti & Variabili private -----------------------------------------------
 
     ActionsEnum MESSAGE_COMMAND = ActionsEnum.LOGIN;
     
@@ -23,10 +23,10 @@ public final class ActionLogin extends Action {
 		boolean match = data.matches(regex);
 		if(match){
 			
-			// è dentro a channels se è già loggato
+			// ï¿½ dentro a channels se ï¿½ giï¿½ loggato
 			if(PresenceHandler.channels.find(channel.getId()) != null){
 			
-				// se è un profilo già loggato da un altro client
+				// se ï¿½ un profilo giï¿½ loggato da un altro client
 				if(Profilo.profili.containsKey(fields[1])){
 					
 					Profilo profiloExistent = Profilo.profili.get(fields[1]);
@@ -61,12 +61,12 @@ public final class ActionLogin extends Action {
     public void setChat_key(String chat_key) {
         this.chat_key = chat_key;
     }
-    
-    // --- Public functions ----------------------------------------------------
-    
-    // --- Protected functions -------------------------------------------------
 
-    // --- Private functions ---------------------------------------------------
+    // --- Metodi public -------------------------------------------------------
+    
+    // --- Metodi protected ----------------------------------------------------
+
+    // --- Metodi private ------------------------------------------------------
 
 	
 }

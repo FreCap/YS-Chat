@@ -4,7 +4,7 @@ import org.jboss.netty.channel.Channel;
 
 public abstract class Action {
 
-    // --- Constants & Variables -----------------------------------------------
+    // --- Costanti & Variabili private -----------------------------------------------
     
     /**
      * Separator between fields.
@@ -16,7 +16,7 @@ public abstract class Action {
      */
     public final static int MESSAGE_FIELDS_MAX = 0;
 
-    // --- Constructors --------------------------------------------------------
+    // --- Costruttori --------------------------------------------------------
     
     public Action() {
     }
@@ -26,7 +26,7 @@ public abstract class Action {
 
     // --- Getter & Setter -----------------------------------------------------
     
-    // --- Public functions ----------------------------------------------------
+    // --- Metodi public -------------------------------------------------------
     
     public static Action parseFromString(String data, Channel channel) {
         System.out.println("Splitting <" + data + ">");
@@ -73,7 +73,7 @@ public abstract class Action {
         return actionToReturn;
     }
     
-    // --- Protected functions -------------------------------------------------
+    // --- Metodi protected ----------------------------------------------------
     
-    // --- Private functions ---------------------------------------------------
+    // --- Metodi private ------------------------------------------------------
 }
