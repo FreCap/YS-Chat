@@ -1,9 +1,10 @@
-package db.table;
+package sn.db.table;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import db.Mysql;
+import sn.db.Mysql;
+
 
 public abstract class Table {
 

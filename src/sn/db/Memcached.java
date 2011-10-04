@@ -1,4 +1,4 @@
-package db;
+package sn.db;
 
 import com.danga.MemCached.MemCachedClient;
 import com.danga.MemCached.SockIOPool;

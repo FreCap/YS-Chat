@@ -1,4 +1,4 @@
-package db.table;
+package sn.db.table;
 
 /**
  * 

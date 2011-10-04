@@ -1,7 +1,7 @@
 package sn.main;
 
-import db.Memcached;
-import db.Mysql;
+import sn.db.Memcached;
+import sn.db.Mysql;
 import sn.net.*;
 
 /**

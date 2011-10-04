@@ -32,13 +32,17 @@ public abstract class Action {
         System.out.println("Splitting <" + data + ">");
         String[] fields = data.split(Action.MESSAGE_FIELD_SEPARATOR, Action.MESSAGE_FIELDS_MAX);
 
-        ActionsEnum actionFound = null;
         Action actionToReturn = null;
-
+        
+        
+        /* E' davvero fondamentale?
+         * 
         // FIXME: Better way?!
         // Cannot use switch with strings.. needs Java 7
+        
+        // cambiato l'enum da string a int
         for (ActionsEnum a : ActionsEnum.values()) {
-            System.out.println("Searching <" + a.toString() + "> against <" + fields[0] + ">");
+            System.out.println("Searching <" + a.ordinal() + "> against <" + fields[0] + ">");
 
             // Check first field.
             // Oracle recommends a ternary check.
@@ -51,22 +55,28 @@ public abstract class Action {
         if (actionFound == null) {
             return null;
         }
-
-        switch (actionFound) {
-            case CHAT_CLOSE:
+        */
+       //int a = Integer.parseInt(fields[0]);
+        switch (1) {
+        /*    case CHAT_CLOSE:
                 break;
             case CHAT_OPEN:
                 break;
             case CHAT_WITH:
                 break;
             case CHG_STATUS:
+                break;*/
+            case ActionConnect.MESSAGE_ID:
+            	ActionConnect.connect(fields, data, channel);
                 break;
-            case DISCONNECT:
+        /*    case DISCONNECT:
                 break;
             case LIST:
                 break;
             case LOGIN:
-                ActionLogin.login(fields, data, channel);
+                break;*/
+            case ActionLoginChatKey.MESSAGE_ID:
+                ActionLoginChatKey.login(fields, data, channel);
                 break;
         }
 

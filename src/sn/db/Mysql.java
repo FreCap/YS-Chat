@@ -1,4 +1,4 @@
-package db;
+package sn.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,8 +13,8 @@ public class Mysql {
 	
 	public static final String url = "localhost";
 	public static final String db = "social";
-	public static final String user = "ascent";
-	public static final String pass = "";
+	public static final String user = "root";
+	public static final String pass = "ascent";
 	
 	
 	public static void init(){

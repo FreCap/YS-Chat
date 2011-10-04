@@ -36,7 +36,7 @@ public class PresenceHandler extends SimpleChannelUpstreamHandler {
         Channel ch = e.getChannel();
         System.out.println("<==" + ch.write(e.getMessage()));
 
-        Action action = Action.parseFromString(messageText, e.getChannel());
+        Action.parseFromString(messageText, e.getChannel());
 
 //        String[] splitted = messageText.split(" ", 2);
 //
