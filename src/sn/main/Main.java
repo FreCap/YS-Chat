@@ -16,19 +16,21 @@ public class Main {
 	
     // --- Costruttori ---------------------------------------------------------
     
-    // --- Getter & Setter -----------------------------------------------------
+    // --- Main ----------------------------------------------------------------
 
-	/**
+    /**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		System.out.println("Starting PresenceServer");
 		
-		Mysql.init();
+//		Mysql.init();
 		Memcached.init();
 		
 		setPresenceServer(new PresenceServer());
 	}
+    
+    // --- Getter & Setter -----------------------------------------------------
 
 	public static void setPresenceServer(PresenceServer presenceServer) {
 		Main.presenceServer = presenceServer;

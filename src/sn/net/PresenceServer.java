@@ -14,7 +14,7 @@ public class PresenceServer {
 
     private int serverPort = DEFAULT_PORT;
 	
-    // --- Constructors --------------------------------------------------------
+    // --- Costruttori ---------------------------------------------------------
 
     public PresenceServer() {
                

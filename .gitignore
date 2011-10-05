@@ -18,3 +18,5 @@
 /*.project
 /.settings
 
+/lib/java_memcached-release_2.6.2.jar
+/lib/mysql-connector-java-5.1.17-bin.jar

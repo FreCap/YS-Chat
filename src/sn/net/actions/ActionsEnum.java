@@ -31,6 +31,7 @@ LIST (11); // { op:11, list:[{profilo_id:int, nickname:String},{profilo_id:int, 
 
 @Deprecated
 public enum ActionsEnum {
+
 	CONNECT (1),
 	LOGIN (2),
 	LOGINCHATKEY (3),

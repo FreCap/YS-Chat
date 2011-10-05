@@ -19,7 +19,7 @@ public final class ActionLoginChatKey extends Action {
 	
 	public static final String scheme_serverToClient = "{ \"op\":%d, \"result\":%s }";
 	
-    // --- Constructors --------------------------------------------------------
+    // --- Costruttori ---------------------------------------------------------
         
 	public static void login(JSONObject obj, String data, INSIOClient client) {
 		
