@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="lib/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="D:/eclipse-java-helios-SR1-win32/eclipse/lib/junit-4.10.jar"/>
 	<classpathentry kind="lib" path="D:/eclipse-java-helios-SR1-win32/eclipse/lib/netty-3.2.4.Final.jar"/>
@@ -9,6 +10,5 @@
 	<classpathentry kind="lib" path="D:/eclipse-java-helios-SR1-win32/eclipse/lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="D:/eclipse-java-helios-SR1-win32/eclipse/lib/slf4j-simple-1.6.1.jar"/>
 	<classpathentry kind="lib" path="D:/eclipse-java-helios-SR1-win32/eclipse/lib/commons-pool-1.5.6.jar"/>
-	<classpathentry kind="lib" path="D:/eclipse-java-helios-SR1-win32/eclipse/lib/socket-io-netty-0.3.3-3.2.5.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
