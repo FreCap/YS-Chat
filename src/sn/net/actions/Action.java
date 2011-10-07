@@ -1,6 +1,6 @@
 package sn.net.actions;
 
-import org.jboss.netty.channel.Channel;
+import com.ibdknox.socket_io_netty.INSIOClient;
 
 public abstract class Action {
 
@@ -28,7 +28,7 @@ public abstract class Action {
     
     // --- Metodi public -------------------------------------------------------
     
-    public static Action parseFromString(String data, Channel channel) {
+    public static Action parseFromString(String data, INSIOClient client) {
         System.out.println("Splitting <" + data + ">");
         String[] fields = data.split(Action.MESSAGE_FIELD_SEPARATOR, Action.MESSAGE_FIELDS_MAX);
 
@@ -67,7 +67,7 @@ public abstract class Action {
             case CHG_STATUS:
                 break;*/
             case ActionConnect.MESSAGE_ID:
-            	ActionConnect.connect(fields, data, channel);
+            	ActionConnect.connect(fields, data, client);
                 break;
         /*    case DISCONNECT:
                 break;
@@ -76,7 +76,7 @@ public abstract class Action {
             case LOGIN:
                 break;*/
             case ActionLoginChatKey.MESSAGE_ID:
-                ActionLoginChatKey.login(fields, data, channel);
+                ActionLoginChatKey.login(fields, data, client);
                 break;
         }
 

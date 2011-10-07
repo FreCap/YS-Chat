@@ -5,7 +5,7 @@ import sn.db.Mysql;
 import sn.net.*;
 
 /**
- *
+ * @author Francesco Capponi <capponi.francesco at gmail.com>
  * @author Alessandro Passerini <alessandro.passerini at xelia.it>
  */
 public class Main {

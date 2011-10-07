@@ -1,7 +1,9 @@
 package sn.net;
 
-import org.jboss.netty.channel.*;
-import org.jboss.netty.channel.group.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.ibdknox.socket_io_netty.INSIOClient;
+import com.ibdknox.socket_io_netty.INSIOHandler;
 
 import sn.net.actions.Action;
 
@@ -10,61 +12,34 @@ import sn.net.actions.Action;
  * http://docs.jboss.org/netty/3.2/xref/org/jboss/netty/channel/SimpleChannelUpstreamHandler.html // lettura
  * http://docs.jboss.org/netty/3.2/xref/org/jboss/netty/channel/SimpleChannelDownstreamHandler.html // scrittura
  */
-public class PresenceHandler extends SimpleChannelUpstreamHandler {
+public class PresenceHandler implements INSIOHandler  {
 
     public static final int MAX_UNITS = 25;
-    public static final ChannelGroup channels = new DefaultChannelGroup();
+	public static ConcurrentHashMap<String,INSIOClient> clients = new ConcurrentHashMap<String,INSIOClient>(); // dv int è ovviamente l'profilo id
 
-    @Override
-    public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e)
-            throws Exception {
-        System.out.println("Connect " + e.getChannel().getId());
-    }
+	@Override
+	public void OnConnect(INSIOClient client) {
+		System.out.println("A user connected :: " + client.getSessionID());	
+	}
 
-    @Override
-    public void channelDisconnected(ChannelHandlerContext ctx,
-            ChannelStateEvent e) throws Exception {
-        System.out.println("Disconnect " + e.getChannel().getId());
-        super.channelDisconnected(ctx, e);
-    }
+	@Override
+	public void OnDisconnect(INSIOClient client) {
+		System.out.println("A user disconnected :: " + client.getSessionID() + " :: hope it was fun");	
+	}
 
-    @Override
-    public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
-        super.messageReceived(ctx, e);
+	@Override
+	public void OnMessage(INSIOClient client, String message) {
+		 	     
+	     System.out.println("<==" + message);
+	   
+	     Action.parseFromString(message, client);
+	}
 
-        String messageText = (String) e.getMessage();
-        Channel ch = e.getChannel();
-        System.out.println("<==" + ch.write(e.getMessage()));
-
-        Action.parseFromString(messageText, e.getChannel());
-
-//        String[] splitted = messageText.split(" ", 2);
-//
-//        int azione = Integer.parseInt(splitted[0]);
-//        String value = splitted[1];
-//
-//        switch (azione) {
-//            case ChatMessageLogin.TAG:
-//                profilo profilo = new profilo();
-//                data = value.split(" ");
-//                profilo.login(e.getChannel(), data[0], data[1]);
-//
-//                Channel ch = e.getChannel();
-//                ch.write(e.getMessage());
-//
-//                break;
-//
-//        }
-
-
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-        e.getCause().printStackTrace();
-        Channel ch = e.getChannel();
-        ch.close();
-    }
+	@Override
+	public void OnShutdown() {
+		
+	}
+    
     
     // --- Metodi public -------------------------------------------------------
     

@@ -1,10 +1,6 @@
 package sn.net;
 
-import java.net.InetSocketAddress;
-import java.util.concurrent.Executors;
-
-import org.jboss.netty.bootstrap.ServerBootstrap;
-import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
+import com.ibdknox.socket_io_netty.NSIOServer;
 
 /**
  * Starta il Server di Chat con Netty
@@ -21,15 +17,11 @@ public class PresenceServer {
     // --- Constructors --------------------------------------------------------
 
     public PresenceServer() {
-        ServerBootstrap bootstrap = new ServerBootstrap(
-                new NioServerSocketChannelFactory(
-                Executors.newCachedThreadPool(),
-                Executors.newCachedThreadPool()));
-
-        bootstrap.setPipelineFactory(new PresencePipelineFactory());
-
+               
+        NSIOServer bootstrap = new NSIOServer(new PresenceHandler(), serverPort);
+		
         try {
-            bootstrap.bind(new InetSocketAddress(serverPort));
+        	bootstrap.start();
             System.out.println("PresenceServer listening on 127.0.0.1:" + serverPort);
         } catch(Exception e) {
             System.out.println("Cannot bind to 127.0.0.1:" + serverPort + ". Is there another server active?");

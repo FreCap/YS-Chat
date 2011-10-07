@@ -3,7 +3,7 @@ package sn.net.actions;
 import java.security.SecureRandom;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jboss.netty.channel.Channel;
+import com.ibdknox.socket_io_netty.INSIOClient;
 
 import sn.net.PresenceHandler;
 
@@ -17,24 +17,24 @@ public final class ActionConnect extends Action {
     public static final String regex_clientToServer = "^([1]{1})$";
 	public static final String scheme_serverToClient = "%d %s";
 	
-	public static ConcurrentHashMap<Integer,String> salts = new ConcurrentHashMap<Integer, String>();
+	public static ConcurrentHashMap<String,String> salts = new ConcurrentHashMap<String, String>();
 	
     // --- Constructors --------------------------------------------------------
         
-	public static void connect(String[] fields, String data, Channel channel) {
+	public static void connect(String[] fields, String data, INSIOClient client) {
 		System.out.println("PASSAGE:0");
 		System.out.println(data);
 		boolean match = data.matches(regex_clientToServer);
 		if(match){
 			System.out.println("PASSAGE:1");
 			// è dentro a channels se è già loggato
-			if(PresenceHandler.channels.find(channel.getId()) == null){
+			if(PresenceHandler.clients.get(client.getSessionID()) == null){
 				System.out.println("PASSAGE:2");
 				SecureRandom random = new SecureRandom();
 				String random_string = random.generateSeed(40).toString();
-				salts.put(channel.getId(), random_string);
+				salts.put(client.getSessionID(), random_string);
 
-				write(channel, random_string);
+				write(client, random_string);
 				
 			}
 			
@@ -42,9 +42,9 @@ public final class ActionConnect extends Action {
 		
 	}
 	
-	public static void write(Channel channel, String random_string){
+	public static void write(INSIOClient client, String random_string){
 		
-		channel.write(String.format(scheme_serverToClient, MESSAGE_ID, random_string));
+		client.send(String.format(scheme_serverToClient, MESSAGE_ID, random_string));
 		
 	}
     

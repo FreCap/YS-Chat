@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="D:/eclipse-java-helios-SR1-win32/eclipse/lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="D:/eclipse-java-helios-SR1-win32/eclipse/lib/slf4j-simple-1.6.1.jar"/>
 	<classpathentry kind="lib" path="D:/eclipse-java-helios-SR1-win32/eclipse/lib/commons-pool-1.5.6.jar"/>
+	<classpathentry kind="lib" path="D:/eclipse-java-helios-SR1-win32/eclipse/lib/socket-io-netty-0.3.3-3.2.5.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

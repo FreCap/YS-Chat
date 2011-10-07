@@ -1,6 +1,6 @@
 package sn.net.actions;
 
-import org.jboss.netty.channel.Channel;
+import com.ibdknox.socket_io_netty.INSIOClient;
 
 import sn.net.PresenceHandler;
 import sn.profilo.Profilo;
@@ -20,13 +20,13 @@ public final class ActionLoginChatKey extends Action {
 	
     // --- Constructors --------------------------------------------------------
         
-	public static void login(String[] fields, String data, Channel channel) {
+	public static void login(String[] fields, String data, INSIOClient client) {
 		
 		boolean match = data.matches(regex_clientToServer);
 		if(match){
 			
 			//se è dentro a channels se è già loggato
-			if(PresenceHandler.channels.find(channel.getId()) == null){
+			if(PresenceHandler.clients.get(client.getSessionID()) == null){
 				
 				Profilo profilo = null;
 				
@@ -37,7 +37,7 @@ public final class ActionLoginChatKey extends Action {
 					profilo = new Profilo();
 				}
 				
-				profilo.login_byChatKey(channel, Integer.parseInt(fields[1]), fields[2]);
+				profilo.login_byChatKey(client, Integer.parseInt(fields[1]), fields[2]);
 				
 			}
 			
