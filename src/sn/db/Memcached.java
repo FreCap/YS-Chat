@@ -5,7 +5,7 @@ import com.danga.MemCached.SockIOPool;
 
 public class Memcached {
 
-	protected static MemCachedClient MemCached = new MemCachedClient();
+	protected static MemCachedClient MemCached = null;
 
 	final static boolean active = false;
 	final static String server = "127.0.0.1";
@@ -16,7 +16,9 @@ public class Memcached {
 	@SuppressWarnings("unused")
 	public static void init() {
 		if(active == true){
-			
+            System.out.println("Initialing Memcached.");
+			MemCached = new MemCachedClient();
+            
 			SockIOPool pool = SockIOPool.getInstance();
 			
 			// servers

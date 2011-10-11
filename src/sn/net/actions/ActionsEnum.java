@@ -35,7 +35,7 @@ public enum ActionsEnum {
 	CONNECT (1),
 	LOGIN (2),
 	LOGINCHATKEY (3),
-	CHG_STATUS (4),
+	CHANGE_STATUS (4),
 	DISCONNECT (5),
 	CHAT_WITH (6),
 	CHAT_OPEN (7),

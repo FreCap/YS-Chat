@@ -13,7 +13,8 @@ public class ActionChangeStatus extends Action
     
     // --- Costanti & Variabili private ----------------------------------------
 	
-    public static final ActionsEnum MESSAGE_COMMAND = ActionsEnum.CHANGE_STATUS;
+    public static final int MESSAGE_ID = 4;
+    //public static final ActionsEnum MESSAGE_COMMAND = ActionsEnum.CHANGE_STATUS;
     
     //(int) command | (int) account_id (string) chat_key+salt MD5
     public static final String regex_client = "/^([0-9]{0,3}) ([0-9]{0,15}) ([0-9a-zA-Z]{10,50})$/";
