@@ -10,7 +10,8 @@
 		// Create SocketIO instance, connect
 		var socket = new io.Socket("localhost", {
 		  port: 9999,
-		  transports: ['websocket', 'flashsocket', 'xhr-polling']
+		  transports: ['flashsocket', 'xhr-polling'],
+		  rememberTransport: false
 		});
 
 
@@ -21,6 +22,7 @@
 		// Add a connect listener
 		socket.on('message',function(data) {
 		  console.log('Received a message from the server!',data);
+		 
 		});
 		// Add a disconnect listener
 		socket.on('disconnect',function() {

@@ -19,7 +19,7 @@ public class PresenceServer {
     public PresenceServer() {
                
         NSIOServer bootstrap = new NSIOServer(new PresenceHandler(), serverPort);
-		
+
         try {
         	bootstrap.start();
             System.out.println("PresenceServer listening on 127.0.0.1:" + serverPort);
