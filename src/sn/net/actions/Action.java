@@ -1,5 +1,8 @@
 package sn.net.actions;
 
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
 import com.ibdknox.socket_io_netty.INSIOClient;
 
 public abstract class Action {
@@ -29,12 +32,8 @@ public abstract class Action {
     // --- Metodi public -------------------------------------------------------
     
     public static Action parseFromString(String data, INSIOClient client) {
-        System.out.println("Splitting <" + data + ">");
-        String[] fields = data.split(Action.MESSAGE_FIELD_SEPARATOR, Action.MESSAGE_FIELDS_MAX);
-
-        Action actionToReturn = null;
         
-        
+    	JSONObject obj = (JSONObject) JSONValue.parse(data);
         /* E' davvero fondamentale?
          * 
         // FIXME: Better way?!
@@ -57,7 +56,9 @@ public abstract class Action {
         }
         */
        //int a = Integer.parseInt(fields[0]);
-        switch (1) {
+    	
+    	int op = Integer.parseInt(Long.toString((Long) obj.get("op")));
+        switch (op) {
         /*    case CHAT_CLOSE:
                 break;
             case CHAT_OPEN:
@@ -67,7 +68,7 @@ public abstract class Action {
             case CHG_STATUS:
                 break;*/
             case ActionConnect.MESSAGE_ID:
-            	ActionConnect.connect(fields, data, client);
+            	ActionConnect.connect(obj, data, client);
                 break;
         /*    case DISCONNECT:
                 break;
@@ -76,11 +77,12 @@ public abstract class Action {
             case LOGIN:
                 break;*/
             case ActionLoginChatKey.MESSAGE_ID:
-                ActionLoginChatKey.login(fields, data, client);
+                ActionLoginChatKey.login(obj, data, client);
                 break;
+               
         }
-
-        return actionToReturn;
+ 
+        return null;
     }
     
     // --- Metodi protected ----------------------------------------------------

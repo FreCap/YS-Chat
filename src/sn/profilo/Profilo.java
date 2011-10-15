@@ -32,6 +32,7 @@ public class Profilo {
 		//utente inesistente
 		if(SQL_profilo == null){
 			//TODO error
+			return false;
 		}
 		try {
 			String Hash_fromDB = SecureHash.Md5(SQL_profilo.getString("chat_key")+ActionConnect.salts.get(client.getSessionID()));
@@ -39,6 +40,7 @@ public class Profilo {
 			// chat key errata
 			if(Hash_fromDB != chatKeyEncrypted){
 				//TODO error
+				return false;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

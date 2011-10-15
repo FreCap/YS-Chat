@@ -1,5 +1,7 @@
 package sn.net.actions;
 
+import org.json.simple.JSONObject;
+
 import com.ibdknox.socket_io_netty.INSIOClient;
 
 import sn.net.PresenceHandler;
@@ -12,34 +14,31 @@ public final class ActionLoginChatKey extends Action {
 	public static final int MESSAGE_ID = 3;
     
     //(int) command | (int) account_id (string) chat_key+salt MD5
-    public static final String regex_clientToServer = "^([3]{1}) ([0-9]{0,15}) ([0-9a-zA-Z]{10,50})$";
-	public static final String scheme_serverToClient = "%d %d %s";
+    @Deprecated
+	public static final String regex_clientToServer = "^([3]{1}) ([0-9]{0,15}) ([0-9a-zA-Z]{10,50})$";
+	
+    public static final String scheme_serverToClient = "%d %d %s";
 
 	int profilo_id;
 	String chat_key;
 	
     // --- Constructors --------------------------------------------------------
         
-	public static void login(String[] fields, String data, INSIOClient client) {
+	public static void login(JSONObject obj, String data, INSIOClient client) {
 		
-		boolean match = data.matches(regex_clientToServer);
-		if(match){
+		//se è dentro a channels se è già loggato
+		if(PresenceHandler.clients.get(client.getSessionID()) == null){
 			
-			//se è dentro a channels se è già loggato
-			if(PresenceHandler.clients.get(client.getSessionID()) == null){
-				
-				Profilo profilo = null;
-				
-				// se è un profilo già loggato da un altro client
-				if(Profilo.profili.containsKey(fields[1])){
-					profilo = Profilo.profili.get(fields[1]);
-				}else{					
-					profilo = new Profilo();
-				}
-				
-				profilo.login_byChatKey(client, Integer.parseInt(fields[1]), fields[2]);
-				
+			Profilo profilo = null;
+			
+			// se è un profilo già loggato da un altro client
+			if(Profilo.profili.containsKey((Integer) obj.get("account_id"))){
+				profilo = Profilo.profili.get((Integer) obj.get("account_id"));
+			}else{					
+				profilo = new Profilo();
 			}
+			
+			profilo.login_byChatKey(client, (Integer) obj.get("account_id"),(String) obj.get("chat_key"));
 			
 		}
 		

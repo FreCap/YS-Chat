@@ -29,11 +29,11 @@ public class PresenceHandler implements INSIOHandler  {
 
 	@Override
 	public void OnMessage(INSIOClient client, String message) {
-		 	     
+		 
 	     System.out.println("<==" + message);
-	   
 	     Action.parseFromString(message, client);
 	}
+	
 
 	@Override
 	public void OnShutdown() {
