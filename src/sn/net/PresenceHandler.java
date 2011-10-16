@@ -1,7 +1,8 @@
 package sn.net;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-
 import com.ibdknox.socket_io_netty.INSIOClient;
 import com.ibdknox.socket_io_netty.INSIOHandler;
 
@@ -16,7 +17,10 @@ public class PresenceHandler implements INSIOHandler  {
 
     public static final int MAX_UNITS = 25;
 	public static ConcurrentHashMap<String,INSIOClient> clients = new ConcurrentHashMap<String,INSIOClient>(); // dv int è ovviamente l'profilo id
-
+	
+	private PresenceFutureListener firstListener;
+	private List<PresenceFutureListener> otherListeners;
+	
 	@Override
 	public void OnConnect(INSIOClient client) {
 		System.out.println("A user connected :: " + client.getSessionID());	
@@ -25,11 +29,11 @@ public class PresenceHandler implements INSIOHandler  {
 	@Override
 	public void OnDisconnect(INSIOClient client) {
 		System.out.println("A user disconnected :: " + client.getSessionID() + " :: hope it was fun");	
+		notifyListeners(client);
 	}
 
 	@Override
 	public void OnMessage(INSIOClient client, String message) {
-		 
 	     System.out.println("<==" + message);
 	     Action.parseFromString(message, client);
 	}
@@ -39,11 +43,38 @@ public class PresenceHandler implements INSIOHandler  {
 	public void OnShutdown() {
 		
 	}
+	
+	public void addFutureListener(PresenceFutureListener listener) {
+        if (listener == null) {
+            throw new NullPointerException("listener");
+        }       
+        if (firstListener == null) {
+        	firstListener = listener;
+    	} else {
+			if (otherListeners == null) {
+				otherListeners = new ArrayList<PresenceFutureListener>(1);
+			}
+			otherListeners.add(listener);
+		}
+	}
     
-    
-    // --- Metodi public -------------------------------------------------------
-    
-    // --- Metodi protected ----------------------------------------------------
+	 private void notifyListeners(INSIOClient client) {
+		if (firstListener != null) {
+			firstListener.operationComplete(client);
+			firstListener = null;
+			if (otherListeners != null) {
+				for (PresenceFutureListener l: otherListeners) {
+					l.operationComplete(client);
+				}
+				otherListeners = null;
+			}
+		}
+	}
+		 
+	
+	// --- Metodi public -------------------------------------------------------
+	
+	// --- Metodi protected ----------------------------------------------------
 
     // --- Metodi private ------------------------------------------------------
 

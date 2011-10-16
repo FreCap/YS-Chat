@@ -47,7 +47,6 @@ public class Profilo {
 		}
 		
 		//success
-		ActionConnect.salts.remove(client.getSessionID());
 		channel_add(client);
 		return true;
 	}

@@ -1,14 +1,14 @@
 package sn.net.actions;
 
-import java.security.SecureRandom;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.simple.JSONObject;
 
 import com.ibdknox.socket_io_netty.INSIOClient;
 
+import sn.net.PresenceFutureListener;
 import sn.net.PresenceHandler;
-import sn.util.SecureHash;
+import sn.util.RandomHash;
 
 public final class ActionConnect extends Action {
 
@@ -28,10 +28,10 @@ public final class ActionConnect extends Action {
 	public static void connect(JSONObject obj, String data, INSIOClient client) {
 		// è dentro a channels se è già loggato
 		if(PresenceHandler.clients.get(client.getSessionID()) == null){
-			SecureRandom random = new SecureRandom();
-			String random_string = random.generateSeed(40).toString();
+			String random_string = RandomHash.one();
 			salts.put(client.getSessionID(), random_string);
-			write(client, random_string);			
+			//TODO da aggiungere il futureListener
+			write(client, random_string);	
 		}
 	}
 	
@@ -40,6 +40,12 @@ public final class ActionConnect extends Action {
 		client.send(String.format(scheme_serverToClient, MESSAGE_ID, random_string));
 		
 	}
+	
+	static PresenceFutureListener REMOVE_SALT = new PresenceFutureListener() {
+		 public void operationComplete(INSIOClient client) {
+			 ActionConnect.salts.remove(client.getSessionID());
+		 }
+	 };
     
     // --- Getter & Setter -----------------------------------------------------
     
