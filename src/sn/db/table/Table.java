@@ -10,11 +10,11 @@ public abstract class Table {
 
 	static String tableName = null;
 	static boolean Cache_Row = false;
-	static String primaryColumn = null;
+	static String primaryColumn;
 	
-	public static String get_column_byId(int item_id, String column){
+	public static String get_column_byId(int item_id, String column, String tableName, String primaryColumn){
 		
-		ResultSet rs = Mysql.query("SELECT " + column + " FROM " + tableName + " WHERE " + primaryColumn + " = " + item_id + "LIMIT 1");
+		ResultSet rs = Mysql.query("SELECT " + column + " FROM " + tableName + " WHERE " + primaryColumn + " = " + item_id + " LIMIT 1");
 		
 		try {
 			if(rs.next()){
@@ -26,9 +26,9 @@ public abstract class Table {
 		return null;
 	}
 	
-	public static ResultSet get_byId(int item_id){
+	public static ResultSet get_byId(int item_id, String tableName, String primaryColumn){
 		
-		ResultSet rs = Mysql.query("SELECT * FROM " + tableName + " WHERE " + primaryColumn + " = " + item_id + "LIMIT 1");
+		ResultSet rs = Mysql.query("SELECT * FROM " + tableName + " WHERE " + primaryColumn + " = " + item_id + " LIMIT 1");
 		try {
 			rs.next();
 		} catch (SQLException e) {
@@ -38,9 +38,9 @@ public abstract class Table {
 	
 	}
 
-	public static String[] get_byId(int item_id, boolean toArray){
+	public static String[] get_byId(int item_id, boolean toArray, String tableName, String primaryColumn){
 		if(toArray){
-			ResultSet rs = get_byId(item_id);
+			ResultSet rs = get_byId(item_id, tableName, primaryColumn);
 			return Mysql.ResultSetRow_to_StringArray(rs);
 		}
 		return null;

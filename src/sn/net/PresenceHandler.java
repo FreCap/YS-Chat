@@ -18,8 +18,7 @@ public class PresenceHandler implements INSIOHandler  {
     public static final int MAX_UNITS = 25;
 	public static ConcurrentHashMap<String,INSIOClient> clients = new ConcurrentHashMap<String,INSIOClient>(); // dv int è ovviamente l'profilo id
 	
-	private PresenceFutureListener firstListener;
-	private List<PresenceFutureListener> otherListeners;
+	private static ConcurrentHashMap<String,List<PresenceFutureListener>> listeners = new ConcurrentHashMap<String, List<PresenceFutureListener>>(20000);
 	
 	@Override
 	public void OnConnect(INSIOClient client) {
@@ -44,33 +43,26 @@ public class PresenceHandler implements INSIOHandler  {
 		
 	}
 	
-	public void addFutureListener(PresenceFutureListener listener) {
-        if (listener == null) {
+	public static void addFutureListener(INSIOClient client, PresenceFutureListener futureListener) {
+        if (futureListener == null) {
             throw new NullPointerException("listener");
         }       
-        if (firstListener == null) {
-        	firstListener = listener;
-    	} else {
-			if (otherListeners == null) {
-				otherListeners = new ArrayList<PresenceFutureListener>(1);
-			}
-			otherListeners.add(listener);
+        
+        if (!listeners.contains(client.getSessionID())) {
+        	ArrayList<PresenceFutureListener> listenersList = new ArrayList<PresenceFutureListener>(1);
+        	listeners.put(client.getSessionID(), listenersList);
 		}
+		listeners.get(client.getSessionID()).add(futureListener);
 	}
     
-	 private void notifyListeners(INSIOClient client) {
-		if (firstListener != null) {
-			firstListener.operationComplete(client);
-			firstListener = null;
-			if (otherListeners != null) {
-				for (PresenceFutureListener l: otherListeners) {
-					l.operationComplete(client);
-				}
-				otherListeners = null;
-			}
+	 public static void notifyListeners(INSIOClient client) {
+		if (listeners.containsKey(client.getSessionID())) {
+			for (PresenceFutureListener l: listeners.get(client.getSessionID())) {
+				l.operationComplete(client);
+			}	
+			listeners.remove(client.getSessionID());
 		}
 	}
-		 
 	
 	// --- Metodi public -------------------------------------------------------
 	

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import sn.db.table.TableProfilo;
+import sn.net.PresenceFutureListener;
 import sn.net.PresenceHandler;
 import sn.net.actions.ActionConnect;
 import sn.util.SecureHash;
@@ -18,32 +19,42 @@ public class Profilo {
 	
 	public static ConcurrentHashMap<Integer,Profilo> profili = new ConcurrentHashMap<Integer,Profilo>(); // dv int è ovviamente l'profilo id
 	ArrayList<String> channels_id = new ArrayList<String>();
+	
+	int profilo_id;
+	String nickname;
+	String chat_key;
+	
+	//TODO to implement
 	IntegerArray friends_online;
 	IntegerArray chat_opened;
 	int chat_active;
-	String nickname;
-	String chat_key;
-	int profilo_id;
 	int status;
 	
-	public boolean login_byChatKey(INSIOClient client, int account_id, String chatKeyEncrypted){
-		ResultSet SQL_profilo = TableProfilo.get_byId(account_id);
+	public boolean login_byChatKey(INSIOClient client, int profilo_id_from, String chatKeyEncrypted){
 		
-		//utente inesistente
-		if(SQL_profilo == null){
-			//TODO error
-			return false;
-		}
-		try {
-			String Hash_fromDB = SecureHash.Md5(SQL_profilo.getString("chat_key")+ActionConnect.salts.get(client.getSessionID()));
+		if(chat_key.isEmpty()){
+			ResultSet SQL_profilo = TableProfilo.get_byId(profilo_id_from);
 			
-			// chat key errata
-			if(Hash_fromDB != chatKeyEncrypted){
+			//utente inesistente
+			if(SQL_profilo == null){
+				System.out.println("profilo_id " + profilo_id_from + " inesistente");
 				//TODO error
 				return false;
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+			try {
+				profilo_id = profilo_id_from;
+				nickname = SQL_profilo.getString("nickname");
+				chat_key = SQL_profilo.getString("chat_key");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		String Hash_fromDB = SecureHash.Md5(chat_key+ActionConnect.salts.get(client.getSessionID()));
+		// chat key errata
+		if(!(Hash_fromDB.equals(chatKeyEncrypted))){
+			//TODO error
+			return false;
 		}
 		
 		//success
@@ -66,20 +77,21 @@ public class Profilo {
 		if(result){
 			PresenceHandler.clients.put(client.getSessionID(), client);
 			
-			/*client.getCloseFuture().addListener(new ChannelFutureListener() {//TODO, visto che adesso si usa socket.io, bisogna usare le sue api
-	            public void operationComplete(ChannelFuture future) {
-	            	synchronized(channels_id) {
-	            		channels_id.pop(future.getChannel().getId());
+			PresenceHandler.addFutureListener(client, new PresenceFutureListener() {
+				@Override
+				public void operationComplete(INSIOClient client) {
+					synchronized(channels_id) {
+	            		channels_id.remove(client.getSessionID());
 	            	}
-	                if(channels_id.toIntArray().length == 0){
-	                	//logout profilo
+	                if(channels_id.size() == 0){
+	                	//TODO logout profilo
 	                }
-	            }
-	        });*/
+					
+				}
+	        });
 		}
-		
 		return result;
-		
-	}	
+
+	}
 	
 }

@@ -13,14 +13,11 @@ public final class ActionLoginChatKey extends Action {
 	
 	public static final int MESSAGE_ID = 3;
     
-    //(int) command | (int) account_id (string) chat_key+salt MD5
+    //(int) command | (int) profilo_id (string) chat_key+salt MD5
     @Deprecated
 	public static final String regex_clientToServer = "^([3]{1}) ([0-9]{0,15}) ([0-9a-zA-Z]{10,50})$";
 	
-    public static final String scheme_serverToClient = "%d %d %s";
-
-	int profilo_id;
-	String chat_key;
+	public static final String scheme_serverToClient = "{ \"op\":%d, \"result\":%s }";
 	
     // --- Constructors --------------------------------------------------------
         
@@ -30,37 +27,29 @@ public final class ActionLoginChatKey extends Action {
 		if(PresenceHandler.clients.get(client.getSessionID()) == null){
 			
 			Profilo profilo = null;
-			
 			// se è un profilo già loggato da un altro client
-			if(Profilo.profili.containsKey((Integer) obj.get("account_id"))){
-				profilo = Profilo.profili.get((Integer) obj.get("account_id"));
+			Integer profilo_id = Integer.parseInt((String) obj.get("profilo_id"));
+			
+			if(Profilo.profili.containsKey(profilo_id)){
+				profilo = Profilo.profili.get(profilo_id);
 			}else{					
 				profilo = new Profilo();
 			}
 			
-			profilo.login_byChatKey(client, (Integer) obj.get("account_id"),(String) obj.get("chat_key"));
-			
+			boolean logged = profilo.login_byChatKey(client, profilo_id,(String) obj.get("chat_key"));
+			if(logged){
+				Profilo.profili.put(profilo_id, profilo);
+			}
+			write(client, logged);
 		}
 		
 	}
 	
+	public static void write(INSIOClient client, boolean logged){
+		client.send(String.format(scheme_serverToClient, MESSAGE_ID, new Boolean(logged).toString()));
+	}
+	
     // --- Getter & Setter -----------------------------------------------------
-    
-    public int getprofilo_id() {
-        return profilo_id;
-    }
-
-    public void setprofilo_id(int profilo_id) {
-        this.profilo_id = profilo_id;
-    }
-
-    public String getChat_key() {
-        return chat_key;
-    }
-
-    public void setChat_key(String chat_key) {
-        this.chat_key = chat_key;
-    }
 
     // --- Metodi public -------------------------------------------------------
     
