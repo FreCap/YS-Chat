@@ -1,7 +1,5 @@
 package sn.net.actions;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.json.simple.JSONObject;
 
 import com.ibdknox.socket_io_netty.INSIOClient;
@@ -28,13 +26,13 @@ public final class ActionList extends Action {
 		int profilo_id = Profilo.sessionID2profiloID.get(client.getSessionID());
 		String list_string = "";
 		if(profilo_id > 0){
-			IntegerArray list = Profilo.profili.get(profilo_id).friend_getList();
+			IntegerArray list = Profilo.profili.get(profilo_id).friends_online;
 			for (int profilo_id_friend : list.toIntArray()) {
 				if(!list_string.isEmpty()){
-					list_string.concat(",");
+					list_string = list_string.concat(",");
 				}
 				if(profilo_id_friend != 0){
-					list_string.concat(String.format(scheme_list, profilo_id_friend, Profilo.profili.get(profilo_id_friend).nickname));
+					list_string = list_string.concat(String.format(scheme_list, profilo_id_friend, Profilo.profili.get(profilo_id_friend).nickname));
 				}
 			}
 		}

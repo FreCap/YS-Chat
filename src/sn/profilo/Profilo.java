@@ -25,7 +25,7 @@ public class Profilo {
 	int profilo_id;
 	public String nickname;
 	String chat_key;
-	IntegerArray friends_online = new IntegerArray();
+	public IntegerArray friends_online = new IntegerArray();
 	
 	//TODO to implement
 	IntegerArray chat_opened;
@@ -63,10 +63,6 @@ public class Profilo {
 		channel_add(client);
 		friend_checkList_fromDB();
 		return true;
-	}
-	
-	public IntegerArray friend_getList(){
-		return friends_online;
 	}
 	
 	public void friend_checkList_fromDB(){
