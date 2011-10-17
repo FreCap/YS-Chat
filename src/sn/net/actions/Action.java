@@ -79,6 +79,9 @@ public abstract class Action {
             case ActionLoginChatKey.MESSAGE_ID:
                 ActionLoginChatKey.login(obj, data, client);
                 break;
+            case ActionList.MESSAGE_ID:
+                ActionList.list(obj, data, client);
+                break;
         }
  
         return null;

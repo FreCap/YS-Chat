@@ -24,11 +24,11 @@ public final class ActionLoginChatKey extends Action {
 	public static void login(JSONObject obj, String data, INSIOClient client) {
 		
 		//se è dentro a channels se è già loggato
-		if(PresenceHandler.clients.get(client.getSessionID()) == null){
+		if(!PresenceHandler.clients.containsKey(client.getSessionID())){
 			
 			Profilo profilo = null;
 			// se è un profilo già loggato da un altro client
-			Integer profilo_id = Integer.parseInt((String) obj.get("profilo_id"));
+			Long profilo_id = (Long) obj.get("profilo_id");
 			
 			if(Profilo.profili.containsKey(profilo_id)){
 				profilo = Profilo.profili.get(profilo_id);
@@ -36,9 +36,9 @@ public final class ActionLoginChatKey extends Action {
 				profilo = new Profilo();
 			}
 			
-			boolean logged = profilo.login_byChatKey(client, profilo_id,(String) obj.get("chat_key"));
+			boolean logged = profilo.login_byChatKey(client, profilo_id.intValue(),(String) obj.get("chat_key"));
 			if(logged){
-				Profilo.profili.put(profilo_id, profilo);
+				Profilo.profili.put(profilo_id.intValue(), profilo);
 			}
 			write(client, logged);
 		}

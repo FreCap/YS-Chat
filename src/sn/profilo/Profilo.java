@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import sn.db.table.TableProfilo;
+import sn.db.table.TableRelazioni;
 import sn.net.PresenceFutureListener;
 import sn.net.PresenceHandler;
 import sn.net.actions.ActionConnect;
@@ -18,21 +19,22 @@ import com.sun.org.apache.xalan.internal.xsltc.util.IntegerArray;
 public class Profilo {
 	
 	public static ConcurrentHashMap<Integer,Profilo> profili = new ConcurrentHashMap<Integer,Profilo>(); // dv int è ovviamente l'profilo id
+	public static ConcurrentHashMap<String,Integer> sessionID2profiloID = new ConcurrentHashMap<String, Integer>();
 	ArrayList<String> channels_id = new ArrayList<String>();
 	
 	int profilo_id;
-	String nickname;
+	public String nickname;
 	String chat_key;
+	IntegerArray friends_online = new IntegerArray();
 	
 	//TODO to implement
-	IntegerArray friends_online;
 	IntegerArray chat_opened;
 	int chat_active;
 	int status;
 	
 	public boolean login_byChatKey(INSIOClient client, int profilo_id_from, String chatKeyEncrypted){
 		
-		if(chat_key.isEmpty()){
+		if(chat_key == null){
 			ResultSet SQL_profilo = TableProfilo.get_byId(profilo_id_from);
 			
 			//utente inesistente
@@ -59,7 +61,45 @@ public class Profilo {
 		
 		//success
 		channel_add(client);
+		friend_checkList_fromDB();
 		return true;
+	}
+	
+	public IntegerArray friend_getList(){
+		return friends_online;
+	}
+	
+	public void friend_checkList_fromDB(){
+		
+		ResultSet relazioni_SQL = TableRelazioni.get_byProfiloId(profilo_id);
+		IntegerArray new_friends_online = new IntegerArray();
+		try {
+			int profilo_id2;
+			while(relazioni_SQL.next()){
+				profilo_id2 = relazioni_SQL.getInt("profilo_id2");
+				if(profili.containsKey(profilo_id2)){
+					//TODO da mettere l'esclusione ai tipi di account non possibili da contattare, come quelli bloccati..
+					new_friends_online.add(profilo_id2);
+					profili.get(profilo_id2).friend_add(profilo_id);
+				}
+			}
+			friends_online = new_friends_online;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	
+	}
+	
+	public void friend_add(int profilo_id){
+		synchronized (friends_online) {
+			friends_online.addNew(profilo_id);
+		}
+	}
+	
+	public void friend_remove(int profilo_id){
+		synchronized (friends_online) {
+			friends_online.pop(profilo_id);
+		}
 	}
 	
 	public boolean channel_add(INSIOClient client){
@@ -69,6 +109,7 @@ public class Profilo {
 			if(exist == true){
 				return false;
 			}else{
+				sessionID2profiloID.put(client.getSessionID(), profilo_id);
 				channels_id.add(client.getSessionID());
 				result = true;
 			}
@@ -82,6 +123,7 @@ public class Profilo {
 				public void operationComplete(INSIOClient client) {
 					synchronized(channels_id) {
 	            		channels_id.remove(client.getSessionID());
+	            		sessionID2profiloID.remove(client.getSessionID());
 	            	}
 	                if(channels_id.size() == 0){
 	                	//TODO logout profilo

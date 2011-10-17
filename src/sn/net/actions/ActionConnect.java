@@ -28,7 +28,7 @@ public final class ActionConnect extends Action {
         
 	public static void connect(JSONObject obj, String data, INSIOClient client) {
 		// è dentro a channels se è già loggato
-		if(PresenceHandler.clients.get(client.getSessionID()) == null){
+		if(!PresenceHandler.clients.containsKey(client.getSessionID())){
 			String random_string = RandomHash.one();
 			salts.put(client.getSessionID(), random_string);
 			PresenceHandler.addFutureListener(client, REMOVE_SALT);

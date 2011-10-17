@@ -7,7 +7,7 @@
 </head>
 
 <input id="loginMethod" name="loginMethod" value="3" />
-<input id="account_id" name="account_id" value="1" />
+<input id="profilo_id" name="profilo_id" value="1" />
 <input id="chat_key" name="chat_key" value="98jdas" />
 
 <script> 
@@ -24,15 +24,16 @@
 		
 			var actions = { CONNECT : 1, // { op:1 }
 						LOGIN : 2, // { op:2, user:"String", pass:"String" }
-						LOGINCHATKEY : 3, // { op:3, account_id:int, chat_key:"String" }
+						LOGINCHATKEY : 3, // { op:3, profilo_id:int, chat_key:"String" }
 						CHG_STATUS : 4, // { op:4, status:int }
 						DISCONNECT : 5, // { op:5 }
-						CHAT_WITH : 6, // { op:6, account_id:int, message:"String" }
-						CHAT_OPEN : 7, // { op:7, account_id:int }
-						CHAT_CLOSE : 8, //  { op:8, account_id:int }
+						CHAT_WITH : 6, // { op:6, profilo_id:int, message:"String" }
+						CHAT_OPEN : 7, // { op:7, profilo_id:int }
+						CHAT_CLOSE : 8, //  { op:8, profilo_id:int }
 						LIST : 9 // { op:9 }
 					}; 
 			
+			this.friends_online = {};
 			this.status = 0;
 			
 			this.get_loginInfo = function(){
@@ -41,7 +42,7 @@
 				if (loginMethod == actions.LOGINCHATKEY){
 					parametro = { 
 							op: actions.LOGINCHATKEY,
-							account_id: $("#account_id").val(),
+							profilo_id: Math.floor(Math.random()*7),//TODO $("#profilo_id").val(),
 							chat_key: $("#chat_key").val()
 						}			
 				}else{
@@ -51,6 +52,13 @@
 						}	
 				}
 				return parametro;
+			}
+			
+			this.get_friendList = function(){
+				var parametro = {
+								op:actions.LIST
+							}
+				this2.sendSocket(parametro);
 			}
 			
 			this.socket = new io.Socket("localhost", {
@@ -97,10 +105,14 @@
 					case actions.LOGINCHATKEY: 
 						if(data_JSON.result == true){
 							this2.status = statuses.CONNECTED;
+							this2.get_friendList();//TODO
 							//fetch friends list
 						}else{
 							//TODO vari casi di errore, implementazione server mancante
 						}
+						break;
+					case actions.LIST:
+						this2.friends_list = data_JSON.list;
 						break;
 				}
 			});
