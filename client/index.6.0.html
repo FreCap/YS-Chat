@@ -3,6 +3,7 @@
 <head>
 <script src="socket.io-6.0.js"></script> 
 <script src="jquery-1.5.1.min.js"></script>
+<script src="jquery.livequery.js"></script>
 <script src="md5.js"></script>
 <link type="text/css" rel="stylesheet" href="style.css" /> 
 
@@ -18,21 +19,27 @@
 	</div>
 	
 	<div class="OpenedChatWrapper">
-		<div class="second">
-			<div class="ChatTab opened">
-				<div class="ButtonOpen">
-				asd
+			<div class="second">
+			</div>
+		</div>
+	
+	<div style="display:none" id="itemChat">
+		<div class="ChatTab" id=""><!-- nell'id si mette l'id dell'account -->
+			<div class="ButtonOpen">
+				<div class="nickname"></div>
+				<div class="status"></div><!-- TODO -->
+			</div>
+			<div class="TabOpened">
+				<div class="Header">
+					<div class="nickname"></div>
+					<div class="status"></div><!-- TODO -->
+					<div class="close"></div><!-- TODO -->
 				</div>
-				<div class="TabOpened">
-					<div class="Header">
-					header
-					</div>
-					<div class="Body">
-					body
-					</div>
-					<div class="Footer">
-					footer
-					</div>
+				<div class="Body">
+				body
+				</div>
+				<div class="Footer">
+					<input id="Input"/>
 				</div>
 			</div>
 		</div>
@@ -63,6 +70,8 @@
 					}; 
 			
 			this.friends_online = [];
+			this.chat_opened = [];
+			this.chat_active = null;
 			this.status = 0;
 			
 			this.get_loginInfo = function(){
@@ -97,6 +106,7 @@
 			}
 			
 			this.GUI = {
+				chat_opened_container: $(".OpenedChatWrapper").find(".second"),
 				profilo_link_model: jQuery('<a/>').addClass('clearfix profilo').attr('href','#').append(jQuery('<a/>')),
 				profilo_model: function(profilo_id,nickname){
 					var profilo_link_model = this2.GUI.profilo_link_model.clone();
@@ -109,6 +119,41 @@
 					$.each(this2.friends_online, function(i, l){
 						this2.GUI.profilo_model(l.profilo_id, l.nickname).appendTo($(".profiliList"));
 					});
+					
+					//TODO to remove, debug
+					this2.GUI.initEvents();
+				},
+				initEvents: function(){
+					$(".profiliList").find(".profilo").livequery("click", function(e){
+						this2.GUI.chatTab_open($(this).attr("profilo_id"));
+					});
+				},
+				chatTab_open: function(profilo_id){
+					var already_opened = false;
+					$.each(this2.chat_opened, function(i, l){
+						if(l == profilo_id){
+							already_opened = true;
+						}
+					});
+					if(!already_opened){
+						this2.GUI.chatTab_create(profilo_id);
+					}
+					
+				},
+				chatTab_create: function(profilo_id){
+					var Chat_tab = $("#itemChat").find(".ChatTab").clone();
+					var profilo;
+					//TODO puramente per test, in realtà nell'originale è da usare il datamanager
+					$.each(this2.friends_online, function(i, l){
+						if(profilo_id == l.profilo_id){
+							profilo = l;
+						}
+					});
+					//fine TOD
+					Chat_tab.attr("id",profilo.profilo_id);
+					Chat_tab.find(".nickname").text(profilo.nickname);
+					this2.chat_opened.push(profilo_id);
+					this2.GUI.chat_opened_container.append(Chat_tab);
 				}
 			};
 			
