@@ -50,6 +50,8 @@ height: 25px;
 width: 160px;
 
 margin-left: 4px;
+
+float:left;
 }
 
 .ChatTab.opened{
@@ -78,7 +80,7 @@ display:none!important;
 .ChatTab .TabOpened{
 bottom: 0;
 height: 285px;
-width: 100%;
+width: 260px;/*100%;*/
 
 display:none;
 -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .3);
@@ -96,6 +98,15 @@ background-color: white;
 border: 1px solid rgba(0, 0, 0, .3);
 border-width: 0 1px;
 }
+
+.ChatTab .Header div{
+display: inline-block;
+}
+
+.ChatTab .Header .close{
+text-align: right;
+}
+
 
 .ChatTab .Body{
 height: 234px;

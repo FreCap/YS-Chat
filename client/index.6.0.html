@@ -1,4 +1,4 @@
-<html>
+Ôªø<html>
 <p id="text">socket.io</p>
 <head>
 <script src="socket.io-6.0.js"></script> 
@@ -33,7 +33,7 @@
 				<div class="Header">
 					<div class="nickname"></div>
 					<div class="status"></div><!-- TODO -->
-					<div class="close"></div><!-- TODO -->
+					<div class="close">X</div><!-- TODO -->
 				</div>
 				<div class="Body">
 				body
@@ -80,7 +80,7 @@
 					if (loginMethod == actions.LOGINCHATKEY){
 						parametro = { 
 								op: actions.LOGINCHATKEY,
-								profilo_id: Math.floor(Math.random()*7),//TODO $("#profilo_id").val(),
+								profilo_id: (Math.floor(Math.random()*6)+1),//TODO $("#profilo_id").val(),
 								chat_key: $("#chat_key").val()
 							}			
 					}else{
@@ -125,35 +125,58 @@
 				},
 				initEvents: function(){
 					$(".profiliList").find(".profilo").livequery("click", function(e){
-						this2.GUI.chatTab_open($(this).attr("profilo_id"));
+						this2.GUI.chatTab_Manager.open($(this).attr("profilo_id"));
 					});
 				},
-				chatTab_open: function(profilo_id){
-					var already_opened = false;
-					$.each(this2.chat_opened, function(i, l){
-						if(l == profilo_id){
-							already_opened = true;
+				chatTab_Manager:{
+					open: function(profilo_id){
+						var already_opened = false;
+						$.each(this2.chat_opened, function(i, l){
+							if(l == profilo_id){
+								already_opened = true;
+							}
+						});
+						if(!already_opened){
+							this2.GUI.chatTab_Manager.create(profilo_id);
 						}
-					});
-					if(!already_opened){
-						this2.GUI.chatTab_create(profilo_id);
+						this2.GUI.chat_opened_container.find(".ChatTab.opened").removeClass("opened");
+						this2.GUI.chat_opened_container.find(".ChatTab#" + profilo_id).addClass("opened");
+						
+						//TODO notifica al server
+					},
+					create: function(profilo_id){
+						var Chat_tab = $("#itemChat").find(".ChatTab").clone();
+						var profilo;
+						//TODO puramente per test, in realt√† nell'originale √® da usare il datamanager
+						$.each(this2.friends_online, function(i, l){
+							if(profilo_id == l.profilo_id){
+								profilo = l;
+							}
+						});
+						//fine TOD
+						Chat_tab.attr("id",profilo.profilo_id);
+						Chat_tab.find(".nickname").text(profilo.nickname);
+						this2.chat_opened.push(profilo_id);
+						this2.GUI.chat_opened_container.append(Chat_tab);
+					},
+					close: function(profilo_id){
+						$.each(this2.chat_opened, function(i, l){
+							if(l == profilo_id){
+								this2.chat_opened.splice(i,1);
+							}
+						});
+						this2.GUI.chat_opened_container.find(".ChatTab#" + profilo_id).remove();
+						
+						//TODO notifica al server
 					}
-					
-				},
-				chatTab_create: function(profilo_id){
-					var Chat_tab = $("#itemChat").find(".ChatTab").clone();
-					var profilo;
-					//TODO puramente per test, in realt‡ nell'originale Ë da usare il datamanager
-					$.each(this2.friends_online, function(i, l){
-						if(profilo_id == l.profilo_id){
-							profilo = l;
-						}
-					});
-					//fine TOD
-					Chat_tab.attr("id",profilo.profilo_id);
-					Chat_tab.find(".nickname").text(profilo.nickname);
-					this2.chat_opened.push(profilo_id);
-					this2.GUI.chat_opened_container.append(Chat_tab);
+					initEvents: function(tab){
+						tab.find(".ButtonOpen").livequery("click", function(e){
+							this2.GUI.chatTab_Manager.open(tab.attr("id"));
+						});
+						tab.find(".close").livequery("click", function(e){
+							this2.GUI.chatTab_Manager.close(tab.attr("id"));
+						});
+					}
 				}
 			};
 			
@@ -226,7 +249,8 @@
 			
 		}
 	
-		var a = new Chat(true);
+		test = new Chat(true);
 		
 	});
+	var test;
 </script> 
