@@ -66,12 +66,14 @@
 						CHAT_WITH : 6, // { op:6, profilo_id:int, message:"String" }
 						CHAT_OPEN : 7, // { op:7, profilo_id:int }
 						CHAT_CLOSE : 8, //  { op:8, profilo_id:int }
-						LIST : 9 // { op:9 }
+						CHAT_NOACTIVE : 9, // { op:9 }
+						CLIENT_STATUS : 10, // { op:10, status:0(IDLED)|1(ONLINE) ( int }
+						LIST : 11 // { op:11 }
 					}; 
 			
 			this.friends_online = [];
-			this.chat_opened = [];
-			this.chat_active = null;
+			this.chatTab_opened = [];
+			this.chatTab_active = null;
 			this.status = 0;
 			
 			this.get_loginInfo = function(){
@@ -99,10 +101,39 @@
 				},
 				List: function(){
 					var parametro = {
-									op:actions.LIST
-							}
+									op: actions.LIST
+								}
+					this2.sendSocket(parametro);
+				},
+				Chat_open: function(profilo_id_open){
+					var parametro = {
+									op: actions.CHAT_OPEN,
+									profilo_id: profilo_id_open
+								}
+					this2.sendSocket(parametro);
+				},
+				Chat_close: function(profilo_id_close){
+					var parametro = {
+									op: actions.CHAT_CLOSE,
+									profilo_id: profilo_id_close
+								}
+					this2.sendSocket(parametro);
+				},
+				Chat_noActive: function(){
+					var parametro = {
+									op: actions.CHAT_NOACTIVE,
+								}
+					this2.sendSocket(parametro);
+				},
+				Chat_with: function(profilo_idSend, messageSend){
+					var parametro = {
+									op: actions.CHAT_WITH,
+									profilo_id: profilo_idSend,
+									message: messageSend
+								}
 					this2.sendSocket(parametro);
 				}
+				
 			}
 			
 			this.GUI = {
@@ -131,7 +162,7 @@
 				chatTab_Manager:{
 					open: function(profilo_id){
 						var already_opened = false;
-						$.each(this2.chat_opened, function(i, l){
+						$.each(this2.chatTab_opened, function(i, l){
 							if(l == profilo_id){
 								already_opened = true;
 							}
@@ -142,7 +173,7 @@
 						this2.GUI.chat_opened_container.find(".ChatTab.opened").removeClass("opened");
 						this2.GUI.chat_opened_container.find(".ChatTab#" + profilo_id).addClass("opened");
 						
-						//TODO notifica al server
+						this2.server.Chat_open(profilo_id);
 					},
 					create: function(profilo_id){
 						var Chat_tab = $("#itemChat").find(".ChatTab").clone();
@@ -156,25 +187,41 @@
 						//fine TOD
 						Chat_tab.attr("id",profilo.profilo_id);
 						Chat_tab.find(".nickname").text(profilo.nickname);
-						this2.chat_opened.push(profilo_id);
+						this2.chatTab_opened.push(profilo_id);
+						this2.chatTab_active = profilo_id;
 						this2.GUI.chat_opened_container.append(Chat_tab);
+						this2.GUI.chatTab_Manager.initEvents(Chat_tab);
 					},
 					close: function(profilo_id){
-						$.each(this2.chat_opened, function(i, l){
+						$.each(this2.chatTab_opened, function(i, l){
 							if(l == profilo_id){
-								this2.chat_opened.splice(i,1);
+								this2.chatTab_opened.splice(i,1);
 							}
 						});
 						this2.GUI.chat_opened_container.find(".ChatTab#" + profilo_id).remove();
-						
-						//TODO notifica al server
-					}
+						this2.server.Chat_close(profilo_id);
+					},
+					reduce: function(profilo_id){
+						this2.chatTab_active = null;
+						this2.GUI.chat_opened_container.find(".ChatTab#" + profilo_id).removeClass("opened");
+						this2.server.Chat_noActive();
+					},
 					initEvents: function(tab){
+						tab = this2.GUI.chat_opened_container.find(".ChatTab#"+tab.attr("id"));
 						tab.find(".ButtonOpen").livequery("click", function(e){
 							this2.GUI.chatTab_Manager.open(tab.attr("id"));
 						});
 						tab.find(".close").livequery("click", function(e){
 							this2.GUI.chatTab_Manager.close(tab.attr("id"));
+							e.stopPropagation();
+						});
+						tab.find(".Header").livequery("click", function(e){
+							this2.GUI.chatTab_Manager.reduce(tab.attr("id"));
+						});
+						
+						tab.find("#Input").livequery("change", function(e){
+							this2.server.Chat_with(tab.attr("id"), $(this).val());
+							tab.val("");
 						});
 					}
 				}

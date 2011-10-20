@@ -9,6 +9,7 @@ import sn.db.table.TableProfilo;
 import sn.db.table.TableRelazioni;
 import sn.net.PresenceFutureListener;
 import sn.net.PresenceHandler;
+import sn.net.actions.ActionChat_With;
 import sn.net.actions.ActionConnect;
 import sn.util.SecureHash;
 
@@ -20,16 +21,18 @@ public class Profilo {
 	
 	public static ConcurrentHashMap<Integer,Profilo> profili = new ConcurrentHashMap<Integer,Profilo>(); // dv int è ovviamente l'profilo id
 	public static ConcurrentHashMap<String,Integer> sessionID2profiloID = new ConcurrentHashMap<String, Integer>();
-	ArrayList<String> channels_id = new ArrayList<String>();
+	ArrayList<String> channels_id_connected = new ArrayList<String>();
+	ArrayList<String> channels_id_actived = new ArrayList<String>();
 	
 	int profilo_id;
 	public String nickname;
 	String chat_key;
 	public IntegerArray friends_online = new IntegerArray();
 	
-	//TODO to implement
-	IntegerArray chat_opened;
-	int chat_active;
+	IntegerArray chatTab_opened;
+	int chatTab_actived;
+	
+	//TODO to implement	
 	int status;
 	
 	public boolean login_byChatKey(INSIOClient client, int profilo_id_from, String chatKeyEncrypted){
@@ -86,6 +89,20 @@ public class Profilo {
 	
 	}
 	
+	public void message_send(int profilo_idTo, String message, INSIOClient client){
+		for(String channel_id:channels_id_actived){
+			if(channel_id != client.getSessionID()){
+				ActionChat_With.write(PresenceHandler.clients.get(channel_id),ActionChat_With.convertToMessage(profilo_idTo, message, 1));
+			}
+		}
+	}
+	
+	public void message_receive(int profilo_idFrom, String message){
+		for(String channel_id:channels_id_actived){
+			ActionChat_With.write(PresenceHandler.clients.get(channel_id),ActionChat_With.convertToMessage(profilo_idFrom, message, 0));
+		}
+	}
+	
 	public void friend_add(int profilo_id){
 		synchronized (friends_online) {
 			friends_online.addNew(profilo_id);
@@ -100,14 +117,20 @@ public class Profilo {
 	
 	public boolean channel_add(INSIOClient client){
 		boolean result = false;
-		synchronized(channels_id) {
-			boolean exist = channels_id.contains(client.getSessionID());		
+		synchronized(channels_id_connected) {
+			boolean exist = channels_id_connected.contains(client.getSessionID());		
 			if(exist == true){
 				return false;
 			}else{
 				sessionID2profiloID.put(client.getSessionID(), profilo_id);
-				channels_id.add(client.getSessionID());
+				channels_id_connected.add(client.getSessionID());
 				result = true;
+			}
+		}
+		
+		if(result == true){
+			synchronized(channels_id_actived) {	
+				channels_id_actived.add(client.getSessionID());
 			}
 		}
 		
@@ -117,11 +140,12 @@ public class Profilo {
 			PresenceHandler.addFutureListener(client, new PresenceFutureListener() {
 				@Override
 				public void operationComplete(INSIOClient client) {
-					synchronized(channels_id) {
-	            		channels_id.remove(client.getSessionID());
+					synchronized(channels_id_connected) {
+	            		channels_id_connected.remove(client.getSessionID());
+	            		channels_id_actived.remove(client.getSessionID());
 	            		sessionID2profiloID.remove(client.getSessionID());
 	            	}
-	                if(channels_id.size() == 0){
+	                if(channels_id_connected.size() == 0){
 	                	//TODO logout profilo
 	                }
 					

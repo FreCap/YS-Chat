@@ -11,7 +11,7 @@ public final class ActionList extends Action {
 
     // --- Costanti & Variabili private -----------------------------------------------
 
-    public static final int MESSAGE_ID = 9;
+    public static final int MESSAGE_ID = 11;
     
     //(int) command | (string) salt
     @Deprecated
