@@ -80,10 +80,14 @@
 					var loginMethod = $("#loginMethod").val();
 					var parametro;
 					if (loginMethod == actions.LOGINCHATKEY){
+						//DEBUG
+						$("#profilo_id").val((Math.floor(Math.random()*6)+1));
+						document.title = $("#profilo_id").val();
+						
 						parametro = { 
 								op: actions.LOGINCHATKEY,
-								profilo_id: (Math.floor(Math.random()*6)+1),//TODO $("#profilo_id").val(),
-								chat_key: $("#chat_key").val()
+								profilo_id: parseInt($("#profilo_id").val()),
+								chat_key: $("#chat_key").val()								
 							}			
 					}else{
 						parametro = { 
@@ -108,14 +112,14 @@
 				Chat_open: function(profilo_id_open){
 					var parametro = {
 									op: actions.CHAT_OPEN,
-									profilo_id: profilo_id_open
+									profilo_id: parseInt(profilo_id_open)
 								}
 					this2.sendSocket(parametro);
 				},
 				Chat_close: function(profilo_id_close){
 					var parametro = {
 									op: actions.CHAT_CLOSE,
-									profilo_id: profilo_id_close
+									profilo_id: parseInt(profilo_id_close)
 								}
 					this2.sendSocket(parametro);
 				},
@@ -128,7 +132,7 @@
 				Chat_with: function(profilo_idSend, messageSend){
 					var parametro = {
 									op: actions.CHAT_WITH,
-									profilo_id: profilo_idSend,
+									profilo_id: parseInt(profilo_idSend),
 									message: messageSend
 								}
 					this2.sendSocket(parametro);
@@ -160,7 +164,15 @@
 					});
 				},
 				chatTab_Manager:{
-					open: function(profilo_id){
+					open: function(profilo_id, server){
+						this2.GUI.chatTab_Manager.create(profilo_id);
+						this2.GUI.chat_opened_container.find(".ChatTab.opened").removeClass("opened");
+						this2.GUI.chat_opened_container.find(".ChatTab#" + profilo_id).addClass("opened");
+						if(server != true){
+							this2.server.Chat_open(profilo_id);
+						}
+					},
+					create: function(profilo_id, server){
 						var already_opened = false;
 						$.each(this2.chatTab_opened, function(i, l){
 							if(l == profilo_id){
@@ -168,43 +180,41 @@
 							}
 						});
 						if(!already_opened){
-							this2.GUI.chatTab_Manager.create(profilo_id);
+							var Chat_tab = $("#itemChat").find(".ChatTab").clone();
+							var profilo;
+							//TODO puramente per test, in realtà nell'originale è da usare il datamanager
+							$.each(this2.friends_online, function(i, l){
+								if(profilo_id == l.profilo_id){
+									profilo = l;
+								}
+							});
+							//fine TOD
+							Chat_tab.attr("id",profilo.profilo_id);
+							Chat_tab.find(".nickname").text(profilo.nickname);
+							this2.chatTab_opened.push(profilo_id);
+							this2.chatTab_active = profilo_id;
+							this2.GUI.chat_opened_container.append(Chat_tab);
+							this2.GUI.chatTab_Manager.initEvents(Chat_tab);
 						}
-						this2.GUI.chat_opened_container.find(".ChatTab.opened").removeClass("opened");
-						this2.GUI.chat_opened_container.find(".ChatTab#" + profilo_id).addClass("opened");
-						
-						this2.server.Chat_open(profilo_id);
 					},
-					create: function(profilo_id){
-						var Chat_tab = $("#itemChat").find(".ChatTab").clone();
-						var profilo;
-						//TODO puramente per test, in realtà nell'originale è da usare il datamanager
-						$.each(this2.friends_online, function(i, l){
-							if(profilo_id == l.profilo_id){
-								profilo = l;
-							}
-						});
-						//fine TOD
-						Chat_tab.attr("id",profilo.profilo_id);
-						Chat_tab.find(".nickname").text(profilo.nickname);
-						this2.chatTab_opened.push(profilo_id);
-						this2.chatTab_active = profilo_id;
-						this2.GUI.chat_opened_container.append(Chat_tab);
-						this2.GUI.chatTab_Manager.initEvents(Chat_tab);
-					},
-					close: function(profilo_id){
+					close: function(profilo_id, server){
 						$.each(this2.chatTab_opened, function(i, l){
 							if(l == profilo_id){
 								this2.chatTab_opened.splice(i,1);
 							}
 						});
 						this2.GUI.chat_opened_container.find(".ChatTab#" + profilo_id).remove();
-						this2.server.Chat_close(profilo_id);
+						if(server != true){
+							this2.server.Chat_close(profilo_id);
+						}
+						
 					},
-					reduce: function(profilo_id){
+					reduce: function(profilo_id, server){
 						this2.chatTab_active = null;
 						this2.GUI.chat_opened_container.find(".ChatTab#" + profilo_id).removeClass("opened");
-						this2.server.Chat_noActive();
+						if(server != true){
+							this2.server.Chat_noActive();
+						}
 					},
 					initEvents: function(tab){
 						tab = this2.GUI.chat_opened_container.find(".ChatTab#"+tab.attr("id"));
@@ -272,6 +282,23 @@
 						}else{
 							//TODO vari casi di errore, implementazione server mancante
 						}
+						break;
+					case actions.CHG_STATUS:
+						break;
+					case actions.DISCONNECT:
+						break;
+					case actions.CHAT_WITH:
+						break;
+					case actions.CHAT_OPEN:						
+						$.each(data_JSON.chatTab, function(i, l){
+							this2.GUI.chatTab_Manager.create(l.profilo_id, true);
+						});
+						this2.GUI.chatTab_Manager.open(data_JSON.chatTab_active, true);
+						break;
+					case actions.CHAT_CLOSE:
+						this2.GUI.chatTab_Manager.close(data_JSON.profilo_id, true);
+						break;
+					case actions.CHAT_NOACTIVE:
 						break;
 					case actions.LIST:
 						this2.friends_online = data_JSON.list;

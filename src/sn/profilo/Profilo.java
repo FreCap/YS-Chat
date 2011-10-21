@@ -9,6 +9,9 @@ import sn.db.table.TableProfilo;
 import sn.db.table.TableRelazioni;
 import sn.net.PresenceFutureListener;
 import sn.net.PresenceHandler;
+import sn.net.actions.ActionChat_Close;
+import sn.net.actions.ActionChat_NoActive;
+import sn.net.actions.ActionChat_Open;
 import sn.net.actions.ActionChat_With;
 import sn.net.actions.ActionConnect;
 import sn.util.SecureHash;
@@ -22,14 +25,13 @@ public class Profilo {
 	public static ConcurrentHashMap<Integer,Profilo> profili = new ConcurrentHashMap<Integer,Profilo>(); // dv int è ovviamente l'profilo id
 	public static ConcurrentHashMap<String,Integer> sessionID2profiloID = new ConcurrentHashMap<String, Integer>();
 	ArrayList<String> channels_id_connected = new ArrayList<String>();
-	ArrayList<String> channels_id_actived = new ArrayList<String>();
 	
 	int profilo_id;
 	public String nickname;
 	String chat_key;
 	public IntegerArray friends_online = new IntegerArray();
 	
-	IntegerArray chatTab_opened;
+	IntegerArray chatTab_opened = new IntegerArray();
 	int chatTab_actived;
 	
 	//TODO to implement	
@@ -90,16 +92,48 @@ public class Profilo {
 	}
 	
 	public void message_send(int profilo_idTo, String message, INSIOClient client){
-		for(String channel_id:channels_id_actived){
+		String messages = ActionChat_With.convertToMessage(profilo_idTo, message, 1);
+		for(String channel_id:channels_id_connected){
 			if(channel_id != client.getSessionID()){
-				ActionChat_With.write(PresenceHandler.clients.get(channel_id),ActionChat_With.convertToMessage(profilo_idTo, message, 1));
+				ActionChat_With.write(PresenceHandler.clients.get(channel_id), messages);
 			}
 		}
 	}
 	
 	public void message_receive(int profilo_idFrom, String message){
-		for(String channel_id:channels_id_actived){
-			ActionChat_With.write(PresenceHandler.clients.get(channel_id),ActionChat_With.convertToMessage(profilo_idFrom, message, 0));
+		String messages = ActionChat_With.convertToMessage(profilo_idFrom, message, 0);
+		for(String channel_id:channels_id_connected){
+			ActionChat_With.write(PresenceHandler.clients.get(channel_id),messages);
+		}
+	}
+	
+	public void chatTab_open(int profilo_idToOpen, INSIOClient client){
+		chatTab_actived = profilo_idToOpen;
+		chatTab_opened.addNew(profilo_idToOpen);
+		//TODO order not implemented, adesso è 1
+		String ChatTab = ActionChat_Open.convertToMessage(profilo_idToOpen, 1);
+		for(String channel_id:channels_id_connected){
+			if(channel_id != client.getSessionID()){
+				ActionChat_Open.write(PresenceHandler.clients.get(channel_id),chatTab_actived, ChatTab);
+			}
+		}
+	}
+	
+	public void chatTab_close(int profilo_idToClose, INSIOClient client){
+		chatTab_opened.pop(profilo_idToClose);
+		for(String channel_id:channels_id_connected){
+			if(channel_id != client.getSessionID()){
+				ActionChat_Close.write(PresenceHandler.clients.get(channel_id),profilo_idToClose);
+			}
+		}
+	}
+	
+	public void chatTab_noactive(INSIOClient client){
+		chatTab_actived = 0;
+		for(String channel_id:channels_id_connected){
+			if(channel_id != client.getSessionID()){
+				ActionChat_NoActive.write(PresenceHandler.clients.get(channel_id));
+			}
 		}
 	}
 	
@@ -128,32 +162,27 @@ public class Profilo {
 			}
 		}
 		
-		if(result == true){
-			synchronized(channels_id_actived) {	
-				channels_id_actived.add(client.getSessionID());
-			}
-		}
-		
 		if(result){
 			PresenceHandler.clients.put(client.getSessionID(), client);
 			
-			PresenceHandler.addFutureListener(client, new PresenceFutureListener() {
-				@Override
-				public void operationComplete(INSIOClient client) {
-					synchronized(channels_id_connected) {
-	            		channels_id_connected.remove(client.getSessionID());
-	            		channels_id_actived.remove(client.getSessionID());
-	            		sessionID2profiloID.remove(client.getSessionID());
-	            	}
-	                if(channels_id_connected.size() == 0){
-	                	//TODO logout profilo
-	                }
-					
-				}
-	        });
+			PresenceHandler.addFutureListener(client, CHANNEL_DISCONNECT);
 		}
 		return result;
 
 	}
+	
+	static PresenceFutureListener CHANNEL_DISCONNECT = new PresenceFutureListener() {
+		 public void operationComplete(INSIOClient client) {
+			int profilo_id = Profilo.sessionID2profiloID.get(client.getSessionID());
+			Profilo profilo = Profilo.profili.get(profilo_id);
+			synchronized(profilo.channels_id_connected) {
+				 profilo.channels_id_connected.remove(client.getSessionID());
+         	}
+			sessionID2profiloID.remove(client.getSessionID());
+            if(profilo.channels_id_connected.size() == 0){
+            	//TODO logout profilo
+            }
+		 }
+	 };
 	
 }

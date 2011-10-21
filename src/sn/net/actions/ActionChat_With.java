@@ -15,14 +15,14 @@ public final class ActionChat_With extends Action {
     
     @Deprecated
     public static final String regex_clientToServer = "^([1]{1})$";
-	public static final String scheme_serverToClient = "{ \"op\":%d, \"actived\":%d, \"messages\":[$s] }";
-	public static final String scheme_message = "{ \"me\":%d, \"profilo_id\":%d, \"message\":[%s] }";
+	public static final String scheme_serverToClient = "{ \"op\":%d, \"messages\":[%s] }";
+	public static final String scheme_message = "{ \"me\":%d, \"profilo_id\":%d, \"message\":\"%s\" }";
     // --- Constructors --------------------------------------------------------
         
 	public static void chat_with(JSONObject obj, String data, INSIOClient client) {
 		// è dentro a channels se è già loggato
 		int profilo_id = Profilo.sessionID2profiloID.get(client.getSessionID());
-		String list_string = "";
+
 		if(profilo_id > 0){
 			
 			Long profilo_idTo = (Long) obj.get("profilo_id");
@@ -32,7 +32,8 @@ public final class ActionChat_With extends Action {
 			IntegerArray list = profilo.friends_online;
 			for (int profilo_id_friend : list.toIntArray()) {
 				if(profilo_id_friend == profilo_idTo){
-					Profilo.profili.get(profilo_idTo).message_receive(profilo_id, message);
+					Profilo ProfiloTo = Profilo.profili.get(profilo_idTo.intValue());
+					ProfiloTo.message_receive(profilo_id, message);
 					profilo.message_send(profilo_idTo.intValue(), message, client);
 					break;
 				}
