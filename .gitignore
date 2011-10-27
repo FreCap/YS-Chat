@@ -18,3 +18,10 @@
 /*.project
 /.settings
 
+/lib/java_memcached-release_2.6.2.jar
+/lib/mysql-connector-java-5.1.17-bin.jar
+
+/lib/commons-pool-1.5.6.jar
+/lib/json-simple-1.1.jar
+/lib/slf4j-api-1.6.1.jar
+/lib/slf4j-simple-1.6.1.jar

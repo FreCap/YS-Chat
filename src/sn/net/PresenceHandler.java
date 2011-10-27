@@ -16,6 +16,7 @@ import sn.net.actions.Action;
 public class PresenceHandler implements INSIOHandler  {
 
     public static final int MAX_UNITS = 25;
+
 	public static ConcurrentHashMap<String,INSIOClient> clients = new ConcurrentHashMap<String,INSIOClient>(); // dv int è ovviamente l'profilo id
 	
 	private static ConcurrentHashMap<String,List<PresenceFutureListener>> listeners = new ConcurrentHashMap<String, List<PresenceFutureListener>>(20000);
@@ -54,7 +55,7 @@ public class PresenceHandler implements INSIOHandler  {
 		}
 		listeners.get(client.getSessionID()).add(futureListener);
 	}
-    
+
 	 public static void notifyListeners(INSIOClient client) {
 		if (listeners.containsKey(client.getSessionID())) {
 			for (PresenceFutureListener l: listeners.get(client.getSessionID())) {

@@ -5,6 +5,7 @@ import org.json.simple.JSONValue;
 
 import com.ibdknox.socket_io_netty.INSIOClient;
 
+
 public abstract class Action {
 
     // --- Costanti & Variabili private -----------------------------------------------
@@ -12,9 +13,6 @@ public abstract class Action {
     // --- Costruttori --------------------------------------------------------
     
     public Action() {
-    }
-
-    public Action(String[] fields) {
     }
 
     // --- Getter & Setter -----------------------------------------------------

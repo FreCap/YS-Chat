@@ -10,9 +10,10 @@ import sn.net.PresenceFutureListener;
 import sn.net.PresenceHandler;
 import sn.util.RandomHash;
 
-public final class ActionConnect extends Action {
+public final class ActionConnect extends Action 
+{
 
-    // --- Costanti & Variabili private -----------------------------------------------
+    // --- Costanti & Variabili private ----------------------------------------
 
     public static final int MESSAGE_ID = 1;
     
@@ -23,7 +24,15 @@ public final class ActionConnect extends Action {
 	
 	public static ConcurrentHashMap<String,String> salts = new ConcurrentHashMap<String, String>();
 	
-    // --- Constructors --------------------------------------------------------
+    // --- Costruttori ---------------------------------------------------------
+
+    public ActionConnect() {
+    }
+
+    // --- Getter & Setter -----------------------------------------------------
+    
+    // --- Metodi public -------------------------------------------------------
+
         
 	public static void connect(JSONObject obj, String data, INSIOClient client) {
 		// è dentro a channels se è già loggato
@@ -32,6 +41,7 @@ public final class ActionConnect extends Action {
 			salts.put(client.getSessionID(), random_string);
 			PresenceHandler.addFutureListener(client, REMOVE_SALT);
 			write(client, random_string);
+
 		}
 	}
 	
@@ -48,7 +58,7 @@ public final class ActionConnect extends Action {
     // --- Getter & Setter -----------------------------------------------------
     
     // --- Metodi public -------------------------------------------------------
-    
+
     // --- Metodi protected ----------------------------------------------------
 
     // --- Metodi private ------------------------------------------------------

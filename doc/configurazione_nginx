@@ -1,0 +1,51 @@
+# Configurazione di esempio per Youstun.
+#
+# 1) Sostituite i tag <..> con i percorsi reali della vostra macchina.
+# 2) Copiare il file in /etc/nginx/sites-available/youstun
+# 3) Create un link simbolico:
+#
+#      /etc/nginx/sites-enabled/youstun => /etc/nginx/sites-available/youstun
+
+server {
+    listen 8082;
+    server_name youstun;
+
+    error_log /var/log/nginx/youstun.error.log;
+    access_log /var/log/nginx/youstun.access.log;
+
+    root  <LA DIRECTORY public DEL PORTALE WEB>;
+    index index.php index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ /index.php;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass   127.0.0.1:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        fastcgi_param  APPLICATION_ENV development;        
+        include        fastcgi_params;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+ 
+
+# another virtual host using mix of IP-, name-, and port-based configuration
+#
+server {
+   listen 9998;
+   server_name chat.youstun;
+   
+   root <LA DIRECTORY client DELLA CHAT>;
+   try_files $uri $uri/ /index.html;
+
+   location ~ /\.ht {
+       deny all;
+   }
+}
+
+
