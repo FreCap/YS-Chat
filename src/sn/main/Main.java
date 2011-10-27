@@ -24,7 +24,7 @@ public class Main {
         
         PresenceServer presenceServer = null;
 		
-//		Mysql.init();
+		Mysql.init();
 		Memcached.init();
         
         presenceServer = new PresenceServer();
