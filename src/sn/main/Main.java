@@ -28,6 +28,11 @@ public class Main {
 		Memcached.init();
 		
 		setPresenceServer(new PresenceServer());
+        if (presenceServer.start()) {
+            
+        } else {
+            System.out.println("Abnormal termination.");
+        }
 	}
     
     // --- Getter & Setter -----------------------------------------------------
