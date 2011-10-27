@@ -9,7 +9,6 @@ import com.ibdknox.socket_io_netty.INSIOClient;
 import sn.net.PresenceFutureListener;
 import sn.net.PresenceHandler;
 import sn.util.RandomHash;
-import sn.util.SecureHash;
 
 public final class ActionConnect extends Action {
 
@@ -34,7 +33,6 @@ public final class ActionConnect extends Action {
 			PresenceHandler.addFutureListener(client, REMOVE_SALT);
 			write(client, random_string);
 		}
-		System.out.println(SecureHash.Md5("asd"));
 	}
 	
 	public static void write(INSIOClient client, String random_string){

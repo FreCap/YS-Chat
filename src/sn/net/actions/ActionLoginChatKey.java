@@ -30,8 +30,8 @@ public final class ActionLoginChatKey extends Action {
 			// se è un profilo già loggato da un altro client
 			Long profilo_id = (Long) obj.get("profilo_id");
 			
-			if(Profilo.profili.containsKey(profilo_id)){
-				profilo = Profilo.profili.get(profilo_id);
+			if(Profilo.profili.containsKey(profilo_id.intValue())){
+				profilo = Profilo.profili.get(profilo_id.intValue());
 			}else{					
 				profilo = new Profilo();
 			}

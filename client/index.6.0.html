@@ -73,7 +73,7 @@
 			
 			this.friends_online = [];
 			this.chatTab_opened = [];
-			this.chatTab_active = null;
+			this.chatTab_active = 0;
 			this.status = 0;
 			
 			this.get_loginInfo = function(){
@@ -81,7 +81,7 @@
 					var parametro;
 					if (loginMethod == actions.LOGINCHATKEY){
 						//DEBUG
-						$("#profilo_id").val((Math.floor(Math.random()*6)+1));
+						$("#profilo_id").val((Math.floor(Math.random()*4)+1));//6
 						document.title = $("#profilo_id").val();
 						
 						parametro = { 
@@ -203,6 +203,9 @@
 								this2.chatTab_opened.splice(i,1);
 							}
 						});
+						if(profilo_id == this2.chatTab_active){
+							this2.chatTab_active = 0;
+						}
 						this2.GUI.chat_opened_container.find(".ChatTab#" + profilo_id).remove();
 						if(server != true){
 							this2.server.Chat_close(profilo_id);
@@ -210,7 +213,7 @@
 						
 					},
 					reduce: function(profilo_id, server){
-						this2.chatTab_active = null;
+						this2.chatTab_active = 0;
 						this2.GUI.chat_opened_container.find(".ChatTab#" + profilo_id).removeClass("opened");
 						if(server != true){
 							this2.server.Chat_noActive();
@@ -238,7 +241,7 @@
 			};
 			
 			
-			this.socket = new io.Socket("localhost", {
+			this.socket = new io.Socket("127.0.0.1", {
 			  port: 9999,
 			  transports: ['websocket','flashsocket', 'xhr-polling'],
 			  rememberTransport: false
@@ -299,6 +302,7 @@
 						this2.GUI.chatTab_Manager.close(data_JSON.profilo_id, true);
 						break;
 					case actions.CHAT_NOACTIVE:
+						this2.GUI.chatTab_Manager.reduce(this2.chatTab_active, true);
 						break;
 					case actions.LIST:
 						this2.friends_online = data_JSON.list;

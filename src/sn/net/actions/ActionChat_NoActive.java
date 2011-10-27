@@ -23,8 +23,7 @@ public final class ActionChat_NoActive extends Action {
 
 		if(profilo_id > 0){
 			
-			Long profilo_idToOpen = (Long) obj.get("profilo_id");			
-			Profilo.profili.get(profilo_id).chatTab_close(profilo_idToOpen.intValue(), client);
+			Profilo.profili.get(profilo_id).chatTab_noactive(client);
 		}
 	}
 	

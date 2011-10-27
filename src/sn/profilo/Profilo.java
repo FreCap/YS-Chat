@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sn.db.table.TableProfilo;
 import sn.db.table.TableRelazioni;
 import sn.net.PresenceFutureListener;
@@ -29,10 +32,13 @@ public class Profilo {
 	int profilo_id;
 	public String nickname;
 	String chat_key;
-	public IntegerArray friends_online = new IntegerArray();
+	public IntegerArray friends_online = new IntegerArray(16);
 	
-	IntegerArray chatTab_opened = new IntegerArray();
+	IntegerArray chatTab_opened = new IntegerArray(16);
 	int chatTab_actived;
+	
+	final Logger logger = LoggerFactory.getLogger(Profilo.class);
+
 	
 	//TODO to implement	
 	int status;
@@ -109,7 +115,12 @@ public class Profilo {
 	
 	public void chatTab_open(int profilo_idToOpen, INSIOClient client){
 		chatTab_actived = profilo_idToOpen;
-		chatTab_opened.addNew(profilo_idToOpen);
+		try {
+			chatTab_opened.addNew(profilo_idToOpen);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.err.println("ArrayIndexOutOfBoundsException");
+		}
+		
 		//TODO order not implemented, adesso è 1
 		String ChatTab = ActionChat_Open.convertToMessage(profilo_idToOpen, 1);
 		for(String channel_id:channels_id_connected){
@@ -120,7 +131,10 @@ public class Profilo {
 	}
 	
 	public void chatTab_close(int profilo_idToClose, INSIOClient client){
-		chatTab_opened.pop(profilo_idToClose);
+		int index = chatTab_opened.indexOf(profilo_idToClose);
+		if(index != -1){
+			chatTab_opened.set(chatTab_opened.indexOf(profilo_idToClose), 0);	
+		}
 		for(String channel_id:channels_id_connected){
 			if(channel_id != client.getSessionID()){
 				ActionChat_Close.write(PresenceHandler.clients.get(channel_id),profilo_idToClose);
@@ -156,15 +170,14 @@ public class Profilo {
 			if(exist == true){
 				return false;
 			}else{
-				sessionID2profiloID.put(client.getSessionID(), profilo_id);
 				channels_id_connected.add(client.getSessionID());
 				result = true;
 			}
 		}
 		
 		if(result){
+			sessionID2profiloID.put(client.getSessionID(), profilo_id);
 			PresenceHandler.clients.put(client.getSessionID(), client);
-			
 			PresenceHandler.addFutureListener(client, CHANNEL_DISCONNECT);
 		}
 		return result;
