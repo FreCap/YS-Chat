@@ -11,8 +11,6 @@ import sn.net.*;
 public class Main {
 
     // --- Costanti & Variabili private ----------------------------------------
-
-	private static PresenceServer presenceServer = null;
 	
     // --- Costruttori ---------------------------------------------------------
     
@@ -22,28 +20,21 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println("Starting PresenceServer");
+//		System.out.println("Starting PresenceServer");
+        
+        PresenceServer presenceServer = null;
 		
 //		Mysql.init();
 		Memcached.init();
-		
-		setPresenceServer(new PresenceServer());
-        if (presenceServer.start()) {
-            
-        } else {
-            System.out.println("Abnormal termination.");
+        
+        presenceServer = new PresenceServer();
+        if (!presenceServer.start()) {
+            // Qualcosa è andato storto.. forzo la chiusura.
+            Runtime.getRuntime().exit(1);
         }
 	}
     
     // --- Getter & Setter -----------------------------------------------------
-
-	public static void setPresenceServer(PresenceServer presenceServer) {
-		Main.presenceServer = presenceServer;
-	}
-
-	public static PresenceServer getPresenceServer() {
-		return presenceServer;
-	}
 
     // --- Metodi public -------------------------------------------------------
     

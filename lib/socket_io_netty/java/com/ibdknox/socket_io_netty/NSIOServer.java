@@ -56,6 +56,7 @@ public class NSIOServer {
             if (logger.isErrorEnabled()) {
                 logger.error("You must run as sudo for flash policy server. X-Domain flash will not currently work.", e);
             }
+            this.running = false;
         }
         if (logger.isDebugEnabled()) {
             logger.debug("Server Started at port [{}]", port);
