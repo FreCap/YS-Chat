@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>YsLib</name>
+			<type>2</type>
+			<location>C:/Users/NewAge/workspaceJava2/ysLib/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>

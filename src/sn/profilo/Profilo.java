@@ -8,8 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sn.db.table.TableProfilo;
-import sn.db.table.TableRelazioni;
 import sn.net.PresenceFutureListener;
 import sn.net.PresenceHandler;
 import sn.net.actions.ActionChat_Close;
@@ -18,6 +16,8 @@ import sn.net.actions.ActionChat_Open;
 import sn.net.actions.ActionChat_With;
 import sn.net.actions.ActionConnect;
 import sn.util.SecureHash;
+import ys.db.table.TableProfilo;
+import ys.db.table.TableRelazioni;
 
 import com.ibdknox.socket_io_netty.INSIOClient;
 import com.sun.org.apache.xalan.internal.xsltc.util.IntegerArray;

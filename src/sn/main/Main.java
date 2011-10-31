@@ -1,8 +1,8 @@
 package sn.main;
 
-import sn.db.Memcached;
-import sn.db.Mysql;
 import sn.net.*;
+import ys.db.Memcached;
+import ys.db.Mysql;
 
 /**
  * @author Francesco Capponi <capponi.francesco at gmail.com>
