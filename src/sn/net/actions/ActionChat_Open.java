@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 import com.ibdknox.socket_io_netty.INSIOClient;
 
 import sn.profilo.Profilo;
+import sn.profilo.ProfiloModel;
 
 public final class ActionChat_Open extends Action {
 
@@ -20,14 +21,14 @@ public final class ActionChat_Open extends Action {
         
 	public static void chat_open(JSONObject obj, String data, INSIOClient client) {
 		// è dentro a channels se è già loggato
-		int profilo_id = Profilo.sessionID2profiloID.get(client.getSessionID());
+		int profilo_id = ProfiloModel.sessionID2profiloID.get(client.getSessionID());
 
 		if(profilo_id > 0){
 			
-			Long profilo_idToOpen = (Long) obj.get("profilo_id");
-			Profilo profilo = Profilo.profili.get(profilo_id);
+			int profilo_idToOpen = ((Long) obj.get("profilo_id")).intValue();
+			Profilo profilo = (Profilo)ProfiloModel.profili.get(profilo_id);
 			
-			profilo.chatTab_open(profilo_idToOpen.intValue(), client);
+			profilo.chatTab_open(profilo_idToOpen, client);
 				
 		}
 	}

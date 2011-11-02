@@ -46,7 +46,17 @@
 	</div>
 </div>
 
+<div class="Console">
+</div>
+
 <script> 
+
+	function log(variabile){
+		$(".Console").prepend(variabile);
+		$(".Console").prepend("<br/>");
+		console.log(variabile);
+	}
+
     $(document).ready(function(){
 		
 		var Chat = function(start){
@@ -58,7 +68,8 @@
 						CONNECTED: 2
 					};// TODO da aggiungerne
 		
-			var actions = { CONNECT : 1, // { op:1 }
+			var actions = { 
+						CONNECT : 1, // { op:1 }
 						LOGIN : 2, // { op:2, user:"String", pass:"String" }
 						LOGINCHATKEY : 3, // { op:3, profilo_id:int, chat_key:"String" }
 						CHG_STATUS : 4, // { op:4, status:int }
@@ -66,10 +77,18 @@
 						CHAT_WITH : 6, // { op:6, profilo_id:int, message:"String" }
 						CHAT_OPEN : 7, // { op:7, profilo_id:int }
 						CHAT_CLOSE : 8, //  { op:8, profilo_id:int }
-						CHAT_NOACTIVE : 9, // { op:9 }
-						CLIENT_STATUS : 10, // { op:10, status:0(IDLED)|1(ONLINE) ( int }
-						LIST : 11 // { op:11 }
+						CHAT_ADDFRIEND: 9, // { op:9, profilo_id:(int), conv_id:(int) }
+						CHAT_LEAVE: 10, // { op:10, conv_id:(int) }
+						CHAT_NOACTIVE : 11, // { op:9 }
+						CLIENT_STATUS : 12, // { op:10, status:0(IDLED)|1(ONLINE) ( int }
+						LIST : 13 // { op:13, tipo: FRIENDS|CHAT_OPENED|ALL (int) }
 					}; 
+					
+			var lists_tipo = {
+						FRIENDS: 1,
+						CHAT_OPENED: 2,
+						ALL: 3
+					};
 			
 			this.friends_online = [];
 			this.chatTab_opened = [];
@@ -103,10 +122,17 @@
 					message = { op: actions.CONNECT };
 					this2.sendSocket(message);
 				},
-				List: function(){
+				List: function(tipo){
+					if(tipo){
+					
+					}else{
+						tipo = lists_tipo.ALL;
+					}
 					var parametro = {
-									op: actions.LIST
+									op: actions.LIST,
+									tipo: tipo
 								}
+					
 					this2.sendSocket(parametro);
 				},
 				Chat_open: function(profilo_id_open){
@@ -221,18 +247,18 @@
 					},
 					initEvents: function(tab){
 						tab = this2.GUI.chat_opened_container.find(".ChatTab#"+tab.attr("id"));
-						tab.find(".ButtonOpen").livequery("click", function(e){
+						tab.find(".ButtonOpen").bind("click", function(e){
 							this2.GUI.chatTab_Manager.open(tab.attr("id"));
 						});
-						tab.find(".close").livequery("click", function(e){
+						tab.find(".close").bind("click", function(e){
 							this2.GUI.chatTab_Manager.close(tab.attr("id"));
 							e.stopPropagation();
 						});
-						tab.find(".Header").livequery("click", function(e){
+						tab.find(".Header").bind("click", function(e){
 							this2.GUI.chatTab_Manager.reduce(tab.attr("id"));
 						});
 						
-						tab.find("#Input").livequery("change", function(e){
+						tab.find("#Input").bind("change", function(e){
 							this2.server.Chat_with(tab.attr("id"), $(this).val());
 							tab.val("");
 						});
@@ -253,12 +279,12 @@
 		
 			// Add a connect listener
 			this.socket.on('connect',function() {
-			  console.log('Connesso!');
+			  log('Connesso!');
 			  this2.server.Login();
 			});
 
 			this.socket.on('message',function(data) {
-				console.log('<< RECEIVING: ' + data);
+				log('<< RECEIVING: ' + data);
 				
 				var data_JSON = $.parseJSON(data);
 				switch (data_JSON.op) { 
@@ -312,12 +338,12 @@
 			});
 			// Add a disconnect listener
 			this.socket.on('disconnect',function() {
-			  console.log('The client has disconnected!');
+			  log('The client has disconnected!');
 			  this2.status = statuses.DISCONNECTED;
 			});
 
 			this.sendSocket = function(message){
-				console.log(">> SENDING:" + JSON.stringify(message));
+				log(">> SENDING:" + JSON.stringify(message));
 				this2.socket.send(JSON.stringify(message));
 			}
 			

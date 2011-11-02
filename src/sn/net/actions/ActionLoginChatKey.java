@@ -6,6 +6,7 @@ import com.ibdknox.socket_io_netty.INSIOClient;
 
 import sn.net.PresenceHandler;
 import sn.profilo.Profilo;
+import sn.profilo.ProfiloModel;
 
 public final class ActionLoginChatKey extends Action {
 
@@ -28,17 +29,17 @@ public final class ActionLoginChatKey extends Action {
 			
 			Profilo profilo = null;
 			// se è un profilo già loggato da un altro client
-			Long profilo_id = (Long) obj.get("profilo_id");
+			int profilo_id = ((Long) obj.get("profilo_id")).intValue();
 			
-			if(Profilo.profili.containsKey(profilo_id.intValue())){
-				profilo = Profilo.profili.get(profilo_id.intValue());
+			if(ProfiloModel.profili.containsKey(profilo_id)){
+				profilo = (Profilo) ProfiloModel.profili.get(profilo_id);
 			}else{					
 				profilo = new Profilo();
 			}
 			
-			boolean logged = profilo.login_byChatKey(client, profilo_id.intValue(),(String) obj.get("chat_key"));
+			boolean logged = profilo.login_byChatKey(client, profilo_id,(String) obj.get("chat_key"));
 			if(logged){
-				Profilo.profili.put(profilo_id.intValue(), profilo);
+				ProfiloModel.profili.put(profilo_id, profilo);
 			}
 			write(client, logged);
 		}

@@ -24,7 +24,7 @@ public class Conversazione {
     public static final String PROFILO_CONVERSAZIONI = "pcnv";//scored set
     public static final String PROFILO_N_CNV_LOST = "pcnvl";//increment
 
-   
+    
     
 	public static void write(String message, Integer sender, Integer receiver, Integer tipo, HashSet<Integer> profili_idsRed){
 	
@@ -77,7 +77,7 @@ public class Conversazione {
 					
 			Integer time = 0;
 					
-			//se � 0 vuol dire che devo fare -1 ai msg persi di sender
+			//se è 0 vuol dire che devo fare -1 ai msg persi di sender
 			if((Long) result.get(0) == 1){
 				p.decr(PROFILO_N_CNV_LOST + sender.toString());
 			}

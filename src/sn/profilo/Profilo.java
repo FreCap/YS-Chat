@@ -3,7 +3,6 @@ package sn.profilo;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,22 +22,18 @@ import com.ibdknox.socket_io_netty.INSIOClient;
 import com.sun.org.apache.xalan.internal.xsltc.util.IntegerArray;
 
 
-public class Profilo {
+public class Profilo extends ProfiloModel {
 	
-	public static ConcurrentHashMap<Integer,Profilo> profili = new ConcurrentHashMap<Integer,Profilo>(); // dv int è ovviamente l'profilo id
-	public static ConcurrentHashMap<String,Integer> sessionID2profiloID = new ConcurrentHashMap<String, Integer>();
 	ArrayList<String> channels_id_connected = new ArrayList<String>();
 	
-	int profilo_id;
-	public String nickname;
 	String chat_key;
-	public IntegerArray friends_online = new IntegerArray(16);
 	
 	IntegerArray chatTab_opened = new IntegerArray(16);
-	int chatTab_actived;
+	public int chatTab_actived;
 	
 	final Logger logger = LoggerFactory.getLogger(Profilo.class);
 
+	
 	
 	//TODO to implement	
 	int status;
@@ -84,10 +79,10 @@ public class Profilo {
 			int profilo_id2;
 			while(relazioni_SQL.next()){
 				profilo_id2 = relazioni_SQL.getInt("profilo_id2");
-				if(profili.containsKey(profilo_id2)){
+				if(ProfiloModel.profili.containsKey(profilo_id2)){
 					//TODO da mettere l'esclusione ai tipi di account non possibili da contattare, come quelli bloccati..
 					new_friends_online.add(profilo_id2);
-					profili.get(profilo_id2).friend_add(profilo_id);
+					ProfiloModel.profili.get(profilo_id2).friend_add(profilo_id);
 				}
 			}
 			friends_online = new_friends_online;
@@ -98,7 +93,7 @@ public class Profilo {
 	}
 	
 	public void message_send(int profilo_idTo, String message, INSIOClient client){
-		String messages = ActionChat_With.convertToMessage(profilo_idTo, message, 1);
+		String messages = ActionChat_With.convertToMessage(profilo_idTo, profilo_id, message);
 		for(String channel_id:channels_id_connected){
 			if(channel_id != client.getSessionID()){
 				ActionChat_With.write(PresenceHandler.clients.get(channel_id), messages);
@@ -106,8 +101,8 @@ public class Profilo {
 		}
 	}
 	
-	public void message_receive(int profilo_idFrom, String message){
-		String messages = ActionChat_With.convertToMessage(profilo_idFrom, message, 0);
+	public void message_receive(int profilo_idChat,int profilo_idFrom, String message){
+		String messages = ActionChat_With.convertToMessage(profilo_idChat, profilo_idFrom, message);
 		for(String channel_id:channels_id_connected){
 			ActionChat_With.write(PresenceHandler.clients.get(channel_id),messages);
 		}
@@ -128,6 +123,24 @@ public class Profilo {
 				ActionChat_Open.write(PresenceHandler.clients.get(channel_id),chatTab_actived, ChatTab);
 			}
 		}
+	}
+	
+	public String ListchatTab_opened(){
+		
+		//TODO order not implemented, adesso è 1
+		boolean first = true;
+		
+		StringBuilder ChatTab = new StringBuilder();
+		for (int chat_id: chatTab_opened.toIntArray()) {
+			if(first == false){
+				ChatTab.append(",");
+			}else{
+				first = false;
+			}
+			ChatTab.append(ActionChat_Open.convertToMessage(chat_id, 1));
+		}
+		return ChatTab.toString();
+		
 	}
 	
 	public void chatTab_close(int profilo_idToClose, INSIOClient client){
@@ -176,7 +189,7 @@ public class Profilo {
 		}
 		
 		if(result){
-			sessionID2profiloID.put(client.getSessionID(), profilo_id);
+			ProfiloModel.sessionID2profiloID.put(client.getSessionID(), profilo_id);
 			PresenceHandler.clients.put(client.getSessionID(), client);
 			PresenceHandler.addFutureListener(client, CHANNEL_DISCONNECT);
 		}
@@ -186,12 +199,12 @@ public class Profilo {
 	
 	static PresenceFutureListener CHANNEL_DISCONNECT = new PresenceFutureListener() {
 		 public void operationComplete(INSIOClient client) {
-			int profilo_id = Profilo.sessionID2profiloID.get(client.getSessionID());
-			Profilo profilo = Profilo.profili.get(profilo_id);
+			int profilo_id = ProfiloModel.sessionID2profiloID.get(client.getSessionID());
+			Profilo profilo = (Profilo) ProfiloModel.profili.get(profilo_id);
 			synchronized(profilo.channels_id_connected) {
 				 profilo.channels_id_connected.remove(client.getSessionID());
          	}
-			sessionID2profiloID.remove(client.getSessionID());
+			ProfiloModel.sessionID2profiloID.remove(client.getSessionID());
             if(profilo.channels_id_connected.size() == 0){
             	//TODO logout profilo
             }

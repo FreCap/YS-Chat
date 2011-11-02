@@ -10,9 +10,11 @@ DISCONNECT (5), // { op:5 }
 CHAT_WITH (6), // { op:6, profilo_id:int, message:"String" }
 CHAT_OPEN (7), // { op:7, profilo_id:int }
 CHAT_CLOSE (8), //  { op:8, profilo_id:int }
-CHAT_NOACTIVE (9), // { op:9 }
-CLIENT_STATUS (10), // { op:10, status:IDLED|ONLINE ( int }
-LIST (11); // { op:11 }
+CHAT_ADDFRIEND (9), // { op:9, profilo_id:(int), conv_id:(int) }
+CHAT_LEAVE (10), // { op:10, conv_id:(int) }
+CHAT_NOACTIVE (11), // { op:11 }
+CLIENT_STATUS (12), // { op:12, status:IDLED|ONLINE (int) }
+LIST (13); // { op:13, tipo: FRIENDS|CHAT_OPENED|ALL (int) }
 
 Server => Client:
 
@@ -22,7 +24,9 @@ LOGINCHATKEY (3), // { op:3, result:Bool }
 CHG_STATUS (4), // { op:4, status:int }
 DISCONNECT (5), // { op:5 }
 CHAT_WITH (6), // { op:6, actived:int, messages: [{me:int, profilo_id:int, message:"String"},{...}] }
-CHAT_OPEN (7), // { op:7, chatTab_active:int, chatTab:[{profilo_id:int, order:int}]}
+CHAT_OPEN (7), // { op:7, chatTab_active:int, tipo:(int) chatTab:[{profilo_id:int, order:int}, {profilo_id:int, profili:[(int),(int)]},....]}
 CHAT_CLOSE (8), //  { op:8, profilo_id:int }
-CHAT_NOACTIVE (9), // { op:9 }
-LIST (11); // { op:11, list:[{profilo_id:int, nickname:String},{profilo_id:int, nickname:String},{profilo_id:int, nickname:String}] }
+CHAT_ADDFRIEND (9), // { op:9, profilo_id:(int), conv_id:(int) }
+CHAT_LEAVE (10), // { op:10, conv_id:(int) }
+CHAT_NOACTIVE (11), // { op:11 }
+LIST (13); // { op:13, list:[{profilo_id:int, nickname:String},{profilo_id:int, nickname:String},{profilo_id:int, nickname:String}] }

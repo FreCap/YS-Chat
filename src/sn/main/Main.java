@@ -3,6 +3,7 @@ package sn.main;
 import sn.net.*;
 import ys.db.Memcached;
 import ys.db.Mysql;
+import ys.db.Redis;
 
 /**
  * @author Francesco Capponi <capponi.francesco at gmail.com>
@@ -26,7 +27,8 @@ public class Main {
 		
 		Mysql.init();
 		Memcached.init();
-        
+        Redis.init();
+		
         presenceServer = new PresenceServer();
         if (!presenceServer.start()) {
             // Qualcosa è andato storto.. forzo la chiusura.
