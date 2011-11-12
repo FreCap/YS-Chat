@@ -1,12 +1,18 @@
 package sn.profilo;
 
+import it.uniroma3.mat.extendedset.intset.FastSet;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
 import sn.net.PresenceFutureListener;
 import sn.net.PresenceHandler;
 import sn.net.actions.ActionChat_Close;
@@ -14,26 +20,27 @@ import sn.net.actions.ActionChat_NoActive;
 import sn.net.actions.ActionChat_Open;
 import sn.net.actions.ActionChat_With;
 import sn.net.actions.ActionConnect;
+import sn.store.Conversazione;
 import sn.util.SecureHash;
+import ys.db.Redis;
 import ys.db.table.TableProfilo;
 import ys.db.table.TableRelazioni;
 
 import com.ibdknox.socket_io_netty.INSIOClient;
-import com.sun.org.apache.xalan.internal.xsltc.util.IntegerArray;
 
 
 public class Profilo extends ProfiloModel {
 	
 	ArrayList<String> channels_id_connected = new ArrayList<String>();
 	
+	final public int tipo = 1;
+	
 	String chat_key;
 	
-	IntegerArray chatTab_opened = new IntegerArray(16);
+	FastSet chatTab_opened = new FastSet();
 	public int chatTab_actived;
 	
 	final Logger logger = LoggerFactory.getLogger(Profilo.class);
-
-	
 	
 	//TODO to implement	
 	int status;
@@ -67,24 +74,63 @@ public class Profilo extends ProfiloModel {
 		
 		//success
 		channel_add(client);
-		friend_checkList_fromDB();
 		return true;
 	}
 	
 	public void friend_checkList_fromDB(){
 		
 		ResultSet relazioni_SQL = TableRelazioni.get_byProfiloId(profilo_id);
-		IntegerArray new_friends_online = new IntegerArray();
+		FastSet new_friends_online = new FastSet();
 		try {
 			int profilo_id2;
 			while(relazioni_SQL.next()){
-				profilo_id2 = relazioni_SQL.getInt("profilo_id2");
-				if(ProfiloModel.profili.containsKey(profilo_id2)){
-					//TODO da mettere l'esclusione ai tipi di account non possibili da contattare, come quelli bloccati..
-					new_friends_online.add(profilo_id2);
-					ProfiloModel.profili.get(profilo_id2).friend_add(profilo_id);
+				int relazione_tipo = relazioni_SQL.getInt("tipo");
+				if(relazione_tipo == TIPO_AMICI || relazione_tipo == TIPO_ISCRITTO){
+					profilo_id2 = relazioni_SQL.getInt("profilo_id2");
+					if(profili.containsKey(profilo_id2)){
+						new_friends_online.add(profilo_id2);
+						profili.get(profilo_id2).friend_add(profilo_id);
+					}else{
+						if(relazione_tipo == TIPO_ISCRITTO){
+							// TODO crea gruppo
+							Gruppo gruppo = new Gruppo();
+							gruppo.crea(profilo_id2);
+							
+							new_friends_online.add(profilo_id2);
+							profili.put(profilo_id2, gruppo);
+							profili.get(profilo_id2).friend_add(profilo_id);
+						}
+					}
 				}
 			}
+			
+			Jedis DB = Redis.DBPool.getResource();
+			
+			// fa il load delle conversazioni solo se è stata aperta nelle chat opened
+			Set<String> opened = DB.smembers(Conversazione.PROFILO_CHATOPENED + profilo_id);
+			for (String profilo_id : opened) {
+				int profilo_idOpened = Integer.valueOf(profilo_id);
+				chatTab_opened.add(profilo_idOpened);
+				if(profilo_idOpened > Party.PARTY_IDSTART){
+					if(!profili.containsKey(profilo_idOpened)){
+						Party party = new Party();
+						party.load(profilo_idOpened);
+						profili.put(profilo_idOpened, party);
+					}
+				}
+			}
+			
+			Set<String> party = DB.smembers(Conversazione.PROFILO_PARTY + profilo_id);
+			for (String party_idDB : party) {
+				int party_idCheck = Integer.valueOf(party_idDB);
+				if(profili.containsKey(party_idCheck)){
+					profili.get(party_idCheck).friend_add(profilo_id);
+					friend_add(party_idCheck);
+				}
+			}
+			
+			Redis.DBPool.returnResource(DB);
+			
 			friends_online = new_friends_online;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -98,28 +144,48 @@ public class Profilo extends ProfiloModel {
 			if(channel_id != client.getSessionID()){
 				ActionChat_With.write(PresenceHandler.clients.get(channel_id), messages);
 			}
-		}
+		}		
 	}
 	
-	public void message_receive(int profilo_idChat,int profilo_idFrom, String message){
+	public void message_receive(int profilo_idChat,int profilo_idFrom, String message, boolean already_stored){
+		
+		// in una conversazione profilo2profilo profilo_idChat diventa anche profilo_idFrom
+		if(profilo_idChat == profilo_id){
+			profilo_idChat = profilo_idFrom;
+		}
+		
 		String messages = ActionChat_With.convertToMessage(profilo_idChat, profilo_idFrom, message);
 		for(String channel_id:channels_id_connected){
 			ActionChat_With.write(PresenceHandler.clients.get(channel_id),messages);
+		}	
+		
+		chatTab_opened.add(profilo_idChat);
+		
+		if(already_stored == false){
+			HashSet<Integer> profili_idsRed = new HashSet<Integer>(1);
+			if(chatTab_actived == profilo_idChat){
+				profili_idsRed.add(profilo_id);
+			}
+			Conversazione.write(message, profilo_id, profilo_idChat, tipo, profili_idsRed);
 		}
 	}
 	
 	public void chatTab_open(int profilo_idToOpen, INSIOClient client){
+		chatTab_open(profilo_idToOpen, client, true);
+	}
+
+	public void chatTab_open(int profilo_idToOpen, INSIOClient client, boolean ignoreSameClient){
 		chatTab_actived = profilo_idToOpen;
-		try {
-			chatTab_opened.addNew(profilo_idToOpen);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.err.println("ArrayIndexOutOfBoundsException");
+		if(profilo_idToOpen == profilo_id){
+			Thread.dumpStack();
+			System.out.println("ERRORE DOPPIO");
 		}
+		chatTab_opened.add(profilo_idToOpen);
 		
 		//TODO order not implemented, adesso è 1
 		String ChatTab = ActionChat_Open.convertToMessage(profilo_idToOpen, 1);
 		for(String channel_id:channels_id_connected){
-			if(channel_id != client.getSessionID()){
+			if((channel_id != client.getSessionID() && ignoreSameClient) || (!ignoreSameClient)){
 				ActionChat_Open.write(PresenceHandler.clients.get(channel_id),chatTab_actived, ChatTab);
 			}
 		}
@@ -131,23 +197,22 @@ public class Profilo extends ProfiloModel {
 		boolean first = true;
 		
 		StringBuilder ChatTab = new StringBuilder();
-		for (int chat_id: chatTab_opened.toIntArray()) {
-			if(first == false){
-				ChatTab.append(",");
-			}else{
-				first = false;
+		if(!chatTab_opened.isEmpty()){
+			for (int chat_id : chatTab_opened.toArray()) {
+				if(first == false){
+					ChatTab.append(",");
+				}else{
+					first = false;
+				}
+				ChatTab.append(ActionChat_Open.convertToMessage(chat_id, 1));
 			}
-			ChatTab.append(ActionChat_Open.convertToMessage(chat_id, 1));
 		}
 		return ChatTab.toString();
 		
 	}
 	
 	public void chatTab_close(int profilo_idToClose, INSIOClient client){
-		int index = chatTab_opened.indexOf(profilo_idToClose);
-		if(index != -1){
-			chatTab_opened.set(chatTab_opened.indexOf(profilo_idToClose), 0);	
-		}
+		chatTab_opened.remove(profilo_idToClose);
 		for(String channel_id:channels_id_connected){
 			if(channel_id != client.getSessionID()){
 				ActionChat_Close.write(PresenceHandler.clients.get(channel_id),profilo_idToClose);
@@ -161,18 +226,6 @@ public class Profilo extends ProfiloModel {
 			if(channel_id != client.getSessionID()){
 				ActionChat_NoActive.write(PresenceHandler.clients.get(channel_id));
 			}
-		}
-	}
-	
-	public void friend_add(int profilo_id){
-		synchronized (friends_online) {
-			friends_online.addNew(profilo_id);
-		}
-	}
-	
-	public void friend_remove(int profilo_id){
-		synchronized (friends_online) {
-			friends_online.pop(profilo_id);
 		}
 	}
 	
@@ -197,6 +250,30 @@ public class Profilo extends ProfiloModel {
 
 	}
 	
+	public void disconnect(){
+		
+		//segnalo che mi sono sconnesso
+		for (int profilo_idCheck : friends_online.toArray()) {
+			profili.get(profilo_idCheck).friend_remove(profilo_id);
+		}
+			
+		//salvo le chat apert
+		Jedis DB = Redis.DBPool.getResource();
+		Pipeline p = DB.pipelined();
+		
+		p.del(Conversazione.PROFILO_CHATOPENED + ((Integer)profilo_id).toString());
+		if(!chatTab_opened.isEmpty()){
+			for (Integer chatTab_open : chatTab_opened.toArray()) {
+				if(chatTab_open != 0){
+					p.sadd(Conversazione.PROFILO_CHATOPENED + ((Integer)profilo_id).toString(), chatTab_open.toString());
+				}
+			}
+		}
+		p.sync();
+		Redis.DBPool.returnResource(DB);
+
+	}
+	
 	static PresenceFutureListener CHANNEL_DISCONNECT = new PresenceFutureListener() {
 		 public void operationComplete(INSIOClient client) {
 			int profilo_id = ProfiloModel.sessionID2profiloID.get(client.getSessionID());
@@ -205,10 +282,16 @@ public class Profilo extends ProfiloModel {
 				 profilo.channels_id_connected.remove(client.getSessionID());
          	}
 			ProfiloModel.sessionID2profiloID.remove(client.getSessionID());
-            if(profilo.channels_id_connected.size() == 0){
-            	//TODO logout profilo
+			
+            if(profilo.channels_id_connected.isEmpty()){
+            	profilo.disconnect();
+            	ProfiloModel.profili.remove(profilo_id);
             }
 		 }
 	 };
 	
+
+	public int get_tipo(){
+		return tipo;
+	}
 }

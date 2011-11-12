@@ -1,9 +1,10 @@
 package sn.net.actions;
 
+import it.uniroma3.mat.extendedset.intset.FastSet;
+
 import org.json.simple.JSONObject;
 
 import com.ibdknox.socket_io_netty.INSIOClient;
-import com.sun.org.apache.xalan.internal.xsltc.util.IntegerArray;
 
 import sn.profilo.ProfiloModel;
 
@@ -16,7 +17,7 @@ public final class ActionChat_With extends Action {
     @Deprecated
     public static final String regex_clientToServer = "^([1]{1})$";
 	public static final String scheme_serverToClient = "{ \"op\":%d, \"messages\":[%s] }";
-	public static final String scheme_message = "{ \"me\":%d, \"conv_id\", \"profilo_id\":%d, \"message\":\"%s\" }";
+	public static final String scheme_message = "{ \"conv_id\":%d, \"profilo_id\":%d, \"message\":\"%s\" }";
     // --- Constructors --------------------------------------------------------
         
 	public static void chat_with(JSONObject obj, String data, INSIOClient client) {
@@ -29,19 +30,15 @@ public final class ActionChat_With extends Action {
 			String message = (String) obj.get("message");
 			
 			ProfiloModel profilo = ProfiloModel.profili.get(profilo_id);
-			IntegerArray list = profilo.friends_online;
-			for (int profilo_id_friend : list.toIntArray()) {
+			FastSet list = profilo.friends_online;
+			for (int profilo_id_friend : list.toArray()) {
 				if(profilo_id_friend == profilo_idTo){
 					ProfiloModel ProfiloTo = ProfiloModel.profili.get(profilo_idTo);
-					ProfiloTo.message_receive(profilo_id, profilo_id_friend, message);
+					ProfiloTo.message_receive(profilo_idTo, profilo_id, message, false);
 					profilo.message_send(profilo_idTo, message, client);
 					break;
 				}
 			}
-			
-			//TODO scrittura su redis tramite class Conversazioni
-			//prima da definire il tipo di conv ( p2GRUPPO p2p p2party) 
-			
 		}
 	}
 	public static String convertToMessage(int conv_id, int profilo_id, String message){

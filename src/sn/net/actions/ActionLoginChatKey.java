@@ -30,20 +30,18 @@ public final class ActionLoginChatKey extends Action {
 			Profilo profilo = null;
 			// se è un profilo già loggato da un altro client
 			int profilo_id = ((Long) obj.get("profilo_id")).intValue();
-			
+			boolean logged;
 			if(ProfiloModel.profili.containsKey(profilo_id)){
 				profilo = (Profilo) ProfiloModel.profili.get(profilo_id);
+				logged = profilo.login_byChatKey(client, profilo_id,(String) obj.get("chat_key"));
 			}else{					
 				profilo = new Profilo();
-			}
-			
-			boolean logged = profilo.login_byChatKey(client, profilo_id,(String) obj.get("chat_key"));
-			if(logged){
+				logged = profilo.login_byChatKey(client, profilo_id,(String) obj.get("chat_key"));
+				profilo.friend_checkList_fromDB();
 				ProfiloModel.profili.put(profilo_id, profilo);
-			}
+			}			
 			write(client, logged);
 		}
-		
 	}
 	
 	public static void write(INSIOClient client, boolean logged){

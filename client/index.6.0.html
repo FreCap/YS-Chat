@@ -32,12 +32,13 @@
 			<div class="TabOpened">
 				<div class="Header">
 					<div class="nickname"></div>
+					<div class="addPartecipante">Add</div>
 					<div class="status"></div><!-- TODO -->
 					<div class="close">X</div><!-- TODO -->
 				</div>
 				<div class="Body">
-				body
 				</div>
+
 				<div class="Footer">
 					<input id="Input"/>
 				</div>
@@ -95,14 +96,20 @@
 			this.chatTab_active = 0;
 			this.status = 0;
 			
+			this.profilo_id = 0;
+			
+			this.messages_toWrite = [];
+			
 			this.get_loginInfo = function(){
 					var loginMethod = $("#loginMethod").val();
 					var parametro;
 					if (loginMethod == actions.LOGINCHATKEY){
 						//DEBUG
 						$("#profilo_id").val((Math.floor(Math.random()*4)+1));//6
-						document.title = $("#profilo_id").val();
+						$("#profilo_id").val(3);
 						
+						document.title = $("#profilo_id").val();
+						this2.profilo_id = parseInt($("#profilo_id").val());
 						parametro = { 
 								op: actions.LOGINCHATKEY,
 								profilo_id: parseInt($("#profilo_id").val()),
@@ -147,6 +154,14 @@
 									op: actions.CHAT_CLOSE,
 									profilo_id: parseInt(profilo_id_close)
 								}
+					this2.sendSocket(parametro);
+				},
+				Chat_addFriend: function(conv_id, profilo_id){
+					var parametro = {
+								op: actions.CHAT_ADDFRIEND,
+								profilo_id: parseInt(profilo_id),
+								conv_id: parseInt(conv_id)
+							}
 					this2.sendSocket(parametro);
 				},
 				Chat_noActive: function(){
@@ -208,19 +223,27 @@
 						if(!already_opened){
 							var Chat_tab = $("#itemChat").find(".ChatTab").clone();
 							var profilo;
+							var found = false;
 							//TODO puramente per test, in realtà nell'originale è da usare il datamanager
 							$.each(this2.friends_online, function(i, l){
 								if(profilo_id == l.profilo_id){
 									profilo = l;
+									found = true;
 								}
 							});
-							//fine TOD
-							Chat_tab.attr("id",profilo.profilo_id);
-							Chat_tab.find(".nickname").text(profilo.nickname);
-							this2.chatTab_opened.push(profilo_id);
-							this2.chatTab_active = profilo_id;
-							this2.GUI.chat_opened_container.append(Chat_tab);
-							this2.GUI.chatTab_Manager.initEvents(Chat_tab);
+							if(!found){
+								this2.server.List(lists_tipo.FRIENDS);
+								return false;
+							}else{
+								//fine TOD
+								Chat_tab.attr("id",profilo.profilo_id);
+								Chat_tab.find(".nickname").text(profilo.nickname);
+								this2.chatTab_opened.push(profilo_id);
+								this2.chatTab_active = profilo_id;
+								this2.GUI.chat_opened_container.append(Chat_tab);
+								this2.GUI.chatTab_Manager.initEvents(Chat_tab);
+								return true;
+							}
 						}
 					},
 					close: function(profilo_id, server){
@@ -245,6 +268,19 @@
 							this2.server.Chat_noActive();
 						}
 					},
+					write: function(conv_id, profilo_id, message, server, messageJson){
+						//TODO
+						if(this2.GUI.chatTab_Manager.create(conv_id, server)){
+							this2.GUI.chat_opened_container.find(".ChatTab#" + conv_id).find(".Body")
+									.append(profilo_id + ": " + message)
+									.append("</br>");
+							if(server != true){
+								this2.server.Chat_with(conv_id, message);
+							}
+						}else{
+							this2.messages_toWrite.push(messageJson);
+						}
+					},
 					initEvents: function(tab){
 						tab = this2.GUI.chat_opened_container.find(".ChatTab#"+tab.attr("id"));
 						tab.find(".ButtonOpen").bind("click", function(e){
@@ -254,18 +290,25 @@
 							this2.GUI.chatTab_Manager.close(tab.attr("id"));
 							e.stopPropagation();
 						});
+						tab.find(".addPartecipante").bind("click", function(e){
+							
+							//TODO
+							profilo_id = 1;
+							
+							this2.server.Chat_addFriend(tab.attr("id"), profilo_id);
+							e.stopPropagation();
+						});
 						tab.find(".Header").bind("click", function(e){
 							this2.GUI.chatTab_Manager.reduce(tab.attr("id"));
 						});
 						
 						tab.find("#Input").bind("change", function(e){
-							this2.server.Chat_with(tab.attr("id"), $(this).val());
-							tab.val("");
+							this2.GUI.chatTab_Manager.write(tab.attr("id"),this2.profilo_id , $(this).val(), false);
+							$(this).val("");
 						});
 					}
 				}
 			};
-			
 			
 			this.socket = new io.Socket("127.0.0.1", {
 			  port: 9999,
@@ -277,7 +320,6 @@
 				this2.socket.connect();
 			}
 		
-			// Add a connect listener
 			this.socket.on('connect',function() {
 			  log('Connesso!');
 			  this2.server.Login();
@@ -307,7 +349,7 @@
 						if(data_JSON.result == true){
 							this2.status = statuses.CONNECTED;
 							this2.server.List();//TODO
-							//fetch friends list
+							//fetch friends list e chat opened list
 						}else{
 							//TODO vari casi di errore, implementazione server mancante
 						}
@@ -317,26 +359,39 @@
 					case actions.DISCONNECT:
 						break;
 					case actions.CHAT_WITH:
+						$.each(data_JSON.messages, function(i, l){
+							this2.GUI.chatTab_Manager.write(l.conv_id, l.profilo_id, l.message, true, l);
+						});
 						break;
 					case actions.CHAT_OPEN:						
 						$.each(data_JSON.chatTab, function(i, l){
 							this2.GUI.chatTab_Manager.create(l.profilo_id, true);
 						});
-						this2.GUI.chatTab_Manager.open(data_JSON.chatTab_active, true);
+						if(data_JSON.chatTab_active != 0){
+							this2.GUI.chatTab_Manager.open(data_JSON.chatTab_active, true);
+						}
 						break;
 					case actions.CHAT_CLOSE:
 						this2.GUI.chatTab_Manager.close(data_JSON.profilo_id, true);
 						break;
+					case actions.CHAT_ADDFRIEND:
+						
+						break;
+					case actions.CHAT_LEAVE:	
+						break;	
 					case actions.CHAT_NOACTIVE:
 						this2.GUI.chatTab_Manager.reduce(this2.chatTab_active, true);
 						break;
 					case actions.LIST:
 						this2.friends_online = data_JSON.list;
 						this2.GUI.update_List();
+						$.each(this2.messages_toWrite, function(i, l){
+							this2.GUI.chatTab_Manager.write(l.conv_id, l.profilo_id, l.message, true, l);
+							this2.messages_toWrite.splice(i,1);
+						});
 						break;
 				}
 			});
-			// Add a disconnect listener
 			this.socket.on('disconnect',function() {
 			  log('The client has disconnected!');
 			  this2.status = statuses.DISCONNECTED;

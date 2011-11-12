@@ -37,7 +37,6 @@ public class PresenceHandler implements INSIOHandler  {
 	     System.out.println("<==" + message);
 	     Action.parseFromString(message, client);
 	}
-	
 
 	@Override
 	public void OnShutdown() {

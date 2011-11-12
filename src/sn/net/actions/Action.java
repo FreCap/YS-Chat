@@ -35,8 +35,9 @@ public abstract class Action {
                 break;
             /*     case CHG_STATUS:
                     break;*/
-            /*    case DISCONNECT:
-                    break;*/
+            case ActionDisconnect.MESSAGE_ID:
+            	ActionDisconnect.disconnect(obj, data, client);
+                break;
             case ActionChat_With.MESSAGE_ID:
             	ActionChat_With.chat_with(obj, data, client);
                 break;
@@ -46,6 +47,11 @@ public abstract class Action {
             case ActionChat_Close.MESSAGE_ID:
             	ActionChat_Close.chat_close(obj, data, client);
                 break;
+            case ActionChat_AddFriend.MESSAGE_ID:
+            	ActionChat_AddFriend.chat_addfriend(obj, data, client);
+                break;
+                /*    case CHAT_LEAVE:
+                break;*/    
             case ActionChat_NoActive.MESSAGE_ID:
             	ActionChat_NoActive.chat_noactive(obj, data, client);
                 break;
