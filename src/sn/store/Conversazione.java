@@ -36,7 +36,7 @@ public class Conversazione {
 
 		String id_conversazione = get_id_conversazione(sender, receiver, tipo);
 				
-		String message_redis = "{m:\"" + message + "\",s:\"" + Integer.toString(sender) + "\"}";
+		String message_redis = "{\"m\":\"" + message + "\",\"s\":\"" + Integer.toString(sender) + "\"}";
 		
 		Jedis DB = Redis.DBPool.getResource();
 		
@@ -127,11 +127,11 @@ public class Conversazione {
 		Redis.DBPool.returnResource(DB);
 	}
 	
-	public static List<String> conversazione_getStorico(String id_conversazione){
+	public static List<String> conversazione_getStorico(String id_conversazione, int n_msg){
 		
 		Jedis DB = Redis.DBPool.getResource();
 		
-		List<String> toreturn = DB.lrange(id_conversazione, -20, -1);
+		List<String> toreturn = DB.lrange(CONV_MESSAGGI + id_conversazione, -(n_msg+1), -1);
 		
 		Redis.DBPool.returnResource(DB);
 		

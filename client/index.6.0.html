@@ -106,7 +106,7 @@
 					if (loginMethod == actions.LOGINCHATKEY){
 						//DEBUG
 						$("#profilo_id").val((Math.floor(Math.random()*4)+1));//6
-						$("#profilo_id").val(3);
+						//$("#profilo_id").val(3);
 						
 						document.title = $("#profilo_id").val();
 						this2.profilo_id = parseInt($("#profilo_id").val());
@@ -218,6 +218,7 @@
 						$.each(this2.chatTab_opened, function(i, l){
 							if(l == profilo_id){
 								already_opened = true;
+								return true;
 							}
 						});
 						if(!already_opened){
@@ -245,6 +246,7 @@
 								return true;
 							}
 						}
+						return true;
 					},
 					close: function(profilo_id, server){
 						$.each(this2.chatTab_opened, function(i, l){
@@ -360,7 +362,15 @@
 						break;
 					case actions.CHAT_WITH:
 						$.each(data_JSON.messages, function(i, l){
-							this2.GUI.chatTab_Manager.write(l.conv_id, l.profilo_id, l.message, true, l);
+							if(l.message){
+								this2.GUI.chatTab_Manager.write(l.conv_id, l.profilo_id, l.message, true, l);
+							}else if(l.messages){
+								$.each(l.messages, function(i2, l2){
+									this2.GUI.chatTab_Manager.write(l.conv_id, l2.s, l2.m, true, l);
+								});
+							}else{
+								log("error");
+							}
 						});
 						break;
 					case actions.CHAT_OPEN:						

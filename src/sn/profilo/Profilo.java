@@ -180,7 +180,6 @@ public class Profilo extends ProfiloModel {
 			Thread.dumpStack();
 			System.out.println("ERRORE DOPPIO");
 		}
-		chatTab_opened.add(profilo_idToOpen);
 		
 		//TODO order not implemented, adesso è 1
 		String ChatTab = ActionChat_Open.convertToMessage(profilo_idToOpen, 1);
@@ -188,6 +187,31 @@ public class Profilo extends ProfiloModel {
 			if((channel_id != client.getSessionID() && ignoreSameClient) || (!ignoreSameClient)){
 				ActionChat_Open.write(PresenceHandler.clients.get(channel_id),chatTab_actived, ChatTab);
 			}
+		}
+		
+		if(chatTab_opened.add(profilo_idToOpen)){
+			
+			//TODO da fare in modo in futuro che solo i client attivi ricevano i msg.
+			StringBuilder messages = new StringBuilder();
+			boolean first = true;
+			for (String message : Conversazione.conversazione_getStorico(
+															Conversazione.get_id_conversazione(profilo_id, profilo_idToOpen, Profilo.profili.get(profilo_idToOpen).get_tipo()),
+															10)) {
+				if(first == false){
+					messages.append(",");
+				}else{
+					first = false;
+				}
+				messages.append(message);
+			}
+			String text = ActionChat_With.convertToMessageList(profilo_idToOpen, messages.toString());
+			
+			if(first != true){
+				for(String channel_id:channels_id_connected){
+					ActionChat_With.write(PresenceHandler.clients.get(channel_id), text);
+				}
+			}
+			
 		}
 	}
 	

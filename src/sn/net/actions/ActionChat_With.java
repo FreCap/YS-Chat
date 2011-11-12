@@ -18,6 +18,7 @@ public final class ActionChat_With extends Action {
     public static final String regex_clientToServer = "^([1]{1})$";
 	public static final String scheme_serverToClient = "{ \"op\":%d, \"messages\":[%s] }";
 	public static final String scheme_message = "{ \"conv_id\":%d, \"profilo_id\":%d, \"message\":\"%s\" }";
+	public static final String scheme_messageList = "{ \"conv_id\":%d, \"messages\":[%s] }";
     // --- Constructors --------------------------------------------------------
         
 	public static void chat_with(JSONObject obj, String data, INSIOClient client) {
@@ -43,6 +44,9 @@ public final class ActionChat_With extends Action {
 	}
 	public static String convertToMessage(int conv_id, int profilo_id, String message){
 		return String.format(scheme_message, conv_id, profilo_id, message);
+	}
+	public static String convertToMessageList(int conv_id, String messages){
+		return String.format(scheme_messageList, conv_id, messages);
 	}
 	
 	public static void write(INSIOClient client, String message){
