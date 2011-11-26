@@ -82,7 +82,14 @@
 						CHAT_LEAVE: 10, // { op:10, conv_id:(int) }
 						CHAT_NOACTIVE : 11, // { op:9 }
 						CLIENT_STATUS : 12, // { op:10, status:0(IDLED)|1(ONLINE) ( int }
-						LIST : 13 // { op:13, tipo: FRIENDS|CHAT_OPENED|ALL (int) }
+						LIST : 13, // { op:13, tipo: FRIENDS|CHAT_OPENED|ALL (int) }
+						
+						CALL_RING: 21, // { op:21, conv_id:(int) }
+						CALL_SUPPORT: 22, // { op:22 }
+						CALL_ACCEPT: 23, // { op:23, conv_id:(int), support:(boolean) }
+						
+						CALL_WAIT: 24, // FromServerOnly { op:23, conv_id:(int), call_id:"String"}
+						CALL: 25 // FromServerOnly { op:24, conv_id:(int), call_id:"String", call_password:"String", call_version:(int), server:(int), port:(int) }
 					}; 
 					
 			var lists_tipo = {
@@ -177,8 +184,28 @@
 									message: messageSend
 								}
 					this2.sendSocket(parametro);
+				},
+				Call_ring: function(conv_idCall){
+					var parametro = {
+									op: actions.CALL_RING,
+									conv_id: parseInt(conv_idCall)
+								}
+					this2.sendSocket(parametro);
+				},
+				Call_support: function(){
+					var parametro = {
+									op: actions.CALL_SUPPORT
+								}
+					this2.sendSocket(parametro);
+				},
+				Call_accept: function(conv_idCall, support){
+					var parametro = {
+									op: actions.CALL_ACCEPT,
+									conv_id: parseInt(conv_idCall),
+									support: support
+								}
+					this2.sendSocket(parametro);
 				}
-				
 			}
 			
 			this.GUI = {
@@ -312,6 +339,12 @@
 				}
 			};
 			
+			this.calls = {
+				
+				
+				
+			}
+			
 			this.socket = new io.Socket("127.0.0.1", {
 			  port: 9999,
 			  transports: ['websocket','flashsocket', 'xhr-polling'],
@@ -366,6 +399,7 @@
 								this2.GUI.chatTab_Manager.write(l.conv_id, l.profilo_id, l.message, true, l);
 							}else if(l.messages){
 								$.each(l.messages, function(i2, l2){
+								
 									this2.GUI.chatTab_Manager.write(l.conv_id, l2.s, l2.m, true, l);
 								});
 							}else{

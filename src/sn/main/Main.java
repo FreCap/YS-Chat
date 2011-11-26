@@ -1,6 +1,5 @@
 package sn.main;
 
-import it.uniroma3.mat.extendedset.intset.FastSet;
 import redis.clients.jedis.Jedis;
 import sn.net.*;
 import sn.profilo.Party;
