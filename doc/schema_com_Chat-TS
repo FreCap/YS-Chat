@@ -1,0 +1,17 @@
+Protocollo di comunicazione:
+
+TS Server ( as Client ) => Chat Server ( as Server ):
+
+info ( server_id:(int), max_clients:(int), DNS:(String), port:(int) )
+
+
+
+
+
+
+
+Chat Server ( as Client ) => TS Server ( as Server ):
+
+new_channel ( nome:(String), password: (String) )
+add_client ( channel_name:(String), client_name: (String)
+
