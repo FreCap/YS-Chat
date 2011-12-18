@@ -98,6 +98,8 @@
 						ALL: 3
 					};
 			
+			var voicePluginName = "NAME";// TODO
+			
 			this.friends_online = [];
 			this.chatTab_opened = [];
 			this.chatTab_active = 0;
@@ -106,6 +108,32 @@
 			this.profilo_id = 0;
 			
 			this.messages_toWrite = [];
+						
+			this.has_voicePlugin(){
+			
+				var isInstalled = false;
+				var version = null;
+				if (window.ActiveXObject) {
+				  var control = null;
+				  try {
+					control = new ActiveXObjectvoicePluginName);
+				  } catch (e) {
+					return;
+				  }
+				  if (control) {
+					return true;
+				  }
+				} else {
+				
+					$.each(navigator.plugins, function(i, l){
+						if(l.name == voicePluginName){
+							return true;
+						}
+					});
+				}
+				
+				return false;
+			}
 			
 			this.get_loginInfo = function(){
 					var loginMethod = $("#loginMethod").val();
@@ -194,7 +222,8 @@
 				},
 				Call_support: function(){
 					var parametro = {
-									op: actions.CALL_SUPPORT
+									op: actions.CALL_SUPPORT,
+									support : this2.has_voicePlugin()
 								}
 					this2.sendSocket(parametro);
 				},
@@ -383,8 +412,8 @@
 					case actions.LOGINCHATKEY: 
 						if(data_JSON.result == true){
 							this2.status = statuses.CONNECTED;
-							this2.server.List();//TODO
-							//fetch friends list e chat opened list
+							this2.server.List();
+							this2.server.Call_support();
 						}else{
 							//TODO vari casi di errore, implementazione server mancante
 						}

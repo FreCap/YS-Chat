@@ -4,6 +4,7 @@ import redis.clients.jedis.Jedis;
 import sn.net.*;
 import sn.profilo.Party;
 import sn.store.Conversazione;
+import sn.thrift.ServerVoiceToText;
 import ys.db.Memcached;
 import ys.db.Mysql;
 import ys.db.Redis;
@@ -32,19 +33,15 @@ public class Main {
 		Memcached.init();
         Redis.init();
 		
-
-      Jedis DB = Redis.DBPool.getResource();
-		
-      DB.set(Conversazione.CONV_INCREMENT, ((Integer)Party.PARTY_IDSTART).toString());
-		
-      
-      Redis.DBPool.returnResource(DB);
-      
-      presenceServer = new PresenceServer();
+        ServerVoiceToText.init();
+        
+        presenceServer = new PresenceServer();
         if (!presenceServer.start()) {
             // Qualcosa è andato storto.. forzo la chiusura.
             Runtime.getRuntime().exit(1);
         }
+       
+ 
 	}
     
     // --- Getter & Setter -----------------------------------------------------

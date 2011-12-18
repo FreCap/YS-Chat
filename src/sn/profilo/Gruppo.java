@@ -12,27 +12,10 @@ import ys.db.table.TableProfilo;
 import ys.db.table.TableRelazioni;
 
 
-public class Gruppo extends ProfiloModel{
+public class Gruppo extends MultiModel{
 	
 	final public int tipo = 2;
-	
-	public FastSet partecipanti = new FastSet();
-	
-	public void message_receive(int profilo_idChat, int profilo_idFrom, String message, boolean unused){
-		Profilo ProfiloTo;
 		
-		HashSet<Integer> profili_idsRed = new HashSet<Integer>();
-		for(int profilo_idTo:friends_online.toArray()){
-			if(profilo_idTo != profilo_idFrom){
-				ProfiloTo = (Profilo) ProfiloModel.profili.get(profilo_idTo);
-				if(ProfiloTo.chatTab_actived == profilo_idChat){
-					profili_idsRed.add(profilo_id);
-				}
-				ProfiloTo.message_receive(profilo_id, profilo_idTo, message, true);
-			}
-		}
-		Conversazione.write(message, profilo_id, profilo_idChat, tipo, profili_idsRed);
-	}
 	
 	public boolean crea(int gruppo_id){
 		

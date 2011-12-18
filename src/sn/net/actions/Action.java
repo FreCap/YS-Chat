@@ -60,6 +60,20 @@ public abstract class Action {
             case ActionList.MESSAGE_ID:
                 ActionList.list(obj, data, client);
                 break;
+                
+            // VOCALE SECTION
+                /*    case CALL_RING:
+                break;*/
+            case ActionCall_Support.MESSAGE_ID:
+            	ActionCall_Support.call_support(obj, data, client);
+                break;
+                /*    case CALL_ACCEPT:
+                break;*/
+                /*    case CALL_HANGUP:
+                break;*/
+              
+                
+                
         }
  
         return null;

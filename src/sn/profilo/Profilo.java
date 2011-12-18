@@ -15,6 +15,9 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import sn.net.PresenceFutureListener;
 import sn.net.PresenceHandler;
+import sn.net.actions.ActionCall_Ring;
+import sn.net.actions.ActionCall_Support;
+import sn.net.actions.ActionCall_Wait;
 import sn.net.actions.ActionChat_Close;
 import sn.net.actions.ActionChat_NoActive;
 import sn.net.actions.ActionChat_Open;
@@ -36,9 +39,14 @@ public class Profilo extends ProfiloModel {
 	final public int tipo = 1;
 	
 	String chat_key;
+
+	FastSet call_opened = new FastSet();
+	public int call_actived;
 	
 	FastSet chatTab_opened = new FastSet();
 	public int chatTab_actived;
+	
+	public ArrayList<String> channel_id_connectedVoiceSupport = new ArrayList<String>();
 	
 	final Logger logger = LoggerFactory.getLogger(Profilo.class);
 	
@@ -137,6 +145,30 @@ public class Profilo extends ProfiloModel {
 		}
 	
 	}
+	
+
+	//######### CALL SECTION #########
+	
+	public void call_notSupportedBy(int profilo_id){
+		for(String channel_id:channels_id_connected){
+			ActionCall_Support.write(PresenceHandler.clients.get(channel_id), profilo_id, false);
+		}		
+	}
+	
+	public boolean call_ring(int conv_id, int caller_id, String call_id){
+		for(String channel_id:channels_id_connected){
+			ActionCall_Ring.write(PresenceHandler.clients.get(channel_id), conv_id, caller_id, call_id);
+		}
+		return true;
+	}
+	
+	public void call_wait(int conv_id, String call_id){
+		for(String channel_id:channels_id_connected){
+			ActionCall_Wait.write(PresenceHandler.clients.get(channel_id), conv_id, call_id);
+		}		
+	}
+	
+	//######### MESSAGE SECTION #########
 	
 	public void message_send(int profilo_idTo, String message, INSIOClient client){
 		String messages = ActionChat_With.convertToMessage(profilo_idTo, profilo_id, message);
@@ -253,6 +285,15 @@ public class Profilo extends ProfiloModel {
 		}
 	}
 	
+	public void channel_voiceSupport_add(INSIOClient client){
+		synchronized (channel_id_connectedVoiceSupport) {
+			boolean exist = channel_id_connectedVoiceSupport.contains(client.getSessionID());		
+			if(!exist){
+				channel_id_connectedVoiceSupport.add(client.getSessionID());
+			}
+		}
+	}
+	
 	public boolean channel_add(INSIOClient client){
 		boolean result = false;
 		synchronized(channels_id_connected) {
@@ -305,6 +346,9 @@ public class Profilo extends ProfiloModel {
 			synchronized(profilo.channels_id_connected) {
 				 profilo.channels_id_connected.remove(client.getSessionID());
          	}
+			synchronized(profilo.channel_id_connectedVoiceSupport) {
+				 profilo.channel_id_connectedVoiceSupport.remove(client.getSessionID());
+        	}
 			ProfiloModel.sessionID2profiloID.remove(client.getSessionID());
 			
             if(profilo.channels_id_connected.isEmpty()){

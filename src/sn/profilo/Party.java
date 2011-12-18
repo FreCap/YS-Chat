@@ -1,7 +1,5 @@
 package sn.profilo;
 
-import it.uniroma3.mat.extendedset.intset.FastSet;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -14,7 +12,7 @@ import ys.db.Redis;
 import ys.db.table.TableRelazioni;
 
 
-public class Party extends ProfiloModel{
+public class Party extends MultiModel{
 	
 	final public static int PARTY_IDSTART = 50000000;
 	
@@ -22,8 +20,6 @@ public class Party extends ProfiloModel{
 	
 	public String nickname = "";
 	
-	public FastSet partecipanti = new FastSet();
-
 	public Party(int profilo_idCreatore, HashSet<Integer> profili_ids) {
 		crea(profilo_idCreatore, profili_ids);
 	}
@@ -133,25 +129,12 @@ public class Party extends ProfiloModel{
 		}
 	}
 	
-	public void message_receive(int profilo_idChat, int profilo_idFrom, String message, boolean unused){
-		Profilo ProfiloTo;
-		
-		HashSet<Integer> profili_idsRed = new HashSet<Integer>();
-		for(int profilo_idTo:friends_online.toArray()){ System.out.println("parteciapnti: "+profilo_idTo);
-			if(profilo_idTo != profilo_idFrom){
-				ProfiloTo = (Profilo) ProfiloModel.profili.get(profilo_idTo);
-				if(ProfiloTo.chatTab_actived == profilo_idChat){
-					profili_idsRed.add(profilo_id);
-				}
-				ProfiloTo.message_receive(profilo_idChat, profilo_idFrom, message, true);
-			}
-		}
-		Conversazione.write(message, profilo_idChat, profilo_id, tipo, profili_idsRed);
-	}
-	
 
 	public int get_tipo(){
 		return tipo;
 	}
 	
 }
+
+
+
