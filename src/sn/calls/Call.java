@@ -17,10 +17,13 @@ public class Call {
 	public static ConcurrentHashMap<String,Call> calls = new ConcurrentHashMap<String,Call>();
 	
 	public String call_id;	
+	public String call_password;
 	public int caller_id;
 	public int called_id;
 	
 	public FastSet partecipanti_attivi = new FastSet();
+	
+	public int iniziata_time;
 	
 	public Call(ProfiloModel caller_model, ProfiloModel called_model){
 		
@@ -82,7 +85,21 @@ public class Call {
 		}	
 	}
 	
+	public void init_TS(){
+		
+		if(!(iniziata_time>100)){
+			
+			
+			
+		}	
+		
+	}
 	
+	public void call_accepted(int profilo_id){
+		
+		
+		
+	}
 	
 	
 }

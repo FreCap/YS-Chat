@@ -19,7 +19,7 @@ LIST: 13, // { op:13, tipo: FRIENDS|CHAT_OPENED|ALL (int) }
 
 CALL_RING: 21 , { op:21, conv_id:(int) }
 CALL_SUPPORT: 22, { op:22, support: (bool) }
-CALL_ACCEPT: 23 , { op:23, conv_id:(int), support:(boolean) }
+CALL_ACCEPT: 23 , { op:23, conv_id:(int) }
 
 
 CALL_HANGUP: 26, // { op:26, conv_id;(int), call_id:(int) }

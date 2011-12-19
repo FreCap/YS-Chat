@@ -4,24 +4,24 @@ import it.uniroma3.mat.extendedset.intset.FastSet;
 
 import org.json.simple.JSONObject;
 
-import com.ibdknox.socket_io_netty.INSIOClient;
-
 import sn.calls.Call;
 import sn.profilo.Profilo;
 import sn.profilo.ProfiloModel;
 import sn.store.Conversazione;
 
-public final class ActionCall_Ring extends Action {
+import com.ibdknox.socket_io_netty.INSIOClient;
+
+public final class ActionCall_Accept extends Action {
 
     // --- Costanti & Variabili private -----------------------------------------------
 
-    public static final int MESSAGE_ID = 21;
+    public static final int MESSAGE_ID = 23;
 
-	public static final String scheme_serverToClient = "{ \"op\":%d, \"conv_id\":%d, \"caller\":%d, \"call_id\":\"%s\" }";
+	public static final String scheme_serverToClient = "{ \"op\":%d, \"conv_id\":%d, \"call_id\":\"%s\" }";
 	
     // --- Constructors --------------------------------------------------------
         
-	public static void call_ring(JSONObject obj, String data, INSIOClient client) {
+	public static void call_accept(JSONObject obj, String data, INSIOClient client) {
 		
 		int conv_id = ((Long) obj.get("conv_id")).intValue();
 		int profilo_id = ProfiloModel.sessionID2profiloID.get(client.getSessionID());
@@ -35,9 +35,9 @@ public final class ActionCall_Ring extends Action {
 					String conversazione_id = Conversazione.get_id_conversazione(profilo_id, profiloCalled.profilo_id, profiloCalled.get_tipo());
 
 					if(Call.calls.containsKey(conversazione_id)){
-						//TODO as I accepted z call
+						Call.calls.get(conversazione_id);
 					}else{	
-						new Call(profilo, profiloCalled);
+						//TODO as I rang z call
 					}
 				}
 			}								
@@ -47,12 +47,11 @@ public final class ActionCall_Ring extends Action {
 			// inesistente
 				
 		}
-			
-	}
 		
+	}
 	
-	public static void write(INSIOClient client, int conv_id, int caller, String call_id){
-		client.send(String.format(scheme_serverToClient, MESSAGE_ID, conv_id, caller, call_id));
+	public static void write(INSIOClient client, int conv_id, String call_id){
+		// should be empty
 	}
     
     // --- Getter & Setter -----------------------------------------------------

@@ -2,7 +2,7 @@ Protocollo di comunicazione:
 
 TS Server ( as Client ) => Chat Server ( as Server ):
 
-info ( server_id:(int), max_clients:(int), DNS:(String), port:(int) )
+info ( server_id:(int), max_clients:(int), DNS:(String), port_TS:(int), port_Thrift:(int) )
 
 
 

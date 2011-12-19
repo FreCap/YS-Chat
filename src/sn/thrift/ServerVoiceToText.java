@@ -15,8 +15,6 @@ public class ServerVoiceToText {
 	
 		public ClientVoiceToTextHandler() {
 		
-			
-		
 		}
 	
 		@Override
@@ -28,12 +26,11 @@ public class ServerVoiceToText {
 			}else{
 				
 				ServerVoice server = new ServerVoice();
-
 				server.server_id = server_id;
 				server.max_clients = max_clients;
 				server.DNS = DNS;
-				server.port = port;
-				
+				//TODO ADD thrift's port and TS's port
+				server.port = port;				
 				ServerVoice.server.put(server_id, server);
 				
 			}
