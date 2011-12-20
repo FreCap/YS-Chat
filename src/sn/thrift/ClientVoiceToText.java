@@ -31,13 +31,13 @@ public class ClientVoiceToText {
 
   public interface Iface {
 
-    public void info(int server_id, int max_clients, String DNS, int port) throws org.apache.thrift.TException;
+    public void info(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift) throws org.apache.thrift.TException;
 
   }
 
   public interface AsyncIface {
 
-    public void info(int server_id, int max_clients, String DNS, int port, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.info_call> resultHandler) throws org.apache.thrift.TException;
+    public void info(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.info_call> resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -61,18 +61,19 @@ public class ClientVoiceToText {
       super(iprot, oprot);
     }
 
-    public void info(int server_id, int max_clients, String DNS, int port) throws org.apache.thrift.TException
+    public void info(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift) throws org.apache.thrift.TException
     {
-      send_info(server_id, max_clients, DNS, port);
+      send_info(server_id, max_clients, DNS, port_TS, port_Thrift);
     }
 
-    public void send_info(int server_id, int max_clients, String DNS, int port) throws org.apache.thrift.TException
+    public void send_info(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift) throws org.apache.thrift.TException
     {
       info_args args = new info_args();
       args.setServer_id(server_id);
       args.setMax_clients(max_clients);
       args.setDNS(DNS);
-      args.setPort(port);
+      args.setPort_TS(port_TS);
+      args.setPort_Thrift(port_Thrift);
       sendBase("info", args);
     }
 
@@ -94,9 +95,9 @@ public class ClientVoiceToText {
       super(protocolFactory, clientManager, transport);
     }
 
-    public void info(int server_id, int max_clients, String DNS, int port, org.apache.thrift.async.AsyncMethodCallback<info_call> resultHandler) throws org.apache.thrift.TException {
+    public void info(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift, org.apache.thrift.async.AsyncMethodCallback<info_call> resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      info_call method_call = new info_call(server_id, max_clients, DNS, port, resultHandler, this, ___protocolFactory, ___transport);
+      info_call method_call = new info_call(server_id, max_clients, DNS, port_TS, port_Thrift, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
@@ -105,13 +106,15 @@ public class ClientVoiceToText {
       private int server_id;
       private int max_clients;
       private String DNS;
-      private int port;
-      public info_call(int server_id, int max_clients, String DNS, int port, org.apache.thrift.async.AsyncMethodCallback<info_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private int port_TS;
+      private int port_Thrift;
+      public info_call(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift, org.apache.thrift.async.AsyncMethodCallback<info_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, true);
         this.server_id = server_id;
         this.max_clients = max_clients;
         this.DNS = DNS;
-        this.port = port;
+        this.port_TS = port_TS;
+        this.port_Thrift = port_Thrift;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
@@ -120,7 +123,8 @@ public class ClientVoiceToText {
         args.setServer_id(server_id);
         args.setMax_clients(max_clients);
         args.setDNS(DNS);
-        args.setPort(port);
+        args.setPort_TS(port_TS);
+        args.setPort_Thrift(port_Thrift);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -161,7 +165,7 @@ public class ClientVoiceToText {
       }
 
       protected org.apache.thrift.TBase getResult(I iface, info_args args) throws org.apache.thrift.TException {
-        iface.info(args.server_id, args.max_clients, args.DNS, args.port);
+        iface.info(args.server_id, args.max_clients, args.DNS, args.port_TS, args.port_Thrift);
         return null;
       }
     }
@@ -174,7 +178,8 @@ public class ClientVoiceToText {
     private static final org.apache.thrift.protocol.TField SERVER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("server_id", org.apache.thrift.protocol.TType.I32, (short)1);
     private static final org.apache.thrift.protocol.TField MAX_CLIENTS_FIELD_DESC = new org.apache.thrift.protocol.TField("max_clients", org.apache.thrift.protocol.TType.I32, (short)2);
     private static final org.apache.thrift.protocol.TField DNS_FIELD_DESC = new org.apache.thrift.protocol.TField("DNS", org.apache.thrift.protocol.TType.STRING, (short)3);
-    private static final org.apache.thrift.protocol.TField PORT_FIELD_DESC = new org.apache.thrift.protocol.TField("port", org.apache.thrift.protocol.TType.I32, (short)4);
+    private static final org.apache.thrift.protocol.TField PORT__TS_FIELD_DESC = new org.apache.thrift.protocol.TField("port_TS", org.apache.thrift.protocol.TType.I32, (short)4);
+    private static final org.apache.thrift.protocol.TField PORT__THRIFT_FIELD_DESC = new org.apache.thrift.protocol.TField("port_Thrift", org.apache.thrift.protocol.TType.I32, (short)5);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -185,14 +190,16 @@ public class ClientVoiceToText {
     public int server_id; // required
     public int max_clients; // required
     public String DNS; // required
-    public int port; // required
+    public int port_TS; // required
+    public int port_Thrift; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       SERVER_ID((short)1, "server_id"),
       MAX_CLIENTS((short)2, "max_clients"),
       DNS((short)3, "DNS"),
-      PORT((short)4, "port");
+      PORT__TS((short)4, "port_TS"),
+      PORT__THRIFT((short)5, "port_Thrift");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -213,8 +220,10 @@ public class ClientVoiceToText {
             return MAX_CLIENTS;
           case 3: // DNS
             return DNS;
-          case 4: // PORT
-            return PORT;
+          case 4: // PORT__TS
+            return PORT__TS;
+          case 5: // PORT__THRIFT
+            return PORT__THRIFT;
           default:
             return null;
         }
@@ -257,8 +266,9 @@ public class ClientVoiceToText {
     // isset id assignments
     private static final int __SERVER_ID_ISSET_ID = 0;
     private static final int __MAX_CLIENTS_ISSET_ID = 1;
-    private static final int __PORT_ISSET_ID = 2;
-    private BitSet __isset_bit_vector = new BitSet(3);
+    private static final int __PORT_TS_ISSET_ID = 2;
+    private static final int __PORT_THRIFT_ISSET_ID = 3;
+    private BitSet __isset_bit_vector = new BitSet(4);
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -268,7 +278,9 @@ public class ClientVoiceToText {
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       tmpMap.put(_Fields.DNS, new org.apache.thrift.meta_data.FieldMetaData("DNS", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-      tmpMap.put(_Fields.PORT, new org.apache.thrift.meta_data.FieldMetaData("port", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.PORT__TS, new org.apache.thrift.meta_data.FieldMetaData("port_TS", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+      tmpMap.put(_Fields.PORT__THRIFT, new org.apache.thrift.meta_data.FieldMetaData("port_Thrift", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(info_args.class, metaDataMap);
@@ -281,7 +293,8 @@ public class ClientVoiceToText {
       int server_id,
       int max_clients,
       String DNS,
-      int port)
+      int port_TS,
+      int port_Thrift)
     {
       this();
       this.server_id = server_id;
@@ -289,8 +302,10 @@ public class ClientVoiceToText {
       this.max_clients = max_clients;
       setMax_clientsIsSet(true);
       this.DNS = DNS;
-      this.port = port;
-      setPortIsSet(true);
+      this.port_TS = port_TS;
+      setPort_TSIsSet(true);
+      this.port_Thrift = port_Thrift;
+      setPort_ThriftIsSet(true);
     }
 
     /**
@@ -304,7 +319,8 @@ public class ClientVoiceToText {
       if (other.isSetDNS()) {
         this.DNS = other.DNS;
       }
-      this.port = other.port;
+      this.port_TS = other.port_TS;
+      this.port_Thrift = other.port_Thrift;
     }
 
     public info_args deepCopy() {
@@ -318,8 +334,10 @@ public class ClientVoiceToText {
       setMax_clientsIsSet(false);
       this.max_clients = 0;
       this.DNS = null;
-      setPortIsSet(false);
-      this.port = 0;
+      setPort_TSIsSet(false);
+      this.port_TS = 0;
+      setPort_ThriftIsSet(false);
+      this.port_Thrift = 0;
     }
 
     public int getServer_id() {
@@ -392,27 +410,50 @@ public class ClientVoiceToText {
       }
     }
 
-    public int getPort() {
-      return this.port;
+    public int getPort_TS() {
+      return this.port_TS;
     }
 
-    public info_args setPort(int port) {
-      this.port = port;
-      setPortIsSet(true);
+    public info_args setPort_TS(int port_TS) {
+      this.port_TS = port_TS;
+      setPort_TSIsSet(true);
       return this;
     }
 
-    public void unsetPort() {
-      __isset_bit_vector.clear(__PORT_ISSET_ID);
+    public void unsetPort_TS() {
+      __isset_bit_vector.clear(__PORT_TS_ISSET_ID);
     }
 
-    /** Returns true if field port is set (has been assigned a value) and false otherwise */
-    public boolean isSetPort() {
-      return __isset_bit_vector.get(__PORT_ISSET_ID);
+    /** Returns true if field port_TS is set (has been assigned a value) and false otherwise */
+    public boolean isSetPort_TS() {
+      return __isset_bit_vector.get(__PORT_TS_ISSET_ID);
     }
 
-    public void setPortIsSet(boolean value) {
-      __isset_bit_vector.set(__PORT_ISSET_ID, value);
+    public void setPort_TSIsSet(boolean value) {
+      __isset_bit_vector.set(__PORT_TS_ISSET_ID, value);
+    }
+
+    public int getPort_Thrift() {
+      return this.port_Thrift;
+    }
+
+    public info_args setPort_Thrift(int port_Thrift) {
+      this.port_Thrift = port_Thrift;
+      setPort_ThriftIsSet(true);
+      return this;
+    }
+
+    public void unsetPort_Thrift() {
+      __isset_bit_vector.clear(__PORT_THRIFT_ISSET_ID);
+    }
+
+    /** Returns true if field port_Thrift is set (has been assigned a value) and false otherwise */
+    public boolean isSetPort_Thrift() {
+      return __isset_bit_vector.get(__PORT_THRIFT_ISSET_ID);
+    }
+
+    public void setPort_ThriftIsSet(boolean value) {
+      __isset_bit_vector.set(__PORT_THRIFT_ISSET_ID, value);
     }
 
     public void setFieldValue(_Fields field, Object value) {
@@ -441,11 +482,19 @@ public class ClientVoiceToText {
         }
         break;
 
-      case PORT:
+      case PORT__TS:
         if (value == null) {
-          unsetPort();
+          unsetPort_TS();
         } else {
-          setPort((Integer)value);
+          setPort_TS((Integer)value);
+        }
+        break;
+
+      case PORT__THRIFT:
+        if (value == null) {
+          unsetPort_Thrift();
+        } else {
+          setPort_Thrift((Integer)value);
         }
         break;
 
@@ -463,8 +512,11 @@ public class ClientVoiceToText {
       case DNS:
         return getDNS();
 
-      case PORT:
-        return Integer.valueOf(getPort());
+      case PORT__TS:
+        return Integer.valueOf(getPort_TS());
+
+      case PORT__THRIFT:
+        return Integer.valueOf(getPort_Thrift());
 
       }
       throw new IllegalStateException();
@@ -483,8 +535,10 @@ public class ClientVoiceToText {
         return isSetMax_clients();
       case DNS:
         return isSetDNS();
-      case PORT:
-        return isSetPort();
+      case PORT__TS:
+        return isSetPort_TS();
+      case PORT__THRIFT:
+        return isSetPort_Thrift();
       }
       throw new IllegalStateException();
     }
@@ -529,12 +583,21 @@ public class ClientVoiceToText {
           return false;
       }
 
-      boolean this_present_port = true;
-      boolean that_present_port = true;
-      if (this_present_port || that_present_port) {
-        if (!(this_present_port && that_present_port))
+      boolean this_present_port_TS = true;
+      boolean that_present_port_TS = true;
+      if (this_present_port_TS || that_present_port_TS) {
+        if (!(this_present_port_TS && that_present_port_TS))
           return false;
-        if (this.port != that.port)
+        if (this.port_TS != that.port_TS)
+          return false;
+      }
+
+      boolean this_present_port_Thrift = true;
+      boolean that_present_port_Thrift = true;
+      if (this_present_port_Thrift || that_present_port_Thrift) {
+        if (!(this_present_port_Thrift && that_present_port_Thrift))
+          return false;
+        if (this.port_Thrift != that.port_Thrift)
           return false;
       }
 
@@ -584,12 +647,22 @@ public class ClientVoiceToText {
           return lastComparison;
         }
       }
-      lastComparison = Boolean.valueOf(isSetPort()).compareTo(typedOther.isSetPort());
+      lastComparison = Boolean.valueOf(isSetPort_TS()).compareTo(typedOther.isSetPort_TS());
       if (lastComparison != 0) {
         return lastComparison;
       }
-      if (isSetPort()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.port, typedOther.port);
+      if (isSetPort_TS()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.port_TS, typedOther.port_TS);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetPort_Thrift()).compareTo(typedOther.isSetPort_Thrift());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetPort_Thrift()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.port_Thrift, typedOther.port_Thrift);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -630,8 +703,12 @@ public class ClientVoiceToText {
       }
       first = false;
       if (!first) sb.append(", ");
-      sb.append("port:");
-      sb.append(this.port);
+      sb.append("port_TS:");
+      sb.append(this.port_TS);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("port_Thrift:");
+      sb.append(this.port_Thrift);
       first = false;
       sb.append(")");
       return sb.toString();
@@ -701,10 +778,18 @@ public class ClientVoiceToText {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 4: // PORT
+            case 4: // PORT__TS
               if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                struct.port = iprot.readI32();
-                struct.setPortIsSet(true);
+                struct.port_TS = iprot.readI32();
+                struct.setPort_TSIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 5: // PORT__THRIFT
+              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                struct.port_Thrift = iprot.readI32();
+                struct.setPort_ThriftIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
@@ -735,8 +820,11 @@ public class ClientVoiceToText {
           oprot.writeString(struct.DNS);
           oprot.writeFieldEnd();
         }
-        oprot.writeFieldBegin(PORT_FIELD_DESC);
-        oprot.writeI32(struct.port);
+        oprot.writeFieldBegin(PORT__TS_FIELD_DESC);
+        oprot.writeI32(struct.port_TS);
+        oprot.writeFieldEnd();
+        oprot.writeFieldBegin(PORT__THRIFT_FIELD_DESC);
+        oprot.writeI32(struct.port_Thrift);
         oprot.writeFieldEnd();
         oprot.writeFieldStop();
         oprot.writeStructEnd();
@@ -765,10 +853,13 @@ public class ClientVoiceToText {
         if (struct.isSetDNS()) {
           optionals.set(2);
         }
-        if (struct.isSetPort()) {
+        if (struct.isSetPort_TS()) {
           optionals.set(3);
         }
-        oprot.writeBitSet(optionals, 4);
+        if (struct.isSetPort_Thrift()) {
+          optionals.set(4);
+        }
+        oprot.writeBitSet(optionals, 5);
         if (struct.isSetServer_id()) {
           oprot.writeI32(struct.server_id);
         }
@@ -778,15 +869,18 @@ public class ClientVoiceToText {
         if (struct.isSetDNS()) {
           oprot.writeString(struct.DNS);
         }
-        if (struct.isSetPort()) {
-          oprot.writeI32(struct.port);
+        if (struct.isSetPort_TS()) {
+          oprot.writeI32(struct.port_TS);
+        }
+        if (struct.isSetPort_Thrift()) {
+          oprot.writeI32(struct.port_Thrift);
         }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, info_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(4);
+        BitSet incoming = iprot.readBitSet(5);
         if (incoming.get(0)) {
           struct.server_id = iprot.readI32();
           struct.setServer_idIsSet(true);
@@ -800,8 +894,12 @@ public class ClientVoiceToText {
           struct.setDNSIsSet(true);
         }
         if (incoming.get(3)) {
-          struct.port = iprot.readI32();
-          struct.setPortIsSet(true);
+          struct.port_TS = iprot.readI32();
+          struct.setPort_TSIsSet(true);
+        }
+        if (incoming.get(4)) {
+          struct.port_Thrift = iprot.readI32();
+          struct.setPort_ThriftIsSet(true);
         }
       }
     }

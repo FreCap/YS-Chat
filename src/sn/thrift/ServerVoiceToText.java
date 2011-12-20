@@ -18,7 +18,7 @@ public class ServerVoiceToText {
 		}
 	
 		@Override
-		public void info(int server_id, int max_clients, String DNS, int port)
+		public void info(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift)
 				throws TException {
 			
 			if(ServerVoice.server.containsKey(server_id)){				
@@ -30,7 +30,9 @@ public class ServerVoiceToText {
 				server.max_clients = max_clients;
 				server.DNS = DNS;
 				//TODO ADD thrift's port and TS's port
-				server.port = port;				
+				server.port_TS = port_TS;
+                                server.port_Thrift = port_Thrift;
+                                
 				ServerVoice.server.put(server_id, server);
 				
 			}

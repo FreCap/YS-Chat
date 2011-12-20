@@ -30,6 +30,8 @@ import ys.db.table.TableProfilo;
 import ys.db.table.TableRelazioni;
 
 import com.ibdknox.socket_io_netty.INSIOClient;
+import sn.calls.Call;
+import sn.net.actions.ActionCall;
 
 
 public class Profilo extends ProfiloModel {
@@ -40,8 +42,8 @@ public class Profilo extends ProfiloModel {
 	
 	String chat_key;
 
-	FastSet call_opened = new FastSet();
-	public int call_actived;
+        final public ArrayList<String> call_opened = new ArrayList<String>();
+	public String call_actived;
 	
 	FastSet chatTab_opened = new FastSet();
 	public int chatTab_actived;
@@ -163,10 +165,39 @@ public class Profilo extends ProfiloModel {
 	}
 	
 	public void call_wait(int conv_id, String call_id){
-		for(String channel_id:channels_id_connected){
-			ActionCall_Wait.write(PresenceHandler.clients.get(channel_id), conv_id, call_id);
-		}		
+            for(String channel_id:channels_id_connected){
+            	ActionCall_Wait.write(PresenceHandler.clients.get(channel_id), conv_id, call_id);
+            }		
 	}
+        
+        public void call_addOpened(String call_id){
+            synchronized(call_opened){
+                call_opened.add(call_id);
+            }    
+            call_actived = call_id;
+        }
+        
+        public void call(Call call){
+        
+            call_addOpened(call.call_id);
+            
+            int conv_id;
+            
+            if(call.called_id == profilo_id){
+                conv_id = call.caller_id;
+            }else{
+                conv_id = call.called_id;
+            }
+            
+            int ts_port = call.get_TSPort();
+            
+            for(String channel_id:channel_id_connectedVoiceSupport){
+		ActionCall.write(PresenceHandler.clients.get(channel_id), conv_id, call.call_id, call.call_password, 1 , call.server_id, ts_port);
+          
+            }
+        
+        }
+        
 	
 	//######### MESSAGE SECTION #########
 	

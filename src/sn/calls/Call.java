@@ -10,6 +10,7 @@ import sn.profilo.ProfiloModel;
 import sn.store.Conversazione;
 import sn.util.RandomHash;
 import sn.util.SecureHash;
+import sn.voice.ServerVoice;
 
 public class Call {
 	
@@ -21,10 +22,18 @@ public class Call {
 	public int caller_id;
 	public int called_id;
 	
+        
 	public FastSet partecipanti_attivi = new FastSet();
 	
+        public int server_id;
 	public int iniziata_time;
 	
+        public int get_tipoCalled(){
+            
+            return ProfiloModel.profili.get(called_id).get_tipo();
+            
+        }
+        
 	public Call(ProfiloModel caller_model, ProfiloModel called_model){
 		
 		Profilo caller = (Profilo) caller_model;
@@ -84,22 +93,48 @@ public class Call {
 			
 		}	
 	}
-	
+        
 	public void init_TS(){
 		
 		if(!(iniziata_time>100)){
-			
-			
-			
+                   
+                    iniziata_time = ((Long) (System.currentTimeMillis()/1000)).intValue();
+                    
+                    server_id = ServerVoice.get_server_withlessWorkLoad();
+                    
+                    ServerVoice.server.get(server_id).new_channel(call_id, call_password);
+                  
+                    call_accepted(caller_id);
+                    
 		}	
 		
 	}
 	
 	public void call_accepted(int profilo_id){
 		
-		
-		
+            init_TS();
+            
+            Profilo profilo = (Profilo) ProfiloModel.profili.get(profilo_id);
+            
+            ServerVoice.server.get(server_id).add_client(call_id, get_clientName_byProfilo(profilo));
+            
+            profilo.call(this);
+            
 	}
 	
+        
+        public static String clientNameSalt = "7ahFA8((2ABfp";
+        
+        public String get_clientName_byProfilo (Profilo profilo){
+            
+            return SecureHash.Md5(profilo.profilo_id + clientNameSalt);
+            
+        }
+        
+        public int get_TSPort(){
+            
+           return ServerVoice.server.get(server_id).port_TS;
+ 
+        }
 	
 }

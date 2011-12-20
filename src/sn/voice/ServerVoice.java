@@ -17,7 +17,8 @@ public class ServerVoice {
 	public int server_id;
 	public int max_clients;
 	public String DNS;
-	public int port;
+	public int port_TS;
+        public int port_Thrift;        
 
 	public int connected_clients;
 	
@@ -27,33 +28,69 @@ public class ServerVoice {
 		return 1;		
 	}
 	
-	private  ClientTextToVoice.Client openClient(){
+	private  ClientTextToVoice.Client openClient() throws TException{
 		
-		ClientTextToVoice.Client client = null;
+            ClientTextToVoice.Client client = null;
 		
-		try {
-	     
-			 TTransport transport;
+            TTransport transport;
 		     
-		     transport = new TSocket("localhost", 9090);
-		     transport.open();
+            transport = new TSocket(DNS, port_Thrift);
+            transport.open();
 		     
-		     TProtocol protocol = new  TBinaryProtocol(transport);
-		     client = new ClientTextToVoice.Client(protocol);  
-	     
-		 } catch (TException x) {
-		    	x.printStackTrace();
-		 }
-		 
-		 return client;
-	}
+            TProtocol protocol = new  TBinaryProtocol(transport);
+            client = new ClientTextToVoice.Client(protocol);  
+	
+            return client;
+	
+        }
 	
 	private void closeClient(ClientTextToVoice.Client client){
 	    
-		client.getInputProtocol().getTransport().close();
-		client.getOutputProtocol().getTransport().close(); 
+            client.getInputProtocol().getTransport().close();
+            client.getOutputProtocol().getTransport().close(); 
 	    
 	}
+        
+        public boolean new_channel(String call_id, String channel_pasword){
+            
+            try {
+                
+                ClientTextToVoice.Client client = openClient();
+            
+                if(client.new_channel(call_id, channel_pasword)){
+                    
+                    closeClient(client);
+                    return true;
+                    
+                }else{
+                    
+                    closeClient(client);
+                    return false;
+                
+                }
+                            
+            } catch (TException x) {
+	   	x.printStackTrace();
+            }     
+            return false;
+        }
+        
+         public void add_client(String channel_name, String client_name){
+            
+            try {
+                
+                ClientTextToVoice.Client client = openClient();
+            
+                client.add_client(channel_name, client_name);
+                
+                closeClient(client);
+            
+            } catch (TException x) {
+	   	x.printStackTrace();
+            }     
+            
+        }
+        
 	
 	
 }

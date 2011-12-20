@@ -35,7 +35,7 @@ public final class ActionCall_Accept extends Action {
 					String conversazione_id = Conversazione.get_id_conversazione(profilo_id, profiloCalled.profilo_id, profiloCalled.get_tipo());
 
 					if(Call.calls.containsKey(conversazione_id)){
-						Call.calls.get(conversazione_id);
+						Call.calls.get(conversazione_id).call_accepted(profilo_id);
 					}else{	
 						//TODO as I rang z call
 					}

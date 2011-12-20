@@ -2,16 +2,13 @@ Protocollo di comunicazione:
 
 TS Server ( as Client ) => Chat Server ( as Server ):
 
-info ( server_id:(int), max_clients:(int), DNS:(String), port_TS:(int), port_Thrift:(int) )
-
-
-
+oneway void info ( 1:i32 server_id, 2:i32 max_clients, 3:string DNS, 4:i32 port_TS, 5:i32 port_Thrift )
 
 
 
 
 Chat Server ( as Client ) => TS Server ( as Server ):
 
-new_channel ( nome:(String), password: (String) )
-add_client ( channel_name:(String), client_name: (String)
+bool new_channel ( 1:string nome, 2:string password )
+oneway void add_client ( 1:string channel_name, 2:string client_name )
 
