@@ -6,6 +6,7 @@ import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 
+import sn.YSConfig;
 import sn.voice.ServerVoice;
 
 public class ServerVoiceToText {
@@ -47,7 +48,7 @@ public class ServerVoiceToText {
 			
 			ClientVoiceToTextHandler handler = new ClientVoiceToTextHandler();
 			ClientVoiceToText.Processor<ClientVoiceToTextHandler> processor = new ClientVoiceToText.Processor<ClientVoiceToTextHandler>(handler);
-			TServerTransport serverTransport = new TServerSocket(9090);
+			TServerTransport serverTransport = new TServerSocket(YSConfig.getInstance().ThriftPort);
 			//TServer server = new TSimpleServer(processor, serverTransport);
 			
 			TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));

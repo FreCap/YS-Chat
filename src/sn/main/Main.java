@@ -1,9 +1,6 @@
 package sn.main;
 
-import redis.clients.jedis.Jedis;
 import sn.net.*;
-import sn.profilo.Party;
-import sn.store.Conversazione;
 import sn.thrift.ServerVoiceToText;
 import ys.db.Memcached;
 import ys.db.Mysql;
@@ -29,8 +26,8 @@ public class Main {
 		
         PresenceServer presenceServer = null;
 		
-		Mysql.init();
-		Memcached.init();
+        Mysql.init();
+	Memcached.init();
         Redis.init();
 		
         ServerVoiceToText.init();
