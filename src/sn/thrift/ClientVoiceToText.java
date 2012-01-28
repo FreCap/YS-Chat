@@ -12,6 +12,7 @@ import org.apache.thrift.scheme.StandardScheme;
 
 import org.apache.thrift.scheme.TupleScheme;
 import org.apache.thrift.protocol.TTupleProtocol;
+import org.apache.thrift.EncodingUtils;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -64,6 +65,7 @@ public class ClientVoiceToText {
     public void info(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift) throws org.apache.thrift.TException
     {
       send_info(server_id, max_clients, DNS, port_TS, port_Thrift);
+      recv_info();
     }
 
     public void send_info(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift) throws org.apache.thrift.TException
@@ -75,6 +77,13 @@ public class ClientVoiceToText {
       args.setPort_TS(port_TS);
       args.setPort_Thrift(port_Thrift);
       sendBase("info", args);
+    }
+
+    public void recv_info() throws org.apache.thrift.TException
+    {
+      info_result result = new info_result();
+      receiveBase(result, "info");
+      return;
     }
 
   }
@@ -109,7 +118,7 @@ public class ClientVoiceToText {
       private int port_TS;
       private int port_Thrift;
       public info_call(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift, org.apache.thrift.async.AsyncMethodCallback<info_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
-        super(client, protocolFactory, transport, resultHandler, true);
+        super(client, protocolFactory, transport, resultHandler, false);
         this.server_id = server_id;
         this.max_clients = max_clients;
         this.DNS = DNS;
@@ -135,6 +144,7 @@ public class ClientVoiceToText {
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_info();
       }
     }
 
@@ -155,18 +165,19 @@ public class ClientVoiceToText {
       return processMap;
     }
 
-    private static class info<I extends Iface> extends org.apache.thrift.ProcessFunction<I, info_args> {
+    public static class info<I extends Iface> extends org.apache.thrift.ProcessFunction<I, info_args> {
       public info() {
         super("info");
       }
 
-      protected info_args getEmptyArgsInstance() {
+      public info_args getEmptyArgsInstance() {
         return new info_args();
       }
 
-      protected org.apache.thrift.TBase getResult(I iface, info_args args) throws org.apache.thrift.TException {
+      public info_result getResult(I iface, info_args args) throws org.apache.thrift.TException {
+        info_result result = new info_result();
         iface.info(args.server_id, args.max_clients, args.DNS, args.port_TS, args.port_Thrift);
-        return null;
+        return result;
       }
     }
 
@@ -268,7 +279,7 @@ public class ClientVoiceToText {
     private static final int __MAX_CLIENTS_ISSET_ID = 1;
     private static final int __PORT_TS_ISSET_ID = 2;
     private static final int __PORT_THRIFT_ISSET_ID = 3;
-    private BitSet __isset_bit_vector = new BitSet(4);
+    private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
@@ -312,8 +323,7 @@ public class ClientVoiceToText {
      * Performs a deep copy on <i>other</i>.
      */
     public info_args(info_args other) {
-      __isset_bit_vector.clear();
-      __isset_bit_vector.or(other.__isset_bit_vector);
+      __isset_bitfield = other.__isset_bitfield;
       this.server_id = other.server_id;
       this.max_clients = other.max_clients;
       if (other.isSetDNS()) {
@@ -351,16 +361,16 @@ public class ClientVoiceToText {
     }
 
     public void unsetServer_id() {
-      __isset_bit_vector.clear(__SERVER_ID_ISSET_ID);
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SERVER_ID_ISSET_ID);
     }
 
     /** Returns true if field server_id is set (has been assigned a value) and false otherwise */
     public boolean isSetServer_id() {
-      return __isset_bit_vector.get(__SERVER_ID_ISSET_ID);
+      return EncodingUtils.testBit(__isset_bitfield, __SERVER_ID_ISSET_ID);
     }
 
     public void setServer_idIsSet(boolean value) {
-      __isset_bit_vector.set(__SERVER_ID_ISSET_ID, value);
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SERVER_ID_ISSET_ID, value);
     }
 
     public int getMax_clients() {
@@ -374,16 +384,16 @@ public class ClientVoiceToText {
     }
 
     public void unsetMax_clients() {
-      __isset_bit_vector.clear(__MAX_CLIENTS_ISSET_ID);
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __MAX_CLIENTS_ISSET_ID);
     }
 
     /** Returns true if field max_clients is set (has been assigned a value) and false otherwise */
     public boolean isSetMax_clients() {
-      return __isset_bit_vector.get(__MAX_CLIENTS_ISSET_ID);
+      return EncodingUtils.testBit(__isset_bitfield, __MAX_CLIENTS_ISSET_ID);
     }
 
     public void setMax_clientsIsSet(boolean value) {
-      __isset_bit_vector.set(__MAX_CLIENTS_ISSET_ID, value);
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __MAX_CLIENTS_ISSET_ID, value);
     }
 
     public String getDNS() {
@@ -421,16 +431,16 @@ public class ClientVoiceToText {
     }
 
     public void unsetPort_TS() {
-      __isset_bit_vector.clear(__PORT_TS_ISSET_ID);
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __PORT_TS_ISSET_ID);
     }
 
     /** Returns true if field port_TS is set (has been assigned a value) and false otherwise */
     public boolean isSetPort_TS() {
-      return __isset_bit_vector.get(__PORT_TS_ISSET_ID);
+      return EncodingUtils.testBit(__isset_bitfield, __PORT_TS_ISSET_ID);
     }
 
     public void setPort_TSIsSet(boolean value) {
-      __isset_bit_vector.set(__PORT_TS_ISSET_ID, value);
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __PORT_TS_ISSET_ID, value);
     }
 
     public int getPort_Thrift() {
@@ -444,16 +454,16 @@ public class ClientVoiceToText {
     }
 
     public void unsetPort_Thrift() {
-      __isset_bit_vector.clear(__PORT_THRIFT_ISSET_ID);
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __PORT_THRIFT_ISSET_ID);
     }
 
     /** Returns true if field port_Thrift is set (has been assigned a value) and false otherwise */
     public boolean isSetPort_Thrift() {
-      return __isset_bit_vector.get(__PORT_THRIFT_ISSET_ID);
+      return EncodingUtils.testBit(__isset_bitfield, __PORT_THRIFT_ISSET_ID);
     }
 
     public void setPort_ThriftIsSet(boolean value) {
-      __isset_bit_vector.set(__PORT_THRIFT_ISSET_ID, value);
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __PORT_THRIFT_ISSET_ID, value);
     }
 
     public void setFieldValue(_Fields field, Object value) {
@@ -716,6 +726,7 @@ public class ClientVoiceToText {
 
     public void validate() throws org.apache.thrift.TException {
       // check for required fields
+      // check for sub-struct validity
     }
 
     private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
@@ -729,7 +740,7 @@ public class ClientVoiceToText {
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
       try {
         // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
-        __isset_bit_vector = new BitSet(1);
+        __isset_bitfield = 0;
         read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
       } catch (org.apache.thrift.TException te) {
         throw new java.io.IOException(te);
@@ -901,6 +912,252 @@ public class ClientVoiceToText {
           struct.port_Thrift = iprot.readI32();
           struct.setPort_ThriftIsSet(true);
         }
+      }
+    }
+
+  }
+
+  public static class info_result implements org.apache.thrift.TBase<info_result, info_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("info_result");
+
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new info_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new info_resultTupleSchemeFactory());
+    }
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(info_result.class, metaDataMap);
+    }
+
+    public info_result() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public info_result(info_result other) {
+    }
+
+    public info_result deepCopy() {
+      return new info_result(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof info_result)
+        return this.equals((info_result)that);
+      return false;
+    }
+
+    public boolean equals(info_result that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(info_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      info_result typedOther = (info_result)other;
+
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("info_result(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class info_resultStandardSchemeFactory implements SchemeFactory {
+      public info_resultStandardScheme getScheme() {
+        return new info_resultStandardScheme();
+      }
+    }
+
+    private static class info_resultStandardScheme extends StandardScheme<info_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, info_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, info_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class info_resultTupleSchemeFactory implements SchemeFactory {
+      public info_resultTupleScheme getScheme() {
+        return new info_resultTupleScheme();
+      }
+    }
+
+    private static class info_resultTupleScheme extends TupleScheme<info_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, info_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, info_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
       }
     }
 

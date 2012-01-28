@@ -57,7 +57,7 @@ public class ServerVoice {
                 
                 ClientTextToVoice.Client client = openClient();
             
-                if(client.new_channel(call_id, channel_pasword)){
+                if(client.new_channel(server_id, call_id, channel_pasword)){
                     
                     closeClient(client);
                     return true;
@@ -81,7 +81,7 @@ public class ServerVoice {
                 
                 ClientTextToVoice.Client client = openClient();
             
-                client.add_client(channel_name, client_name);
+                client.add_client(server_id, channel_name, client_name);
                 
                 closeClient(client);
             

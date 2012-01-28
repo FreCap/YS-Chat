@@ -22,7 +22,7 @@ CALL_SUPPORT: 22, { op:22, support: (bool) }
 CALL_ACCEPT: 23 , { op:23, conv_id:(int) }
 
 
-CALL_HANGUP: 26, // { op:26, conv_id;(int), call_id:(int) }
+CALL_HANGUP: 26, // { op:26, conv_id;(int), call_id:"String" }
 
 
 Server => Client:
@@ -46,4 +46,4 @@ CALL_SUPPORT: 22, { op:22, conv_id:(id), support:(bool)}
 
 CALL_WAIT: 24 , { op:24, conv_id:(int), call_id:"String"}
 CALL: 25 , { op:25, conv_id:(int), call_id:"String", call_password:"String", call_version:(int), server:(int), port:(int) }
-CALL_HANGUP: 26, // { op:26, conv_id;(int), call_id:(int), profilo_id:(int) }
+CALL_HANGUP: 26, // { op:26, conv_id;(int), call_id:"String", profilo_id:(int) }
