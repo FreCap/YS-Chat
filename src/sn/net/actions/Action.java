@@ -22,7 +22,7 @@ public abstract class Action {
     public static Action parseFromString(String data, INSIOClient client) {
         
     	JSONObject obj = (JSONObject) JSONValue.parse(data);
-        
+       
     	int op = Integer.parseInt(Long.toString((Long) obj.get("op")));
         switch (op) {
         	case ActionConnect.MESSAGE_ID:
@@ -62,13 +62,15 @@ public abstract class Action {
                 break;
                 
             // VOCALE SECTION
-                /*    case CALL_RING:
-                break;*/
+            case ActionCall_Ring.MESSAGE_ID:
+                ActionCall_Ring.call_ring(obj, data, client);
+                break;
             case ActionCall_Support.MESSAGE_ID:
             	ActionCall_Support.call_support(obj, data, client);
                 break;
-                /*    case CALL_ACCEPT:
-                break;*/
+            case ActionCall_Accept.MESSAGE_ID:
+                ActionCall_Accept.call_accept(obj, data, client);
+                break;
                 /*    case CALL_HANGUP:
                 break;*/
               

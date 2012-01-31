@@ -57,8 +57,10 @@ public class ServerVoice {
                 
                 ClientTextToVoice.Client client = openClient();
             
-                if(client.new_channel(server_id, call_id, channel_pasword)){
-                    
+				
+				int channel_id = client.channelCreate(server_id, call_id, channel_pasword);
+                if(channel_id > 0){
+                    //TODO
                     closeClient(client);
                     return true;
                     
@@ -75,13 +77,18 @@ public class ServerVoice {
             return false;
         }
         
+         /**
+         * una volta che un client si connette, il calback del server chiede se quel client si può attaccare
+         * a quel determinato channel e il java risponde con un bool
+         * @deprecated
+         **/
          public void add_client(String channel_name, String client_name){
             
             try {
                 
                 ClientTextToVoice.Client client = openClient();
             
-                client.add_client(server_id, channel_name, client_name);
+                //old client.add_client(server_id, channel_name, client_name);
                 
                 closeClient(client);
             

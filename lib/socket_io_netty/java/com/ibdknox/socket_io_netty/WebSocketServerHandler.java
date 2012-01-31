@@ -30,9 +30,9 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names;
 import org.jboss.netty.handler.codec.http.HttpHeaders.Values;
-import org.jboss.netty.handler.codec.http.websocket.WebSocketFrame;
-import org.jboss.netty.handler.codec.http.websocket.WebSocketFrameDecoder;
-import org.jboss.netty.handler.codec.http.websocket.WebSocketFrameEncoder;
+import org.jboss.netty.handler.codec.http.websocketx.WebSocketFrame;
+import org.jboss.netty.handler.codec.http.websocketx.WebSocket08FrameDecoder;
+import org.jboss.netty.handler.codec.http.websocketx.WebSocket08FrameEncoder;
 import org.jboss.netty.util.CharsetUtil;
 import org.jboss.netty.handler.codec.http.QueryStringDecoder;
 import org.slf4j.Logger;
@@ -187,11 +187,11 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
             // Upgrade the connection and send the handshake response.
             ChannelPipeline p = ctx.getChannel().getPipeline();
             p.remove("aggregator");
-            p.replace("decoder", "wsdecoder", new WebSocketFrameDecoder());
+            p.replace("decoder", "wsdecoder", new WebSocket08FrameDecoder(true, true));
 
             ctx.getChannel().write(res);
 
-            p.replace("encoder", "wsencoder", new WebSocketFrameEncoder());
+            p.replace("encoder", "wsencoder", new WebSocket08FrameEncoder(true));
 
             connectSocket(ctx);
             return;
@@ -222,7 +222,7 @@ public class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
 
     private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
         INSIOClient client = getClientByCTX(ctx);
-        handleMessage(client, frame.getTextData());
+        handleMessage(client, frame.getBinaryData().toString());
     }
 
     private void handleMessage(INSIOClient client, String message) {

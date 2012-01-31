@@ -4,9 +4,6 @@ import org.json.simple.JSONObject;
 
 import com.ibdknox.socket_io_netty.INSIOClient;
 
-import sn.profilo.Profilo;
-import sn.profilo.ProfiloModel;
-
 public final class ActionCall_Wait extends Action {
 
     // --- Costanti & Variabili private -----------------------------------------------

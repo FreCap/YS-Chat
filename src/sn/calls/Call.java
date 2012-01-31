@@ -43,14 +43,24 @@ public class Call {
 		if(tipo_called == Conversazione.TIPO_profilo2profilo){
 			
 			Profilo called = (Profilo) called_model;
-			
+			for(int a:called.friends_online.toArray()){
+                            System.out.println(a);
+                            
+                        }
 			if(caller.friends_online.contains(called.profilo_id)){
 			
 				String random_string = "call_id" + (System.currentTimeMillis()/1000) + RandomHash.one();
-				call_id = SecureHash.Md5(random_string);	
-				
-				if(!called.channel_id_connectedVoiceSupport.isEmpty()){
-					
+				call_id = SecureHash.Md5(random_string);	                               
+                                
+				if(caller.channel_id_connectedVoiceSupport.isEmpty()){
+                                    
+                                    caller.call_notSupportedBy(caller.profilo_id);
+                                
+                                }else if(called.channel_id_connectedVoiceSupport.isEmpty()){
+                                    
+                                    caller.call_notSupportedBy(called.profilo_id);
+                                
+                                }else{
 					caller.call_wait(caller.profilo_id, call_id);	
 					
 					caller_id = caller.profilo_id;
@@ -58,8 +68,6 @@ public class Call {
 	
 					calls.put(Conversazione.get_id_conversazione(caller_id, called_id, called.get_tipo()), this);
 					
-				}else{
-					caller.call_notSupportedBy(called.profilo_id);
 				}
 	
 				called.call_ring(caller.profilo_id, caller.profilo_id, call_id);
@@ -79,18 +87,25 @@ public class Call {
 			caller_id = caller.profilo_id;
 			called_id = called.profilo_id;
 			
-			// se ci sono utenti connessi restituisce true
-			if(called.call_ring(called_id, caller_id, call_id)){
-				
-				caller.call_wait(caller.profilo_id, call_id);	
-				calls.put(Conversazione.get_id_conversazione(caller_id, called_id, called.get_tipo()), this);
+                        if(!caller.channel_id_connectedVoiceSupport.isEmpty()){
+                       
+                            // se ci sono utenti connessi restituisce true
+                            if(called.call_ring(called_id, caller_id, call_id)){
 
-			}else{
-				
-				//TODO nessun utente del gruppo/party online
-				
-			}
+                                    caller.call_wait(caller.profilo_id, call_id);	
+                                    calls.put(Conversazione.get_id_conversazione(caller_id, called_id, called.get_tipo()), this);
+
+                            }else{
+
+                                    //TODO nessun utente del gruppo/party online
+
+                            }
 			
+                        }else{
+                            
+                             caller.call_notSupportedBy(caller.profilo_id);
+                        
+                        }
 		}	
 	}
         

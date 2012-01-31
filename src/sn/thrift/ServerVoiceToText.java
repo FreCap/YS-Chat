@@ -17,92 +17,123 @@ public class ServerVoiceToText {
 
 	
 
-	public static class ClientVoiceToTextHandler implements ClientVoiceToText.Iface {
+    public static class ClientVoiceToTextHandler implements ClientVoiceToText.Iface {
 	
-            final Logger logger = LoggerFactory.getLogger(ClientVoiceToTextHandler.class);
+        final Logger logger = LoggerFactory.getLogger(ClientVoiceToTextHandler.class);
             
-		public ClientVoiceToTextHandler() {
+	public ClientVoiceToTextHandler() {
 		
-		}
+	}
 	
-		@Override
-		public void info(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift)
-				throws TException {
+	@Override
+	public void info(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift)
+			throws TException {
 			
-                    logger.info("Info " + String.valueOf(server_id) + " " + String.valueOf(max_clients) + " " + String.valueOf(DNS) + " " + String.valueOf(port_TS) + " " + String.valueOf(port_Thrift) );
+                logger.info("Thrift <-Voice Info " + String.valueOf(server_id) + " " + String.valueOf(max_clients) + " " + String.valueOf(DNS) + " " + String.valueOf(port_TS) + " " + String.valueOf(port_Thrift) );
                     
-			if(ServerVoice.server.containsKey(server_id)){				
+		if(ServerVoice.server.containsKey(server_id)){				
 				
-			}else{
+		}else{
 				
-				ServerVoice server = new ServerVoice();
-				server.server_id = server_id;
-				server.max_clients = max_clients;
-				server.DNS = DNS;
-				//TODO ADD thrift's port and TS's port
-				server.port_TS = port_TS;
-                                server.port_Thrift = port_Thrift;
-                                
-				ServerVoice.server.put(server_id, server);
+			ServerVoice server = new ServerVoice();
+			server.server_id = server_id;
+			server.max_clients = max_clients;
+			server.DNS = DNS;
+			//TODO ADD thrift's port and TS's port
+			server.port_TS = port_TS;
+                        server.port_Thrift = port_Thrift;
+                               
+			ServerVoice.server.put(server_id, server);
 				
-			}
+		}
+	}
+
+		@Override
+		public boolean onClientConnected(int server_id, int clientID, int channelID, String clientNick) throws TException {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		@Override
+		public boolean onClientDisconnected(int server_id, int clientID, int channelID, String clientNick) throws TException {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		@Override
+		public boolean onClientMoved(int server_id, int clientID, int oldChannelID, int newChannelID, String clientNick) throws TException {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		@Override
+		public boolean onChannelCreated(int server_id, int invokerClientID, int channelID, String clientNick) throws TException {
+			logger.info("Thrift <-Voice onChannelCreated " + String.valueOf(server_id) + " " + String.valueOf(invokerClientID) + " " + String.valueOf(channelID) + " " + String.valueOf(clientNick) );
+			//TODO
+			return true;
+		}
+
+		@Override
+		public boolean onChannelEdited(int server_id, int invokerClientID, int channelID, String clientNick) throws TException {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		@Override
+		public boolean onChannelDeleted(int server_id, int invokerClientID, int channelID, String clientNick) throws TException {
+			throw new UnsupportedOperationException("Not supported yet.");
 		}
 	
+    }
+	
+	
+    public static void start(){
+		
+        try {	
+			
+            ClientVoiceToTextHandler handler = new ClientVoiceToTextHandler();
+            ClientVoiceToText.Processor<ClientVoiceToTextHandler> processor = new ClientVoiceToText.Processor<ClientVoiceToTextHandler>(handler);
+            TServerTransport serverTransport = new TServerSocket(YSConfig.getInstance().ThriftPort);
+            //TServer server = new TSimpleServer(processor, serverTransport);
+            TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor).protocolFactory(new TBinaryProtocol.Factory(true, true)));
+			
+            /*
+            TNonblockingServerTransport serverTransport = new TNonblockingServerSocket(YSConfig.getInstance().ThriftPort);
+            //TNonblockingServer.Args args = new TNonblockingServer.Args(serverTransport);
+            THsHaServer.Args args = new THsHaServer.Args(serverTransport);
+            args.processor(processor);
+            args.transportFactory(new TTransportFactory());
+            args.protocolFactory(new TBinaryProtocol.Factory(true, true));
+            //TServer server = new TThreadPoolServer(args);
+                        
+            //TServer server = new TNonblockingServer(args);
+               TServer server = new THsHaServer(args);
+                        
+            System.out.println("Initialing Thrift: ServerVoiceToText");		
+            server.serve();
+                        
+            */
+                        
+            System.out.println("Thrift from Voice started");
+            /* 
+            TServerTransport serverTransport = new TServerSocket(YSConfig.getInstance().ThriftPort);
+            TServer server = new TSimpleServer(new TServer.Args(serverTransport).processor(processor).protocolFactory(new TBinaryProtocol.Factory(true, true)));
+            */
+                        
+            server.serve();
+			
+	} catch (Exception x) {
+            x.printStackTrace();
 	}
-	
-	
-	public static void start(){
 		
-		try {	
-			
-			ClientVoiceToTextHandler handler = new ClientVoiceToTextHandler();
-			ClientVoiceToText.Processor<ClientVoiceToTextHandler> processor = new ClientVoiceToText.Processor<ClientVoiceToTextHandler>(handler);
-			TServerTransport serverTransport = new TServerSocket(YSConfig.getInstance().ThriftPort);
-			//TServer server = new TSimpleServer(processor, serverTransport);
-                  	TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor).protocolFactory(new TBinaryProtocol.Factory(true, true)));
-			
-                       /*
-                        TNonblockingServerTransport serverTransport = new TNonblockingServerSocket(YSConfig.getInstance().ThriftPort);
-                        //TNonblockingServer.Args args = new TNonblockingServer.Args(serverTransport);
-                        THsHaServer.Args args = new THsHaServer.Args(serverTransport);
-                        args.processor(processor);
-                        args.transportFactory(new TTransportFactory());
-                        args.protocolFactory(new TBinaryProtocol.Factory(true, true));
-                        //TServer server = new TThreadPoolServer(args);
-                        
-                        
-                        //TServer server = new TNonblockingServer(args);
-TServer server = new THsHaServer(args);
-                        
-			System.out.println("Initialing Thrift: ServerVoiceToText");		
-			server.serve();
-                        
-                        */
-                        
-                         System.out.println("Thrift from Voice started");
-                        /* 
-                        TServerTransport serverTransport = new TServerSocket(YSConfig.getInstance().ThriftPort);
-                        TServer server = new TSimpleServer(new TServer.Args(serverTransport).processor(processor).protocolFactory(new TBinaryProtocol.Factory(true, true)));
-                        */
-                        
-                        server.serve();
-			
-		} catch (Exception x) {
-			x.printStackTrace();
-		}
-		
-	}
+    }
 	
-	public static void init() {
+    public static void init() {
 		
-		Runnable s = new Runnable() {
-			public void run() {
-				start();
-			}
-		};      
+        Runnable s = new Runnable() {
+            public void run() {
+                start();
+            }
+	};      
 		     
-		new Thread(s).start();
+	new Thread(s).start();
 		
-	}
+    }
 
 }

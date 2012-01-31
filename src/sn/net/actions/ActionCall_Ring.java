@@ -31,7 +31,7 @@ public final class ActionCall_Ring extends Action {
 			FastSet list = profilo.friends_online;
 			for (int profilo_id_friend : list.toArray()) {			
 				if(profilo_id_friend == conv_id){
-					ProfiloModel profiloCalled = ProfiloModel.profili.get(profilo_id);
+					ProfiloModel profiloCalled = ProfiloModel.profili.get(conv_id);
 					String conversazione_id = Conversazione.get_id_conversazione(profilo_id, profiloCalled.profilo_id, profiloCalled.get_tipo());
 
 					if(Call.calls.containsKey(conversazione_id)){

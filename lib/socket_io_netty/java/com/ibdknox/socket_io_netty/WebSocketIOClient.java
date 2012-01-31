@@ -2,7 +2,7 @@ package com.ibdknox.socket_io_netty;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.handler.codec.http.websocket.DefaultWebSocketFrame;
+import org.jboss.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
 
 public class WebSocketIOClient extends GenericIOClient {
@@ -17,7 +17,7 @@ public class WebSocketIOClient extends GenericIOClient {
 
         Channel chan = ctx.getChannel();
         if(chan.isOpen()) {
-            chan.write(new DefaultWebSocketFrame(message));
+            chan.write(new TextWebSocketFrame(message));
         } else {
             this.disconnect();
         }

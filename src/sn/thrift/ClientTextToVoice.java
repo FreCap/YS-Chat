@@ -32,17 +32,21 @@ public class ClientTextToVoice {
 
   public interface Iface {
 
-    public boolean new_channel(int server_id, String nome, String password) throws org.apache.thrift.TException;
+    public int channelCreate(int server_id, String nome, String password) throws org.apache.thrift.TException;
 
-    public boolean add_client(int server_id, String channel_name, String client_name) throws org.apache.thrift.TException;
+    public boolean channelDelete(int server_id, String nome) throws org.apache.thrift.TException;
+
+    public boolean disconnectClient(int server_id, String clientID) throws org.apache.thrift.TException;
 
   }
 
   public interface AsyncIface {
 
-    public void new_channel(int server_id, String nome, String password, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.new_channel_call> resultHandler) throws org.apache.thrift.TException;
+    public void channelCreate(int server_id, String nome, String password, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.channelCreate_call> resultHandler) throws org.apache.thrift.TException;
 
-    public void add_client(int server_id, String channel_name, String client_name, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.add_client_call> resultHandler) throws org.apache.thrift.TException;
+    public void channelDelete(int server_id, String nome, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.channelDelete_call> resultHandler) throws org.apache.thrift.TException;
+
+    public void disconnectClient(int server_id, String clientID, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.disconnectClient_call> resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -66,54 +70,77 @@ public class ClientTextToVoice {
       super(iprot, oprot);
     }
 
-    public boolean new_channel(int server_id, String nome, String password) throws org.apache.thrift.TException
+    public int channelCreate(int server_id, String nome, String password) throws org.apache.thrift.TException
     {
-      send_new_channel(server_id, nome, password);
-      return recv_new_channel();
+      send_channelCreate(server_id, nome, password);
+      return recv_channelCreate();
     }
 
-    public void send_new_channel(int server_id, String nome, String password) throws org.apache.thrift.TException
+    public void send_channelCreate(int server_id, String nome, String password) throws org.apache.thrift.TException
     {
-      new_channel_args args = new new_channel_args();
+      channelCreate_args args = new channelCreate_args();
       args.setServer_id(server_id);
       args.setNome(nome);
       args.setPassword(password);
-      sendBase("new_channel", args);
+      sendBase("channelCreate", args);
     }
 
-    public boolean recv_new_channel() throws org.apache.thrift.TException
+    public int recv_channelCreate() throws org.apache.thrift.TException
     {
-      new_channel_result result = new new_channel_result();
-      receiveBase(result, "new_channel");
+      channelCreate_result result = new channelCreate_result();
+      receiveBase(result, "channelCreate");
       if (result.isSetSuccess()) {
         return result.success;
       }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "new_channel failed: unknown result");
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "channelCreate failed: unknown result");
     }
 
-    public boolean add_client(int server_id, String channel_name, String client_name) throws org.apache.thrift.TException
+    public boolean channelDelete(int server_id, String nome) throws org.apache.thrift.TException
     {
-      send_add_client(server_id, channel_name, client_name);
-      return recv_add_client();
+      send_channelDelete(server_id, nome);
+      return recv_channelDelete();
     }
 
-    public void send_add_client(int server_id, String channel_name, String client_name) throws org.apache.thrift.TException
+    public void send_channelDelete(int server_id, String nome) throws org.apache.thrift.TException
     {
-      add_client_args args = new add_client_args();
+      channelDelete_args args = new channelDelete_args();
       args.setServer_id(server_id);
-      args.setChannel_name(channel_name);
-      args.setClient_name(client_name);
-      sendBase("add_client", args);
+      args.setNome(nome);
+      sendBase("channelDelete", args);
     }
 
-    public boolean recv_add_client() throws org.apache.thrift.TException
+    public boolean recv_channelDelete() throws org.apache.thrift.TException
     {
-      add_client_result result = new add_client_result();
-      receiveBase(result, "add_client");
+      channelDelete_result result = new channelDelete_result();
+      receiveBase(result, "channelDelete");
       if (result.isSetSuccess()) {
         return result.success;
       }
-      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "add_client failed: unknown result");
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "channelDelete failed: unknown result");
+    }
+
+    public boolean disconnectClient(int server_id, String clientID) throws org.apache.thrift.TException
+    {
+      send_disconnectClient(server_id, clientID);
+      return recv_disconnectClient();
+    }
+
+    public void send_disconnectClient(int server_id, String clientID) throws org.apache.thrift.TException
+    {
+      disconnectClient_args args = new disconnectClient_args();
+      args.setServer_id(server_id);
+      args.setClientID(clientID);
+      sendBase("disconnectClient", args);
+    }
+
+    public boolean recv_disconnectClient() throws org.apache.thrift.TException
+    {
+      disconnectClient_result result = new disconnectClient_result();
+      receiveBase(result, "disconnectClient");
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "disconnectClient failed: unknown result");
     }
 
   }
@@ -134,18 +161,18 @@ public class ClientTextToVoice {
       super(protocolFactory, clientManager, transport);
     }
 
-    public void new_channel(int server_id, String nome, String password, org.apache.thrift.async.AsyncMethodCallback<new_channel_call> resultHandler) throws org.apache.thrift.TException {
+    public void channelCreate(int server_id, String nome, String password, org.apache.thrift.async.AsyncMethodCallback<channelCreate_call> resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      new_channel_call method_call = new new_channel_call(server_id, nome, password, resultHandler, this, ___protocolFactory, ___transport);
+      channelCreate_call method_call = new channelCreate_call(server_id, nome, password, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
-    public static class new_channel_call extends org.apache.thrift.async.TAsyncMethodCall {
+    public static class channelCreate_call extends org.apache.thrift.async.TAsyncMethodCall {
       private int server_id;
       private String nome;
       private String password;
-      public new_channel_call(int server_id, String nome, String password, org.apache.thrift.async.AsyncMethodCallback<new_channel_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      public channelCreate_call(int server_id, String nome, String password, org.apache.thrift.async.AsyncMethodCallback<channelCreate_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.server_id = server_id;
         this.nome = nome;
@@ -153,8 +180,8 @@ public class ClientTextToVoice {
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("new_channel", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        new_channel_args args = new new_channel_args();
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("channelCreate", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        channelCreate_args args = new channelCreate_args();
         args.setServer_id(server_id);
         args.setNome(nome);
         args.setPassword(password);
@@ -162,40 +189,37 @@ public class ClientTextToVoice {
         prot.writeMessageEnd();
       }
 
-      public boolean getResult() throws org.apache.thrift.TException {
+      public int getResult() throws org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_new_channel();
+        return (new Client(prot)).recv_channelCreate();
       }
     }
 
-    public void add_client(int server_id, String channel_name, String client_name, org.apache.thrift.async.AsyncMethodCallback<add_client_call> resultHandler) throws org.apache.thrift.TException {
+    public void channelDelete(int server_id, String nome, org.apache.thrift.async.AsyncMethodCallback<channelDelete_call> resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      add_client_call method_call = new add_client_call(server_id, channel_name, client_name, resultHandler, this, ___protocolFactory, ___transport);
+      channelDelete_call method_call = new channelDelete_call(server_id, nome, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
 
-    public static class add_client_call extends org.apache.thrift.async.TAsyncMethodCall {
+    public static class channelDelete_call extends org.apache.thrift.async.TAsyncMethodCall {
       private int server_id;
-      private String channel_name;
-      private String client_name;
-      public add_client_call(int server_id, String channel_name, String client_name, org.apache.thrift.async.AsyncMethodCallback<add_client_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private String nome;
+      public channelDelete_call(int server_id, String nome, org.apache.thrift.async.AsyncMethodCallback<channelDelete_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.server_id = server_id;
-        this.channel_name = channel_name;
-        this.client_name = client_name;
+        this.nome = nome;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("add_client", org.apache.thrift.protocol.TMessageType.CALL, 0));
-        add_client_args args = new add_client_args();
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("channelDelete", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        channelDelete_args args = new channelDelete_args();
         args.setServer_id(server_id);
-        args.setChannel_name(channel_name);
-        args.setClient_name(client_name);
+        args.setNome(nome);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -206,7 +230,42 @@ public class ClientTextToVoice {
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        return (new Client(prot)).recv_add_client();
+        return (new Client(prot)).recv_channelDelete();
+      }
+    }
+
+    public void disconnectClient(int server_id, String clientID, org.apache.thrift.async.AsyncMethodCallback<disconnectClient_call> resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      disconnectClient_call method_call = new disconnectClient_call(server_id, clientID, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class disconnectClient_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private int server_id;
+      private String clientID;
+      public disconnectClient_call(int server_id, String clientID, org.apache.thrift.async.AsyncMethodCallback<disconnectClient_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.server_id = server_id;
+        this.clientID = clientID;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("disconnectClient", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        disconnectClient_args args = new disconnectClient_args();
+        args.setServer_id(server_id);
+        args.setClientID(clientID);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public boolean getResult() throws org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        return (new Client(prot)).recv_disconnectClient();
       }
     }
 
@@ -223,40 +282,58 @@ public class ClientTextToVoice {
     }
 
     private static <I extends Iface> Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> getProcessMap(Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> processMap) {
-      processMap.put("new_channel", new new_channel());
-      processMap.put("add_client", new add_client());
+      processMap.put("channelCreate", new channelCreate());
+      processMap.put("channelDelete", new channelDelete());
+      processMap.put("disconnectClient", new disconnectClient());
       return processMap;
     }
 
-    public static class new_channel<I extends Iface> extends org.apache.thrift.ProcessFunction<I, new_channel_args> {
-      public new_channel() {
-        super("new_channel");
+    public static class channelCreate<I extends Iface> extends org.apache.thrift.ProcessFunction<I, channelCreate_args> {
+      public channelCreate() {
+        super("channelCreate");
       }
 
-      public new_channel_args getEmptyArgsInstance() {
-        return new new_channel_args();
+      public channelCreate_args getEmptyArgsInstance() {
+        return new channelCreate_args();
       }
 
-      public new_channel_result getResult(I iface, new_channel_args args) throws org.apache.thrift.TException {
-        new_channel_result result = new new_channel_result();
-        result.success = iface.new_channel(args.server_id, args.nome, args.password);
+      public channelCreate_result getResult(I iface, channelCreate_args args) throws org.apache.thrift.TException {
+        channelCreate_result result = new channelCreate_result();
+        result.success = iface.channelCreate(args.server_id, args.nome, args.password);
         result.setSuccessIsSet(true);
         return result;
       }
     }
 
-    public static class add_client<I extends Iface> extends org.apache.thrift.ProcessFunction<I, add_client_args> {
-      public add_client() {
-        super("add_client");
+    public static class channelDelete<I extends Iface> extends org.apache.thrift.ProcessFunction<I, channelDelete_args> {
+      public channelDelete() {
+        super("channelDelete");
       }
 
-      public add_client_args getEmptyArgsInstance() {
-        return new add_client_args();
+      public channelDelete_args getEmptyArgsInstance() {
+        return new channelDelete_args();
       }
 
-      public add_client_result getResult(I iface, add_client_args args) throws org.apache.thrift.TException {
-        add_client_result result = new add_client_result();
-        result.success = iface.add_client(args.server_id, args.channel_name, args.client_name);
+      public channelDelete_result getResult(I iface, channelDelete_args args) throws org.apache.thrift.TException {
+        channelDelete_result result = new channelDelete_result();
+        result.success = iface.channelDelete(args.server_id, args.nome);
+        result.setSuccessIsSet(true);
+        return result;
+      }
+    }
+
+    public static class disconnectClient<I extends Iface> extends org.apache.thrift.ProcessFunction<I, disconnectClient_args> {
+      public disconnectClient() {
+        super("disconnectClient");
+      }
+
+      public disconnectClient_args getEmptyArgsInstance() {
+        return new disconnectClient_args();
+      }
+
+      public disconnectClient_result getResult(I iface, disconnectClient_args args) throws org.apache.thrift.TException {
+        disconnectClient_result result = new disconnectClient_result();
+        result.success = iface.disconnectClient(args.server_id, args.clientID);
         result.setSuccessIsSet(true);
         return result;
       }
@@ -264,8 +341,8 @@ public class ClientTextToVoice {
 
   }
 
-  public static class new_channel_args implements org.apache.thrift.TBase<new_channel_args, new_channel_args._Fields>, java.io.Serializable, Cloneable   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("new_channel_args");
+  public static class channelCreate_args implements org.apache.thrift.TBase<channelCreate_args, channelCreate_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("channelCreate_args");
 
     private static final org.apache.thrift.protocol.TField SERVER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("server_id", org.apache.thrift.protocol.TType.I32, (short)1);
     private static final org.apache.thrift.protocol.TField NOME_FIELD_DESC = new org.apache.thrift.protocol.TField("nome", org.apache.thrift.protocol.TType.STRING, (short)2);
@@ -273,8 +350,8 @@ public class ClientTextToVoice {
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new new_channel_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new new_channel_argsTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new channelCreate_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new channelCreate_argsTupleSchemeFactory());
     }
 
     public int server_id; // required
@@ -358,13 +435,13 @@ public class ClientTextToVoice {
       tmpMap.put(_Fields.PASSWORD, new org.apache.thrift.meta_data.FieldMetaData("password", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(new_channel_args.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(channelCreate_args.class, metaDataMap);
     }
 
-    public new_channel_args() {
+    public channelCreate_args() {
     }
 
-    public new_channel_args(
+    public channelCreate_args(
       int server_id,
       String nome,
       String password)
@@ -379,7 +456,7 @@ public class ClientTextToVoice {
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public new_channel_args(new_channel_args other) {
+    public channelCreate_args(channelCreate_args other) {
       __isset_bitfield = other.__isset_bitfield;
       this.server_id = other.server_id;
       if (other.isSetNome()) {
@@ -390,8 +467,8 @@ public class ClientTextToVoice {
       }
     }
 
-    public new_channel_args deepCopy() {
-      return new new_channel_args(this);
+    public channelCreate_args deepCopy() {
+      return new channelCreate_args(this);
     }
 
     @Override
@@ -406,7 +483,7 @@ public class ClientTextToVoice {
       return this.server_id;
     }
 
-    public new_channel_args setServer_id(int server_id) {
+    public channelCreate_args setServer_id(int server_id) {
       this.server_id = server_id;
       setServer_idIsSet(true);
       return this;
@@ -429,7 +506,7 @@ public class ClientTextToVoice {
       return this.nome;
     }
 
-    public new_channel_args setNome(String nome) {
+    public channelCreate_args setNome(String nome) {
       this.nome = nome;
       return this;
     }
@@ -453,7 +530,7 @@ public class ClientTextToVoice {
       return this.password;
     }
 
-    public new_channel_args setPassword(String password) {
+    public channelCreate_args setPassword(String password) {
       this.password = password;
       return this;
     }
@@ -538,12 +615,12 @@ public class ClientTextToVoice {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof new_channel_args)
-        return this.equals((new_channel_args)that);
+      if (that instanceof channelCreate_args)
+        return this.equals((channelCreate_args)that);
       return false;
     }
 
-    public boolean equals(new_channel_args that) {
+    public boolean equals(channelCreate_args that) {
       if (that == null)
         return false;
 
@@ -582,13 +659,13 @@ public class ClientTextToVoice {
       return 0;
     }
 
-    public int compareTo(new_channel_args other) {
+    public int compareTo(channelCreate_args other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
 
       int lastComparison = 0;
-      new_channel_args typedOther = (new_channel_args)other;
+      channelCreate_args typedOther = (channelCreate_args)other;
 
       lastComparison = Boolean.valueOf(isSetServer_id()).compareTo(typedOther.isSetServer_id());
       if (lastComparison != 0) {
@@ -637,7 +714,7 @@ public class ClientTextToVoice {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("new_channel_args(");
+      StringBuilder sb = new StringBuilder("channelCreate_args(");
       boolean first = true;
 
       sb.append("server_id:");
@@ -686,15 +763,15 @@ public class ClientTextToVoice {
       }
     }
 
-    private static class new_channel_argsStandardSchemeFactory implements SchemeFactory {
-      public new_channel_argsStandardScheme getScheme() {
-        return new new_channel_argsStandardScheme();
+    private static class channelCreate_argsStandardSchemeFactory implements SchemeFactory {
+      public channelCreate_argsStandardScheme getScheme() {
+        return new channelCreate_argsStandardScheme();
       }
     }
 
-    private static class new_channel_argsStandardScheme extends StandardScheme<new_channel_args> {
+    private static class channelCreate_argsStandardScheme extends StandardScheme<channelCreate_args> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, new_channel_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, channelCreate_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -739,7 +816,7 @@ public class ClientTextToVoice {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, new_channel_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, channelCreate_args struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
@@ -762,16 +839,16 @@ public class ClientTextToVoice {
 
     }
 
-    private static class new_channel_argsTupleSchemeFactory implements SchemeFactory {
-      public new_channel_argsTupleScheme getScheme() {
-        return new new_channel_argsTupleScheme();
+    private static class channelCreate_argsTupleSchemeFactory implements SchemeFactory {
+      public channelCreate_argsTupleScheme getScheme() {
+        return new channelCreate_argsTupleScheme();
       }
     }
 
-    private static class new_channel_argsTupleScheme extends TupleScheme<new_channel_args> {
+    private static class channelCreate_argsTupleScheme extends TupleScheme<channelCreate_args> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, new_channel_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, channelCreate_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetServer_id()) {
@@ -796,7 +873,7 @@ public class ClientTextToVoice {
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, new_channel_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, channelCreate_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(3);
         if (incoming.get(0)) {
@@ -816,18 +893,18 @@ public class ClientTextToVoice {
 
   }
 
-  public static class new_channel_result implements org.apache.thrift.TBase<new_channel_result, new_channel_result._Fields>, java.io.Serializable, Cloneable   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("new_channel_result");
+  public static class channelCreate_result implements org.apache.thrift.TBase<channelCreate_result, channelCreate_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("channelCreate_result");
 
-    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.BOOL, (short)0);
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.I32, (short)0);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new new_channel_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new new_channel_resultTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new channelCreate_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new channelCreate_resultTupleSchemeFactory());
     }
 
-    public boolean success; // required
+    public int success; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -894,16 +971,16 @@ public class ClientTextToVoice {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(new_channel_result.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(channelCreate_result.class, metaDataMap);
     }
 
-    public new_channel_result() {
+    public channelCreate_result() {
     }
 
-    public new_channel_result(
-      boolean success)
+    public channelCreate_result(
+      int success)
     {
       this();
       this.success = success;
@@ -913,26 +990,26 @@ public class ClientTextToVoice {
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public new_channel_result(new_channel_result other) {
+    public channelCreate_result(channelCreate_result other) {
       __isset_bitfield = other.__isset_bitfield;
       this.success = other.success;
     }
 
-    public new_channel_result deepCopy() {
-      return new new_channel_result(this);
+    public channelCreate_result deepCopy() {
+      return new channelCreate_result(this);
     }
 
     @Override
     public void clear() {
       setSuccessIsSet(false);
-      this.success = false;
+      this.success = 0;
     }
 
-    public boolean isSuccess() {
+    public int getSuccess() {
       return this.success;
     }
 
-    public new_channel_result setSuccess(boolean success) {
+    public channelCreate_result setSuccess(int success) {
       this.success = success;
       setSuccessIsSet(true);
       return this;
@@ -957,7 +1034,7 @@ public class ClientTextToVoice {
         if (value == null) {
           unsetSuccess();
         } else {
-          setSuccess((Boolean)value);
+          setSuccess((Integer)value);
         }
         break;
 
@@ -967,7 +1044,7 @@ public class ClientTextToVoice {
     public Object getFieldValue(_Fields field) {
       switch (field) {
       case SUCCESS:
-        return Boolean.valueOf(isSuccess());
+        return Integer.valueOf(getSuccess());
 
       }
       throw new IllegalStateException();
@@ -990,12 +1067,12 @@ public class ClientTextToVoice {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof new_channel_result)
-        return this.equals((new_channel_result)that);
+      if (that instanceof channelCreate_result)
+        return this.equals((channelCreate_result)that);
       return false;
     }
 
-    public boolean equals(new_channel_result that) {
+    public boolean equals(channelCreate_result that) {
       if (that == null)
         return false;
 
@@ -1016,13 +1093,13 @@ public class ClientTextToVoice {
       return 0;
     }
 
-    public int compareTo(new_channel_result other) {
+    public int compareTo(channelCreate_result other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
 
       int lastComparison = 0;
-      new_channel_result typedOther = (new_channel_result)other;
+      channelCreate_result typedOther = (channelCreate_result)other;
 
       lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(typedOther.isSetSuccess());
       if (lastComparison != 0) {
@@ -1051,7 +1128,7 @@ public class ClientTextToVoice {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("new_channel_result(");
+      StringBuilder sb = new StringBuilder("channelCreate_result(");
       boolean first = true;
 
       sb.append("success:");
@@ -1082,15 +1159,15 @@ public class ClientTextToVoice {
       }
     }
 
-    private static class new_channel_resultStandardSchemeFactory implements SchemeFactory {
-      public new_channel_resultStandardScheme getScheme() {
-        return new new_channel_resultStandardScheme();
+    private static class channelCreate_resultStandardSchemeFactory implements SchemeFactory {
+      public channelCreate_resultStandardScheme getScheme() {
+        return new channelCreate_resultStandardScheme();
       }
     }
 
-    private static class new_channel_resultStandardScheme extends StandardScheme<new_channel_result> {
+    private static class channelCreate_resultStandardScheme extends StandardScheme<channelCreate_result> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, new_channel_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, channelCreate_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -1101,8 +1178,8 @@ public class ClientTextToVoice {
           }
           switch (schemeField.id) {
             case 0: // SUCCESS
-              if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
-                struct.success = iprot.readBool();
+              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                struct.success = iprot.readI32();
                 struct.setSuccessIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -1119,12 +1196,12 @@ public class ClientTextToVoice {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, new_channel_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, channelCreate_result struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
         oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
-        oprot.writeBool(struct.success);
+        oprot.writeI32(struct.success);
         oprot.writeFieldEnd();
         oprot.writeFieldStop();
         oprot.writeStructEnd();
@@ -1132,16 +1209,16 @@ public class ClientTextToVoice {
 
     }
 
-    private static class new_channel_resultTupleSchemeFactory implements SchemeFactory {
-      public new_channel_resultTupleScheme getScheme() {
-        return new new_channel_resultTupleScheme();
+    private static class channelCreate_resultTupleSchemeFactory implements SchemeFactory {
+      public channelCreate_resultTupleScheme getScheme() {
+        return new channelCreate_resultTupleScheme();
       }
     }
 
-    private static class new_channel_resultTupleScheme extends TupleScheme<new_channel_result> {
+    private static class channelCreate_resultTupleScheme extends TupleScheme<channelCreate_result> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, new_channel_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, channelCreate_result struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetSuccess()) {
@@ -1149,16 +1226,16 @@ public class ClientTextToVoice {
         }
         oprot.writeBitSet(optionals, 1);
         if (struct.isSetSuccess()) {
-          oprot.writeBool(struct.success);
+          oprot.writeI32(struct.success);
         }
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, new_channel_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, channelCreate_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
-          struct.success = iprot.readBool();
+          struct.success = iprot.readI32();
           struct.setSuccessIsSet(true);
         }
       }
@@ -1166,28 +1243,25 @@ public class ClientTextToVoice {
 
   }
 
-  public static class add_client_args implements org.apache.thrift.TBase<add_client_args, add_client_args._Fields>, java.io.Serializable, Cloneable   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("add_client_args");
+  public static class channelDelete_args implements org.apache.thrift.TBase<channelDelete_args, channelDelete_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("channelDelete_args");
 
     private static final org.apache.thrift.protocol.TField SERVER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("server_id", org.apache.thrift.protocol.TType.I32, (short)1);
-    private static final org.apache.thrift.protocol.TField CHANNEL_NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("channel_name", org.apache.thrift.protocol.TType.STRING, (short)2);
-    private static final org.apache.thrift.protocol.TField CLIENT_NAME_FIELD_DESC = new org.apache.thrift.protocol.TField("client_name", org.apache.thrift.protocol.TType.STRING, (short)3);
+    private static final org.apache.thrift.protocol.TField NOME_FIELD_DESC = new org.apache.thrift.protocol.TField("nome", org.apache.thrift.protocol.TType.STRING, (short)2);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new add_client_argsStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new add_client_argsTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new channelDelete_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new channelDelete_argsTupleSchemeFactory());
     }
 
     public int server_id; // required
-    public String channel_name; // required
-    public String client_name; // required
+    public String nome; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       SERVER_ID((short)1, "server_id"),
-      CHANNEL_NAME((short)2, "channel_name"),
-      CLIENT_NAME((short)3, "client_name");
+      NOME((short)2, "nome");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -1204,10 +1278,8 @@ public class ClientTextToVoice {
         switch(fieldId) {
           case 1: // SERVER_ID
             return SERVER_ID;
-          case 2: // CHANNEL_NAME
-            return CHANNEL_NAME;
-          case 3: // CLIENT_NAME
-            return CLIENT_NAME;
+          case 2: // NOME
+            return NOME;
           default:
             return null;
         }
@@ -1255,60 +1327,52 @@ public class ClientTextToVoice {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.SERVER_ID, new org.apache.thrift.meta_data.FieldMetaData("server_id", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-      tmpMap.put(_Fields.CHANNEL_NAME, new org.apache.thrift.meta_data.FieldMetaData("channel_name", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-      tmpMap.put(_Fields.CLIENT_NAME, new org.apache.thrift.meta_data.FieldMetaData("client_name", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+      tmpMap.put(_Fields.NOME, new org.apache.thrift.meta_data.FieldMetaData("nome", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(add_client_args.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(channelDelete_args.class, metaDataMap);
     }
 
-    public add_client_args() {
+    public channelDelete_args() {
     }
 
-    public add_client_args(
+    public channelDelete_args(
       int server_id,
-      String channel_name,
-      String client_name)
+      String nome)
     {
       this();
       this.server_id = server_id;
       setServer_idIsSet(true);
-      this.channel_name = channel_name;
-      this.client_name = client_name;
+      this.nome = nome;
     }
 
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public add_client_args(add_client_args other) {
+    public channelDelete_args(channelDelete_args other) {
       __isset_bitfield = other.__isset_bitfield;
       this.server_id = other.server_id;
-      if (other.isSetChannel_name()) {
-        this.channel_name = other.channel_name;
-      }
-      if (other.isSetClient_name()) {
-        this.client_name = other.client_name;
+      if (other.isSetNome()) {
+        this.nome = other.nome;
       }
     }
 
-    public add_client_args deepCopy() {
-      return new add_client_args(this);
+    public channelDelete_args deepCopy() {
+      return new channelDelete_args(this);
     }
 
     @Override
     public void clear() {
       setServer_idIsSet(false);
       this.server_id = 0;
-      this.channel_name = null;
-      this.client_name = null;
+      this.nome = null;
     }
 
     public int getServer_id() {
       return this.server_id;
     }
 
-    public add_client_args setServer_id(int server_id) {
+    public channelDelete_args setServer_id(int server_id) {
       this.server_id = server_id;
       setServer_idIsSet(true);
       return this;
@@ -1327,51 +1391,27 @@ public class ClientTextToVoice {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SERVER_ID_ISSET_ID, value);
     }
 
-    public String getChannel_name() {
-      return this.channel_name;
+    public String getNome() {
+      return this.nome;
     }
 
-    public add_client_args setChannel_name(String channel_name) {
-      this.channel_name = channel_name;
+    public channelDelete_args setNome(String nome) {
+      this.nome = nome;
       return this;
     }
 
-    public void unsetChannel_name() {
-      this.channel_name = null;
+    public void unsetNome() {
+      this.nome = null;
     }
 
-    /** Returns true if field channel_name is set (has been assigned a value) and false otherwise */
-    public boolean isSetChannel_name() {
-      return this.channel_name != null;
+    /** Returns true if field nome is set (has been assigned a value) and false otherwise */
+    public boolean isSetNome() {
+      return this.nome != null;
     }
 
-    public void setChannel_nameIsSet(boolean value) {
+    public void setNomeIsSet(boolean value) {
       if (!value) {
-        this.channel_name = null;
-      }
-    }
-
-    public String getClient_name() {
-      return this.client_name;
-    }
-
-    public add_client_args setClient_name(String client_name) {
-      this.client_name = client_name;
-      return this;
-    }
-
-    public void unsetClient_name() {
-      this.client_name = null;
-    }
-
-    /** Returns true if field client_name is set (has been assigned a value) and false otherwise */
-    public boolean isSetClient_name() {
-      return this.client_name != null;
-    }
-
-    public void setClient_nameIsSet(boolean value) {
-      if (!value) {
-        this.client_name = null;
+        this.nome = null;
       }
     }
 
@@ -1385,19 +1425,11 @@ public class ClientTextToVoice {
         }
         break;
 
-      case CHANNEL_NAME:
+      case NOME:
         if (value == null) {
-          unsetChannel_name();
+          unsetNome();
         } else {
-          setChannel_name((String)value);
-        }
-        break;
-
-      case CLIENT_NAME:
-        if (value == null) {
-          unsetClient_name();
-        } else {
-          setClient_name((String)value);
+          setNome((String)value);
         }
         break;
 
@@ -1409,11 +1441,8 @@ public class ClientTextToVoice {
       case SERVER_ID:
         return Integer.valueOf(getServer_id());
 
-      case CHANNEL_NAME:
-        return getChannel_name();
-
-      case CLIENT_NAME:
-        return getClient_name();
+      case NOME:
+        return getNome();
 
       }
       throw new IllegalStateException();
@@ -1428,10 +1457,8 @@ public class ClientTextToVoice {
       switch (field) {
       case SERVER_ID:
         return isSetServer_id();
-      case CHANNEL_NAME:
-        return isSetChannel_name();
-      case CLIENT_NAME:
-        return isSetClient_name();
+      case NOME:
+        return isSetNome();
       }
       throw new IllegalStateException();
     }
@@ -1440,12 +1467,12 @@ public class ClientTextToVoice {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof add_client_args)
-        return this.equals((add_client_args)that);
+      if (that instanceof channelDelete_args)
+        return this.equals((channelDelete_args)that);
       return false;
     }
 
-    public boolean equals(add_client_args that) {
+    public boolean equals(channelDelete_args that) {
       if (that == null)
         return false;
 
@@ -1458,21 +1485,12 @@ public class ClientTextToVoice {
           return false;
       }
 
-      boolean this_present_channel_name = true && this.isSetChannel_name();
-      boolean that_present_channel_name = true && that.isSetChannel_name();
-      if (this_present_channel_name || that_present_channel_name) {
-        if (!(this_present_channel_name && that_present_channel_name))
+      boolean this_present_nome = true && this.isSetNome();
+      boolean that_present_nome = true && that.isSetNome();
+      if (this_present_nome || that_present_nome) {
+        if (!(this_present_nome && that_present_nome))
           return false;
-        if (!this.channel_name.equals(that.channel_name))
-          return false;
-      }
-
-      boolean this_present_client_name = true && this.isSetClient_name();
-      boolean that_present_client_name = true && that.isSetClient_name();
-      if (this_present_client_name || that_present_client_name) {
-        if (!(this_present_client_name && that_present_client_name))
-          return false;
-        if (!this.client_name.equals(that.client_name))
+        if (!this.nome.equals(that.nome))
           return false;
       }
 
@@ -1484,13 +1502,13 @@ public class ClientTextToVoice {
       return 0;
     }
 
-    public int compareTo(add_client_args other) {
+    public int compareTo(channelDelete_args other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
 
       int lastComparison = 0;
-      add_client_args typedOther = (add_client_args)other;
+      channelDelete_args typedOther = (channelDelete_args)other;
 
       lastComparison = Boolean.valueOf(isSetServer_id()).compareTo(typedOther.isSetServer_id());
       if (lastComparison != 0) {
@@ -1502,22 +1520,12 @@ public class ClientTextToVoice {
           return lastComparison;
         }
       }
-      lastComparison = Boolean.valueOf(isSetChannel_name()).compareTo(typedOther.isSetChannel_name());
+      lastComparison = Boolean.valueOf(isSetNome()).compareTo(typedOther.isSetNome());
       if (lastComparison != 0) {
         return lastComparison;
       }
-      if (isSetChannel_name()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.channel_name, typedOther.channel_name);
-        if (lastComparison != 0) {
-          return lastComparison;
-        }
-      }
-      lastComparison = Boolean.valueOf(isSetClient_name()).compareTo(typedOther.isSetClient_name());
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-      if (isSetClient_name()) {
-        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.client_name, typedOther.client_name);
+      if (isSetNome()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.nome, typedOther.nome);
         if (lastComparison != 0) {
           return lastComparison;
         }
@@ -1539,26 +1547,18 @@ public class ClientTextToVoice {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("add_client_args(");
+      StringBuilder sb = new StringBuilder("channelDelete_args(");
       boolean first = true;
 
       sb.append("server_id:");
       sb.append(this.server_id);
       first = false;
       if (!first) sb.append(", ");
-      sb.append("channel_name:");
-      if (this.channel_name == null) {
+      sb.append("nome:");
+      if (this.nome == null) {
         sb.append("null");
       } else {
-        sb.append(this.channel_name);
-      }
-      first = false;
-      if (!first) sb.append(", ");
-      sb.append("client_name:");
-      if (this.client_name == null) {
-        sb.append("null");
-      } else {
-        sb.append(this.client_name);
+        sb.append(this.nome);
       }
       first = false;
       sb.append(")");
@@ -1588,15 +1588,15 @@ public class ClientTextToVoice {
       }
     }
 
-    private static class add_client_argsStandardSchemeFactory implements SchemeFactory {
-      public add_client_argsStandardScheme getScheme() {
-        return new add_client_argsStandardScheme();
+    private static class channelDelete_argsStandardSchemeFactory implements SchemeFactory {
+      public channelDelete_argsStandardScheme getScheme() {
+        return new channelDelete_argsStandardScheme();
       }
     }
 
-    private static class add_client_argsStandardScheme extends StandardScheme<add_client_args> {
+    private static class channelDelete_argsStandardScheme extends StandardScheme<channelDelete_args> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, add_client_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, channelDelete_args struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -1614,18 +1614,10 @@ public class ClientTextToVoice {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
-            case 2: // CHANNEL_NAME
+            case 2: // NOME
               if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                struct.channel_name = iprot.readString();
-                struct.setChannel_nameIsSet(true);
-              } else { 
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              }
-              break;
-            case 3: // CLIENT_NAME
-              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                struct.client_name = iprot.readString();
-                struct.setClient_nameIsSet(true);
+                struct.nome = iprot.readString();
+                struct.setNomeIsSet(true);
               } else { 
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
@@ -1641,21 +1633,16 @@ public class ClientTextToVoice {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, add_client_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, channelDelete_args struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
         oprot.writeFieldBegin(SERVER_ID_FIELD_DESC);
         oprot.writeI32(struct.server_id);
         oprot.writeFieldEnd();
-        if (struct.channel_name != null) {
-          oprot.writeFieldBegin(CHANNEL_NAME_FIELD_DESC);
-          oprot.writeString(struct.channel_name);
-          oprot.writeFieldEnd();
-        }
-        if (struct.client_name != null) {
-          oprot.writeFieldBegin(CLIENT_NAME_FIELD_DESC);
-          oprot.writeString(struct.client_name);
+        if (struct.nome != null) {
+          oprot.writeFieldBegin(NOME_FIELD_DESC);
+          oprot.writeString(struct.nome);
           oprot.writeFieldEnd();
         }
         oprot.writeFieldStop();
@@ -1664,69 +1651,59 @@ public class ClientTextToVoice {
 
     }
 
-    private static class add_client_argsTupleSchemeFactory implements SchemeFactory {
-      public add_client_argsTupleScheme getScheme() {
-        return new add_client_argsTupleScheme();
+    private static class channelDelete_argsTupleSchemeFactory implements SchemeFactory {
+      public channelDelete_argsTupleScheme getScheme() {
+        return new channelDelete_argsTupleScheme();
       }
     }
 
-    private static class add_client_argsTupleScheme extends TupleScheme<add_client_args> {
+    private static class channelDelete_argsTupleScheme extends TupleScheme<channelDelete_args> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, add_client_args struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, channelDelete_args struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetServer_id()) {
           optionals.set(0);
         }
-        if (struct.isSetChannel_name()) {
+        if (struct.isSetNome()) {
           optionals.set(1);
         }
-        if (struct.isSetClient_name()) {
-          optionals.set(2);
-        }
-        oprot.writeBitSet(optionals, 3);
+        oprot.writeBitSet(optionals, 2);
         if (struct.isSetServer_id()) {
           oprot.writeI32(struct.server_id);
         }
-        if (struct.isSetChannel_name()) {
-          oprot.writeString(struct.channel_name);
-        }
-        if (struct.isSetClient_name()) {
-          oprot.writeString(struct.client_name);
+        if (struct.isSetNome()) {
+          oprot.writeString(struct.nome);
         }
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, add_client_args struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, channelDelete_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(3);
+        BitSet incoming = iprot.readBitSet(2);
         if (incoming.get(0)) {
           struct.server_id = iprot.readI32();
           struct.setServer_idIsSet(true);
         }
         if (incoming.get(1)) {
-          struct.channel_name = iprot.readString();
-          struct.setChannel_nameIsSet(true);
-        }
-        if (incoming.get(2)) {
-          struct.client_name = iprot.readString();
-          struct.setClient_nameIsSet(true);
+          struct.nome = iprot.readString();
+          struct.setNomeIsSet(true);
         }
       }
     }
 
   }
 
-  public static class add_client_result implements org.apache.thrift.TBase<add_client_result, add_client_result._Fields>, java.io.Serializable, Cloneable   {
-    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("add_client_result");
+  public static class channelDelete_result implements org.apache.thrift.TBase<channelDelete_result, channelDelete_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("channelDelete_result");
 
     private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.BOOL, (short)0);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
-      schemes.put(StandardScheme.class, new add_client_resultStandardSchemeFactory());
-      schemes.put(TupleScheme.class, new add_client_resultTupleSchemeFactory());
+      schemes.put(StandardScheme.class, new channelDelete_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new channelDelete_resultTupleSchemeFactory());
     }
 
     public boolean success; // required
@@ -1798,13 +1775,13 @@ public class ClientTextToVoice {
       tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
-      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(add_client_result.class, metaDataMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(channelDelete_result.class, metaDataMap);
     }
 
-    public add_client_result() {
+    public channelDelete_result() {
     }
 
-    public add_client_result(
+    public channelDelete_result(
       boolean success)
     {
       this();
@@ -1815,13 +1792,13 @@ public class ClientTextToVoice {
     /**
      * Performs a deep copy on <i>other</i>.
      */
-    public add_client_result(add_client_result other) {
+    public channelDelete_result(channelDelete_result other) {
       __isset_bitfield = other.__isset_bitfield;
       this.success = other.success;
     }
 
-    public add_client_result deepCopy() {
-      return new add_client_result(this);
+    public channelDelete_result deepCopy() {
+      return new channelDelete_result(this);
     }
 
     @Override
@@ -1834,7 +1811,7 @@ public class ClientTextToVoice {
       return this.success;
     }
 
-    public add_client_result setSuccess(boolean success) {
+    public channelDelete_result setSuccess(boolean success) {
       this.success = success;
       setSuccessIsSet(true);
       return this;
@@ -1892,12 +1869,12 @@ public class ClientTextToVoice {
     public boolean equals(Object that) {
       if (that == null)
         return false;
-      if (that instanceof add_client_result)
-        return this.equals((add_client_result)that);
+      if (that instanceof channelDelete_result)
+        return this.equals((channelDelete_result)that);
       return false;
     }
 
-    public boolean equals(add_client_result that) {
+    public boolean equals(channelDelete_result that) {
       if (that == null)
         return false;
 
@@ -1918,13 +1895,13 @@ public class ClientTextToVoice {
       return 0;
     }
 
-    public int compareTo(add_client_result other) {
+    public int compareTo(channelDelete_result other) {
       if (!getClass().equals(other.getClass())) {
         return getClass().getName().compareTo(other.getClass().getName());
       }
 
       int lastComparison = 0;
-      add_client_result typedOther = (add_client_result)other;
+      channelDelete_result typedOther = (channelDelete_result)other;
 
       lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(typedOther.isSetSuccess());
       if (lastComparison != 0) {
@@ -1953,7 +1930,7 @@ public class ClientTextToVoice {
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder("add_client_result(");
+      StringBuilder sb = new StringBuilder("channelDelete_result(");
       boolean first = true;
 
       sb.append("success:");
@@ -1984,15 +1961,15 @@ public class ClientTextToVoice {
       }
     }
 
-    private static class add_client_resultStandardSchemeFactory implements SchemeFactory {
-      public add_client_resultStandardScheme getScheme() {
-        return new add_client_resultStandardScheme();
+    private static class channelDelete_resultStandardSchemeFactory implements SchemeFactory {
+      public channelDelete_resultStandardScheme getScheme() {
+        return new channelDelete_resultStandardScheme();
       }
     }
 
-    private static class add_client_resultStandardScheme extends StandardScheme<add_client_result> {
+    private static class channelDelete_resultStandardScheme extends StandardScheme<channelDelete_result> {
 
-      public void read(org.apache.thrift.protocol.TProtocol iprot, add_client_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol iprot, channelDelete_result struct) throws org.apache.thrift.TException {
         org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
         while (true)
@@ -2021,7 +1998,7 @@ public class ClientTextToVoice {
         struct.validate();
       }
 
-      public void write(org.apache.thrift.protocol.TProtocol oprot, add_client_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol oprot, channelDelete_result struct) throws org.apache.thrift.TException {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
@@ -2034,16 +2011,16 @@ public class ClientTextToVoice {
 
     }
 
-    private static class add_client_resultTupleSchemeFactory implements SchemeFactory {
-      public add_client_resultTupleScheme getScheme() {
-        return new add_client_resultTupleScheme();
+    private static class channelDelete_resultTupleSchemeFactory implements SchemeFactory {
+      public channelDelete_resultTupleScheme getScheme() {
+        return new channelDelete_resultTupleScheme();
       }
     }
 
-    private static class add_client_resultTupleScheme extends TupleScheme<add_client_result> {
+    private static class channelDelete_resultTupleScheme extends TupleScheme<channelDelete_result> {
 
       @Override
-      public void write(org.apache.thrift.protocol.TProtocol prot, add_client_result struct) throws org.apache.thrift.TException {
+      public void write(org.apache.thrift.protocol.TProtocol prot, channelDelete_result struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
         BitSet optionals = new BitSet();
         if (struct.isSetSuccess()) {
@@ -2056,7 +2033,809 @@ public class ClientTextToVoice {
       }
 
       @Override
-      public void read(org.apache.thrift.protocol.TProtocol prot, add_client_result struct) throws org.apache.thrift.TException {
+      public void read(org.apache.thrift.protocol.TProtocol prot, channelDelete_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.success = iprot.readBool();
+          struct.setSuccessIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class disconnectClient_args implements org.apache.thrift.TBase<disconnectClient_args, disconnectClient_args._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("disconnectClient_args");
+
+    private static final org.apache.thrift.protocol.TField SERVER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("server_id", org.apache.thrift.protocol.TType.I32, (short)1);
+    private static final org.apache.thrift.protocol.TField CLIENT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("clientID", org.apache.thrift.protocol.TType.STRING, (short)2);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new disconnectClient_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new disconnectClient_argsTupleSchemeFactory());
+    }
+
+    public int server_id; // required
+    public String clientID; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SERVER_ID((short)1, "server_id"),
+      CLIENT_ID((short)2, "clientID");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // SERVER_ID
+            return SERVER_ID;
+          case 2: // CLIENT_ID
+            return CLIENT_ID;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __SERVER_ID_ISSET_ID = 0;
+    private byte __isset_bitfield = 0;
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SERVER_ID, new org.apache.thrift.meta_data.FieldMetaData("server_id", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+      tmpMap.put(_Fields.CLIENT_ID, new org.apache.thrift.meta_data.FieldMetaData("clientID", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(disconnectClient_args.class, metaDataMap);
+    }
+
+    public disconnectClient_args() {
+    }
+
+    public disconnectClient_args(
+      int server_id,
+      String clientID)
+    {
+      this();
+      this.server_id = server_id;
+      setServer_idIsSet(true);
+      this.clientID = clientID;
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public disconnectClient_args(disconnectClient_args other) {
+      __isset_bitfield = other.__isset_bitfield;
+      this.server_id = other.server_id;
+      if (other.isSetClientID()) {
+        this.clientID = other.clientID;
+      }
+    }
+
+    public disconnectClient_args deepCopy() {
+      return new disconnectClient_args(this);
+    }
+
+    @Override
+    public void clear() {
+      setServer_idIsSet(false);
+      this.server_id = 0;
+      this.clientID = null;
+    }
+
+    public int getServer_id() {
+      return this.server_id;
+    }
+
+    public disconnectClient_args setServer_id(int server_id) {
+      this.server_id = server_id;
+      setServer_idIsSet(true);
+      return this;
+    }
+
+    public void unsetServer_id() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SERVER_ID_ISSET_ID);
+    }
+
+    /** Returns true if field server_id is set (has been assigned a value) and false otherwise */
+    public boolean isSetServer_id() {
+      return EncodingUtils.testBit(__isset_bitfield, __SERVER_ID_ISSET_ID);
+    }
+
+    public void setServer_idIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SERVER_ID_ISSET_ID, value);
+    }
+
+    public String getClientID() {
+      return this.clientID;
+    }
+
+    public disconnectClient_args setClientID(String clientID) {
+      this.clientID = clientID;
+      return this;
+    }
+
+    public void unsetClientID() {
+      this.clientID = null;
+    }
+
+    /** Returns true if field clientID is set (has been assigned a value) and false otherwise */
+    public boolean isSetClientID() {
+      return this.clientID != null;
+    }
+
+    public void setClientIDIsSet(boolean value) {
+      if (!value) {
+        this.clientID = null;
+      }
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SERVER_ID:
+        if (value == null) {
+          unsetServer_id();
+        } else {
+          setServer_id((Integer)value);
+        }
+        break;
+
+      case CLIENT_ID:
+        if (value == null) {
+          unsetClientID();
+        } else {
+          setClientID((String)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SERVER_ID:
+        return Integer.valueOf(getServer_id());
+
+      case CLIENT_ID:
+        return getClientID();
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SERVER_ID:
+        return isSetServer_id();
+      case CLIENT_ID:
+        return isSetClientID();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof disconnectClient_args)
+        return this.equals((disconnectClient_args)that);
+      return false;
+    }
+
+    public boolean equals(disconnectClient_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_server_id = true;
+      boolean that_present_server_id = true;
+      if (this_present_server_id || that_present_server_id) {
+        if (!(this_present_server_id && that_present_server_id))
+          return false;
+        if (this.server_id != that.server_id)
+          return false;
+      }
+
+      boolean this_present_clientID = true && this.isSetClientID();
+      boolean that_present_clientID = true && that.isSetClientID();
+      if (this_present_clientID || that_present_clientID) {
+        if (!(this_present_clientID && that_present_clientID))
+          return false;
+        if (!this.clientID.equals(that.clientID))
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(disconnectClient_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      disconnectClient_args typedOther = (disconnectClient_args)other;
+
+      lastComparison = Boolean.valueOf(isSetServer_id()).compareTo(typedOther.isSetServer_id());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetServer_id()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.server_id, typedOther.server_id);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetClientID()).compareTo(typedOther.isSetClientID());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetClientID()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.clientID, typedOther.clientID);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("disconnectClient_args(");
+      boolean first = true;
+
+      sb.append("server_id:");
+      sb.append(this.server_id);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("clientID:");
+      if (this.clientID == null) {
+        sb.append("null");
+      } else {
+        sb.append(this.clientID);
+      }
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+        __isset_bitfield = 0;
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class disconnectClient_argsStandardSchemeFactory implements SchemeFactory {
+      public disconnectClient_argsStandardScheme getScheme() {
+        return new disconnectClient_argsStandardScheme();
+      }
+    }
+
+    private static class disconnectClient_argsStandardScheme extends StandardScheme<disconnectClient_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, disconnectClient_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // SERVER_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                struct.server_id = iprot.readI32();
+                struct.setServer_idIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 2: // CLIENT_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                struct.clientID = iprot.readString();
+                struct.setClientIDIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, disconnectClient_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldBegin(SERVER_ID_FIELD_DESC);
+        oprot.writeI32(struct.server_id);
+        oprot.writeFieldEnd();
+        if (struct.clientID != null) {
+          oprot.writeFieldBegin(CLIENT_ID_FIELD_DESC);
+          oprot.writeString(struct.clientID);
+          oprot.writeFieldEnd();
+        }
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class disconnectClient_argsTupleSchemeFactory implements SchemeFactory {
+      public disconnectClient_argsTupleScheme getScheme() {
+        return new disconnectClient_argsTupleScheme();
+      }
+    }
+
+    private static class disconnectClient_argsTupleScheme extends TupleScheme<disconnectClient_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, disconnectClient_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetServer_id()) {
+          optionals.set(0);
+        }
+        if (struct.isSetClientID()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetServer_id()) {
+          oprot.writeI32(struct.server_id);
+        }
+        if (struct.isSetClientID()) {
+          oprot.writeString(struct.clientID);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, disconnectClient_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          struct.server_id = iprot.readI32();
+          struct.setServer_idIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.clientID = iprot.readString();
+          struct.setClientIDIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class disconnectClient_result implements org.apache.thrift.TBase<disconnectClient_result, disconnectClient_result._Fields>, java.io.Serializable, Cloneable   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("disconnectClient_result");
+
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.BOOL, (short)0);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new disconnectClient_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new disconnectClient_resultTupleSchemeFactory());
+    }
+
+    public boolean success; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      SUCCESS((short)0, "success");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __SUCCESS_ISSET_ID = 0;
+    private byte __isset_bitfield = 0;
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(disconnectClient_result.class, metaDataMap);
+    }
+
+    public disconnectClient_result() {
+    }
+
+    public disconnectClient_result(
+      boolean success)
+    {
+      this();
+      this.success = success;
+      setSuccessIsSet(true);
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public disconnectClient_result(disconnectClient_result other) {
+      __isset_bitfield = other.__isset_bitfield;
+      this.success = other.success;
+    }
+
+    public disconnectClient_result deepCopy() {
+      return new disconnectClient_result(this);
+    }
+
+    @Override
+    public void clear() {
+      setSuccessIsSet(false);
+      this.success = false;
+    }
+
+    public boolean isSuccess() {
+      return this.success;
+    }
+
+    public disconnectClient_result setSuccess(boolean success) {
+      this.success = success;
+      setSuccessIsSet(true);
+      return this;
+    }
+
+    public void unsetSuccess() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+    }
+
+    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return EncodingUtils.testBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SUCCESS_ISSET_ID, value);
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((Boolean)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case SUCCESS:
+        return Boolean.valueOf(isSuccess());
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof disconnectClient_result)
+        return this.equals((disconnectClient_result)that);
+      return false;
+    }
+
+    public boolean equals(disconnectClient_result that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_success = true;
+      boolean that_present_success = true;
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (this.success != that.success)
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    public int compareTo(disconnectClient_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+      disconnectClient_result typedOther = (disconnectClient_result)other;
+
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(typedOther.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, typedOther.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("disconnectClient_result(");
+      boolean first = true;
+
+      sb.append("success:");
+      sb.append(this.success);
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class disconnectClient_resultStandardSchemeFactory implements SchemeFactory {
+      public disconnectClient_resultStandardScheme getScheme() {
+        return new disconnectClient_resultStandardScheme();
+      }
+    }
+
+    private static class disconnectClient_resultStandardScheme extends StandardScheme<disconnectClient_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, disconnectClient_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 0: // SUCCESS
+              if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
+                struct.success = iprot.readBool();
+                struct.setSuccessIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, disconnectClient_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+        oprot.writeBool(struct.success);
+        oprot.writeFieldEnd();
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class disconnectClient_resultTupleSchemeFactory implements SchemeFactory {
+      public disconnectClient_resultTupleScheme getScheme() {
+        return new disconnectClient_resultTupleScheme();
+      }
+    }
+
+    private static class disconnectClient_resultTupleScheme extends TupleScheme<disconnectClient_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, disconnectClient_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSuccess()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetSuccess()) {
+          oprot.writeBool(struct.success);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, disconnectClient_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
