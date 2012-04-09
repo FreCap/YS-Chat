@@ -42,7 +42,7 @@ public class Profilo extends ProfiloModel {
 	
 	String chat_key;
 
-        final public ArrayList<String> call_opened = new ArrayList<String>();
+    final public ArrayList<String> call_opened = new ArrayList<String>();
 	public String call_actived;
 	
 	FastSet chatTab_opened = new FastSet();
@@ -183,16 +183,20 @@ public class Profilo extends ProfiloModel {
             
             int conv_id;
             
-            if(call.called_id == profilo_id){
+            if(call.caller_id == profilo_id){
+                conv_id = call.called_id;
+            }else if(call.called_id == profilo_id){
                 conv_id = call.caller_id;
             }else{
-                conv_id = call.called_id;
-            }
+				conv_id = call.called_id;
+			}
             
             int ts_port = call.get_TSPort();
             
+			Call.clientNameToProfiloId.put(call.get_clientName_byProfilo(this), profilo_id);
+			
             for(String channel_id:channel_id_connectedVoiceSupport){
-		ActionCall.write(PresenceHandler.clients.get(channel_id), conv_id, call.call_id, call.call_password, 1 , call.server_id, ts_port);
+				ActionCall.write(PresenceHandler.clients.get(channel_id), conv_id, call.call_id, call.call_password, 1 , call.server_id, ts_port);
           
             }
         

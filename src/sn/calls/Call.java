@@ -16,11 +16,20 @@ public class Call {
 	
 	//l'id della map è fatto da Conversazioni.get_conversazione_id()
 	public static ConcurrentHashMap<String,Call> calls = new ConcurrentHashMap<String,Call>();
+	public static ConcurrentHashMap<Integer,String> callsIdtoName = new ConcurrentHashMap<Integer, String>();
 	
-	public String call_id;	
+	public static ConcurrentHashMap<Integer,String> clientIdToName = new ConcurrentHashMap<Integer, String>();
+	public static ConcurrentHashMap<String,Integer> clientNameToProfiloId = new ConcurrentHashMap<String, Integer>();
+	
+	
+	public int call_idN; // id attribuito dal server
+	public String call_id;
 	public String call_password;
 	public int caller_id;
 	public int called_id;
+	
+	//direttamente da TS
+	public int channelID;
 	
         
 	public FastSet partecipanti_attivi = new FastSet();
@@ -43,10 +52,7 @@ public class Call {
 		if(tipo_called == Conversazione.TIPO_profilo2profilo){
 			
 			Profilo called = (Profilo) called_model;
-			for(int a:called.friends_online.toArray()){
-                            System.out.println(a);
-                            
-                        }
+			
 			if(caller.friends_online.contains(called.profilo_id)){
 			
 				String random_string = "call_id" + (System.currentTimeMillis()/1000) + RandomHash.one();
@@ -54,19 +60,21 @@ public class Call {
                                 
 				if(caller.channel_id_connectedVoiceSupport.isEmpty()){
                                     
-                                    caller.call_notSupportedBy(caller.profilo_id);
-                                
-                                }else if(called.channel_id_connectedVoiceSupport.isEmpty()){
-                                    
-                                    caller.call_notSupportedBy(called.profilo_id);
-                                
-                                }else{
+					caller.call_notSupportedBy(caller.profilo_id);
+
+				}else if(called.channel_id_connectedVoiceSupport.isEmpty()){
+
+					caller.call_notSupportedBy(called.profilo_id);
+
+				}else{
+					
 					caller.call_wait(caller.profilo_id, call_id);	
 					
-					caller_id = caller.profilo_id;
-					called_id = called.profilo_id;
+					//caller_id = caller.profilo_id;
+					//called_id = called.profilo_id;
 	
-					calls.put(Conversazione.get_id_conversazione(caller_id, called_id, called.get_tipo()), this);
+					//calls.put(Conversazione.get_id_conversazione(caller_id, called_id, called.get_tipo()), this);
+					calls.put(call_id, this);
 					
 				}
 	
@@ -87,54 +95,81 @@ public class Call {
 			caller_id = caller.profilo_id;
 			called_id = called.profilo_id;
 			
-                        if(!caller.channel_id_connectedVoiceSupport.isEmpty()){
-                       
-                            // se ci sono utenti connessi restituisce true
-                            if(called.call_ring(called_id, caller_id, call_id)){
+				if(!caller.channel_id_connectedVoiceSupport.isEmpty()){
 
-                                    caller.call_wait(caller.profilo_id, call_id);	
-                                    calls.put(Conversazione.get_id_conversazione(caller_id, called_id, called.get_tipo()), this);
+					// se ci sono utenti connessi restituisce true
+					if(called.call_ring(called_id, caller_id, call_id)){
 
-                            }else{
+							caller.call_wait(caller.profilo_id, call_id);	
+							//calls.put(Conversazione.get_id_conversazione(caller_id, called_id, called.get_tipo()), this);
+							calls.put(call_id, this);
+							
+					}else{
 
-                                    //TODO nessun utente del gruppo/party online
+							//TODO nessun utente del gruppo/party online
 
-                            }
-			
-                        }else{
-                            
-                             caller.call_notSupportedBy(caller.profilo_id);
-                        
-                        }
+					}
+
+				}else{
+
+					 caller.call_notSupportedBy(caller.profilo_id);
+
+				}
 		}	
 	}
         
+	public boolean has_partecipante(int profilo_id){
+		
+		if(profilo_id == caller_id){
+			
+			return true;
+			
+		}
+		
+		ProfiloModel called_model = ProfiloModel.profili.get(called_id);
+		
+		int tipo_called = called_model.get_tipo();
+		
+		if(tipo_called == Conversazione.TIPO_profilo2profilo){
+			if(profilo_id == called_id){
+				return true;
+			}
+		}else{
+			 if(called_model.friends_online.contains(profilo_id)){
+				 return true;
+			 };
+		}
+		
+		return false;
+		
+	}
+	
 	public void init_TS(){
 		
 		if(!(iniziata_time>100)){
-                   
-                    iniziata_time = ((Long) (System.currentTimeMillis()/1000)).intValue();
-                    
-                    server_id = ServerVoice.get_server_withlessWorkLoad();
-                    
-                    ServerVoice.server.get(server_id).new_channel(call_id, call_password);
-                  
-                    call_accepted(caller_id);
-                    
+
+			iniziata_time = ((Long) (System.currentTimeMillis()/1000)).intValue();
+
+			server_id = ServerVoice.get_server_withlessWorkLoad();
+
+			ServerVoice.server.get(server_id).channelCreate(call_id, call_password);
+
+			call_accepted(caller_id);
+
 		}	
 		
 	}
 	
 	public void call_accepted(int profilo_id){
 		
-            init_TS();
-            
-            Profilo profilo = (Profilo) ProfiloModel.profili.get(profilo_id);
-            
-            ServerVoice.server.get(server_id).add_client(call_id, get_clientName_byProfilo(profilo));
-            
-            profilo.call(this);
-            
+		init_TS();
+
+		Profilo profilo = (Profilo) ProfiloModel.profili.get(profilo_id);
+
+		//deprecated ServerVoice.server.get(server_id).add_client(call_id, get_clientName_byProfilo(profilo));
+
+		profilo.call(this);
+
 	}
 	
         

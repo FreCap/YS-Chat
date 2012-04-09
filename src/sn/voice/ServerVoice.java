@@ -18,7 +18,7 @@ public class ServerVoice {
 	public int max_clients;
 	public String DNS;
 	public int port_TS;
-        public int port_Thrift;        
+    public int port_Thrift;        
 
 	public int connected_clients;
 	
@@ -51,32 +51,31 @@ public class ServerVoice {
 	    
 	}
         
-        public boolean new_channel(String call_id, String channel_pasword){
+    public int channelCreate(String call_id, String channel_pasword){
             
-            try {
-                
-                ClientTextToVoice.Client client = openClient();
-            
-				
-				int channel_id = client.channelCreate(server_id, call_id, channel_pasword);
-                if(channel_id > 0){
-                    //TODO
-                    closeClient(client);
-                    return true;
-                    
-                }else{
-                    
-                    closeClient(client);
-                    return false;
-                
-                }
-                            
-            } catch (TException x) {
-	   	x.printStackTrace();
-            }     
-            return false;
-        }
-        
+		try {
+
+			ClientTextToVoice.Client client = openClient();
+
+			int channel_id = client.channelCreate(server_id, call_id, channel_pasword);
+			if(channel_id > 0){
+				//TODO
+				closeClient(client);
+				return channel_id;
+
+			}else{
+
+				closeClient(client);
+				return channel_id;
+
+			}
+
+		} catch (TException x) {
+			x.printStackTrace();
+		}     
+		return 0;
+	}
+
          /**
          * una volta che un client si connette, il calback del server chiede se quel client si può attaccare
          * a quel determinato channel e il java risponde con un bool

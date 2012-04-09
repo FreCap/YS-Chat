@@ -64,29 +64,31 @@ var Chat = function(start){
 	this.messages_toWrite = [];
 
 	this.has_voicePlugin = function(){
+			
+		//return true;//TODO DEBUG
+		
+		var isInstalled = false;
+		var version = null;
+		if (window.ActiveXObject) {
+		  var control = null;
+		  try {
+				control = new ActiveXObjectvoicePluginName();
+		  } catch (e) {
+				return;
+		  }
+		  if (control) {
+				return true;
+		  }
+		} else {
 
-			var isInstalled = false;
-			var version = null;
-			if (window.ActiveXObject) {
-			  var control = null;
-			  try {
-					control = new ActiveXObjectvoicePluginName();
-			  } catch (e) {
-					return;
-			  }
-			  if (control) {
-					return true;
-			  }
-			} else {
+				$.each(navigator.plugins, function(i, l){
+						if(l.name == voicePluginName){
+								return true;
+						}
+				});
+		}
 
-					$.each(navigator.plugins, function(i, l){
-							if(l.name == voicePluginName){
-									return true;
-							}
-					});
-			}
-
-			return false;
+		return false;
 	};
 
 	this.get_loginInfo = function(){
@@ -349,7 +351,7 @@ var Chat = function(start){
 
 	this.socket = new io.Socket("192.168.1.4", {//127.0.0.1
 	  port: 9999,
-	  transports: ['websocket','flashsocket', 'xhr-polling'],
+	  transports: [/*'websocket','flashsocket',*/ 'xhr-polling'],
 	  rememberTransport: false
 	});
 
@@ -436,6 +438,31 @@ var Chat = function(start){
 									this2.messages_toWrite.splice(i,1);
 							});
 							break;
+					case actions.CALL_RING:
+							
+							break;
+					case actions.CALL_SUPPORT:
+						if(data_JSON.support == false){
+							if(data_JSON.conv_id == this2.profilo_id){
+								
+								alert("TU non supporti la chat vocale")
+							}else{
+								alert("l'account " + data_JSON.conv_id + " non supporta la chat vocale");							
+							}
+						}else{
+							//TODO è possibile che il supporto sia true?? verifica
+							
+						}
+						break;
+					case actions.CALL_WAIT:
+						
+						break;
+					case actions.CALL:
+						
+						break;
+					case actions.CALL_HANGUP:
+						
+						break;
 			};
 	});
 	this.socket.on('disconnect',function() {

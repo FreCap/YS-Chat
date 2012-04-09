@@ -6,6 +6,8 @@ namespace php ThriftServer
 namespace perl ThriftServer
 
 service ClientTextToVoice {
+	
+	// server_id deprecated. da decidere se debba diventare VirtualTSServerID	
 
 	//return l'id del channel
 	i32 channelCreate ( 1:i32 server_id, 2:string nome, 3:string password )

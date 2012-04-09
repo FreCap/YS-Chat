@@ -11,7 +11,9 @@ import org.apache.thrift.transport.TServerTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sn.YSConfig;
+import sn.calls.Call;
 import sn.voice.ServerVoice;
+
 
 public class ServerVoiceToText {
 
@@ -21,63 +23,87 @@ public class ServerVoiceToText {
 	
         final Logger logger = LoggerFactory.getLogger(ClientVoiceToTextHandler.class);
             
-	public ClientVoiceToTextHandler() {
+		public ClientVoiceToTextHandler() {
+
+		}
+
+		@Override
+		public void info(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift)
+				throws TException {
+
+					logger.info("Thrift <-Voice Info " + String.valueOf(server_id) + " " + String.valueOf(max_clients) + " " + String.valueOf(DNS) + " " + String.valueOf(port_TS) + " " + String.valueOf(port_Thrift) );
+
+			if(ServerVoice.server.containsKey(server_id)){				
+
+			}else{
+
+				ServerVoice server = new ServerVoice();
+				server.server_id = server_id;
+				server.max_clients = max_clients;
+				server.DNS = DNS;
+				//TODO ADD thrift's port and TS's port
+				server.port_TS = port_TS;
+				server.port_Thrift = port_Thrift;
+
+				ServerVoice.server.put(server_id, server);
+
+			}
+		}
+
+	    public boolean onClientConnected(int server_id, int clientID, String clientNick) throws TException {
+			if(Call.clientNameToProfiloId.containsKey(clientNick)){
+				Call.clientIdToName.put(clientID, clientNick);
+				return true;
+			}else{
+				return false;
+			}
+		}
+
+		public boolean onClientDisconnected(int server_id, int clientID) throws TException {
+			return true;
+		}
+
 		
-	}
-	
-	@Override
-	public void info(int server_id, int max_clients, String DNS, int port_TS, int port_Thrift)
-			throws TException {
-			
-                logger.info("Thrift <-Voice Info " + String.valueOf(server_id) + " " + String.valueOf(max_clients) + " " + String.valueOf(DNS) + " " + String.valueOf(port_TS) + " " + String.valueOf(port_Thrift) );
-                    
-		if(ServerVoice.server.containsKey(server_id)){				
+		public boolean onClientJoined(int server_id, int clientID, int ChannelID) throws TException {
+			if(Call.calls.containsKey(Call.callsIdtoName.get(ChannelID))){
+				Call currentCall = Call.calls.get(Call.callsIdtoName.get(ChannelID));
 				
-		}else{
+				int profilo_id = Call.clientNameToProfiloId.get(Call.clientIdToName.get(clientID));
 				
-			ServerVoice server = new ServerVoice();
-			server.server_id = server_id;
-			server.max_clients = max_clients;
-			server.DNS = DNS;
-			//TODO ADD thrift's port and TS's port
-			server.port_TS = port_TS;
-                        server.port_Thrift = port_Thrift;
-                               
-			ServerVoice.server.put(server_id, server);
+				if(currentCall.has_partecipante(profilo_id)){
+					return true;
+				}else{
+					return false;
+				}
 				
-		}
-	}
-
-		@Override
-		public boolean onClientConnected(int server_id, int clientID, int channelID, String clientNick) throws TException {
-			throw new UnsupportedOperationException("Not supported yet.");
+			}else{
+				//delete
+				return false;
+			}
 		}
 
-		@Override
-		public boolean onClientDisconnected(int server_id, int clientID, int channelID, String clientNick) throws TException {
-			throw new UnsupportedOperationException("Not supported yet.");
-		}
 
-		@Override
-		public boolean onClientMoved(int server_id, int clientID, int oldChannelID, int newChannelID, String clientNick) throws TException {
-			throw new UnsupportedOperationException("Not supported yet.");
-		}
-
-		@Override
-		public boolean onChannelCreated(int server_id, int invokerClientID, int channelID, String clientNick) throws TException {
-			logger.info("Thrift <-Voice onChannelCreated " + String.valueOf(server_id) + " " + String.valueOf(invokerClientID) + " " + String.valueOf(channelID) + " " + String.valueOf(clientNick) );
+		public boolean onClientLeft(int server_id, int clientID, int ChannelID) throws TException {
 			//TODO
 			return true;
 		}
 
-		@Override
-		public boolean onChannelEdited(int server_id, int invokerClientID, int channelID, String clientNick) throws TException {
-			throw new UnsupportedOperationException("Not supported yet.");
-		}
 
-		@Override
-		public boolean onChannelDeleted(int server_id, int invokerClientID, int channelID, String clientNick) throws TException {
-			throw new UnsupportedOperationException("Not supported yet.");
+		public boolean onChannelCreated(int server_id, int channelID, String channelName) throws TException {
+			if(Call.calls.containsKey(channelName)){
+				Call.calls.get(channelName).call_idN = channelID;
+				Call.callsIdtoName.put(channelID, channelName);
+				return true;
+			}else{
+				//delete
+				return false;
+			}
+		}
+ 
+
+		public boolean onChannelDeleted(int server_id, int channelID) throws TException {
+			//da sconnettere ttti quanti alla fine di qst
+			return true;
 		}
 	
     }
