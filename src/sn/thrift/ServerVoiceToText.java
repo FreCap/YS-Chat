@@ -65,21 +65,24 @@ public class ServerVoiceToText {
 
 		
 		public boolean onClientJoined(int server_id, int clientID, int ChannelID) throws TException {
-			if(Call.calls.containsKey(Call.callsIdtoName.get(ChannelID))){
-				Call currentCall = Call.calls.get(Call.callsIdtoName.get(ChannelID));
-				
-				int profilo_id = Call.clientNameToProfiloId.get(Call.clientIdToName.get(clientID));
-				
-				if(currentCall.has_partecipante(profilo_id)){
-					return true;
+			if(Call.callsIdtoName.containsKey(ChannelID)){
+				if(Call.calls.containsKey(Call.callsIdtoName.get(ChannelID))){
+					Call currentCall = Call.calls.get(Call.callsIdtoName.get(ChannelID));
+
+					int profilo_id = Call.clientNameToProfiloId.get(Call.clientIdToName.get(clientID));
+
+					if(currentCall.has_partecipante(profilo_id)){
+						return true;
+					}else{
+						return false;
+					}
+
 				}else{
+					//delete
 					return false;
 				}
-				
-			}else{
-				//delete
-				return false;
 			}
+			return false;
 		}
 
 
